@@ -473,7 +473,7 @@ Some Helpful R tips:
 \mode<presentation>{
 \begin{frame}[allowframebreaks=0.8]{References and Acknowledgements}
   
-\bibliography{../bib4451}
+\bibliography{../bib5200}
 
 \vspace{3mm}
 
@@ -492,7 +492,7 @@ Some Helpful R tips:
 
 \newpage
 
-\bibliography{../bib4451}
+\bibliography{../bib5200}
 
 }
 
