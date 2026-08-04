@@ -47,6 +47,7 @@ An Introduction}
 
 \begin{frame}[allowframebreaks]{Course Overview}
   \begin{itemize}
+    \item TEST
     \item The larger focus of last semester (Math 4450) was probability.
     \item Though we continue where we left off, this semester (Math 4451) will have a much stronger focus on statistics. A complete description of planned course topics can be found at the course website: \url{https://jeswheel.github.io/4451\_s26/\#planned-topics-spring-2026}.
     \item Both probability and statistics are, fundamentally, the study of with randomness... so, what's the difference? \mode<article>{\textbf{Depends on who you ask!}}

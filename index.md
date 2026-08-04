@@ -22,13 +22,18 @@ PREREQ: Earn a minimum grade of C- one of the following:
 
 ## Class notes
 
-1. [Introduction: Philosophy of Statistics](01/index.html)
+1. [Introduction](01/index.html)
 
 <!---
-2. [Introduction to point estimation](02/index.html)
-3. [Maximum Likelihood Estimation](03/index.html)
-4. [Bayesian approach to parameter estimation](04/index.html)
-5. [Point Estimation: Principles and Theory](05/index.html)
+2. [Randomization and Hypothesis Testing](02/index.html)
+3. [Some Statistical Background](03/index.html)
+4. [The Completely Randomized Design](04/index.html)
+5. [Factorial Designs](05/index.html)
+6. [Random Effects Models](06/index.html)
+7. [General Mixed Effects Models](07/index.html)
+8. [Designs with Nested Factors](08/index.html)
+9. [Block Designs](09/index.html)
+10. [Factorial Designs](05/index.html)
 
 [Midterm II Review](midterm02/Midterm2Review.pdf)
 --> 
