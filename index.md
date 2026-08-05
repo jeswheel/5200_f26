@@ -10,7 +10,6 @@ output:
 
 ## Course description
 
-The second of a two-part sequence on:
 This course teaches analysis of balanced experimental designs with fixed, random, crossed, and nested factors; factorial, nested, nested factorial, split plot, split block, and repeated measures designs; and fixed and mixed effects models, residual analysis, and post hoc mean comparisons. 
 Additional coursework is required for those enrolled in the graduate-level course.
 
@@ -40,10 +39,6 @@ PREREQ: Earn a minimum grade of C- one of the following:
 --> 
 
 ------
-
-### Planned topics (Spring 2026)
-
-- 
 
 ### Additional Course Information:
 
@@ -103,5 +98,4 @@ The final exam will be help in our regular classroom on Dec 18, 10:00 a.m. -- 12
 ## Acknowledgements and License
 
 This course and the code involved are made available with an [MIT license](LICENSE).
-Some components follow a Creative Commons Attribution non-commercial license.
-A longer list of acknowledgments is [available](acknowledge.html).
+A list of acknowledgments is [available](acknowledge.html).
