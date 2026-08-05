@@ -1,22 +1,24 @@
 ---
-title: "Mathematical Statistics II<br>Math 4451.<br>Introduction: Philosophy of Statistics"
+title: "<br>Stat 5200.<br>Introduction and Terminology"
 author: "Jesse Wheeler"
 output: html_document
 ---
 
 ----------------------
 
-This section is intended to introduce to course and topics. 
-The material is largely based on the preface and introduction to the textbook: "In all Likelihood", by Yudi Pawitan, which is listed as one of the supplemental texts for this course.
+This section is intended to introduce to course and topics. Desired outcomes:
 
-While the approach of not continuing exactly from where we left off is a bit unconventional, I first wanted to ground this semester's material in the context of Statistics as a discipline, and providing room for us to discuss additional topics outside of the John Rice textbook, as this is likely the last statistics course many of the students in the course will take.
+- Students will know how to formally define an experiment.
+- Students will understand the importance of performing an experiment relative to alternative approaches to answering scientific questions.
+- Students will build familiarity with important definitions and terminology that will be used throughout the course.
 
+**Expected reading:** Chapter 1 of Oehlert, G. W. (2020). *A First Course in Design and Analysis of Experiments*, [http://users.stat.umn.edu/~gary/book/fcdae.pdf](http://users.stat.umn.edu/~gary/book/fcdae.pdf).
 
 | &nbsp;           | &nbsp;                          |
 |:-----------------------|:------------------------:|
 | Lecture slides   | [pdf](slides.pdf) |
 | Lecture notes    | [pdf](notes.pdf) |
-| Annotated Slides | [pdf](annotatedSlides.pdf) |
+<!-- | Annotated Slides | [pdf](annotatedSlides.pdf) | -->
 <!-- | Discussion Problems | [pdf](discussionProbs.pdf) | -->
 ----------------------
 
@@ -26,7 +28,6 @@ While the approach of not continuing exactly from where we left off is a bit unc
 
 [Back to course homepage](../index.html)  
 [Acknowledgements](../acknowledge.html)  
-[Source code for these notes](http://github.com/jeswheel/4451_f25/tree/main/01/)
-
+[Source code for these notes](http://github.com/jeswheel/5200_f26/tree/main/01/)
 
 ----------------------

@@ -199,22 +199,60 @@ An Introduction}
   
 \end{frame}
 
+\section{Observational studies vs experiments}
+
+\begin{frame}[allowframebreaks]{Observational studies vs experiments}
+  \begin{itemize}
+    \item Experiments help answer questions, but there are also non-experimental techniques. What makes experiments special?
+    \item The most important feature is that an experiment gives researchers control: we get to pick the treatment and assignments.
+    \item This is different from \emph{observational studies}, where there are also treatments, units, and responses, but the researcher does not get to control treatment assignment.
+    \framebreak
+    \item If an experiment is designed well, we can
+    \begin{itemize}
+      \item Directly compare impact of various treatments, minimizing \emph{confounding}.
+      \item Design experiments to minimize any form of \emph{bias}.
+      \item Design experiments so that the \emph{error} in comparison is small.
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\section{Design considerations}
+
 \begin{frame}[allowframebreaks]{Design issues and considerations}
   \begin{itemize} 
     \item An important feature of an experiment is that the units are \alert{independent}, meaning that the response of one unit is \emph{not} influenced by treatments or responses of other units.
     \item We should also consider \alert{edge effects}, which can occur in both space and time:
     \begin{itemize}
       \item \textbf{EX (Space):} Plants at the edge of a plot or a greenhouse may respond differently to treatments.
-      \item \textbf{EX (Time):} Flushing out old-equipment, or applying treatments at certain time of day.
-      \item We should account for these possibilities by 
+      \item \textbf{EX (Time):} Flushing out old treatments, or applying treatments at certain time of day.
+      \item We should account for these possibilities by ensuring sufficient separation of units, and provisioning a ``buffer" in both space and time. 
     \end{itemize}
   \end{itemize}
 \end{frame}
 
 \begin{frame}[allowframebreaks]{Fixed resource problem}
-
+  \begin{itemize}
+    \item An often-encountered design problem is when there is a fixed amount of resource available for experimenting.
+    \item Examples:
+      \begin{itemize}
+        \item Fixed sized field
+        \item Fixed amount of time
+        \item Fixed amount of money to spend on experiment.
+      \end{itemize}
+    \item In these situations, a key part of the problem include: Size / shape of plots, number of samples per session, etc.
+    \item \alert{Useful rule of thumb:} Do \emph{more}, less well. That is, have more experimental units instead of more measurement units. 
+    
+    \mode<article>{
+    \vspace{1cm}
+    \textbf{EX:} In a comparison of teaching methods, it may be better to study 1 classroom in each of 20 schools (20 EUs, 20 measurement units), instead of 5 classrooms in 4 schools (4 EUs, still 20 measurement units). The trade-off here is that the first approach has more replicates, but higher-variance amongst EUs; the second approach has fewer replicates, but also lower variance in each replicate. Often the first approach will yield better final results.
+    }
+    
+  \end{itemize}
 \end{frame}
 
+\begin{frame}[allowframebreaks]{Other design considerations}
+  \emph{Open to the class:} \textbf{What issues may arise that you should consider in an experimental design?}
+\end{frame}
 
 \newcommand\acknowledgments{
 \begin{itemize}
