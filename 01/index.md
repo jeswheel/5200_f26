@@ -1,5 +1,5 @@
 ---
-title: "<br>Stat 5200.<br>Introduction and Terminology"
+title: "<br>Stat 5200.<br>Chapter 1: Introduction and Terminology"
 author: "Jesse Wheeler"
 output: html_document
 ---
