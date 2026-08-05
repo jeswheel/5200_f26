@@ -47,407 +47,156 @@ An Introduction}
 
 \begin{frame}[allowframebreaks]{Course Overview}
   \begin{itemize}
-    \item TEST
-    \item The larger focus of last semester (Math 4450) was probability.
-    \item Though we continue where we left off, this semester (Math 4451) will have a much stronger focus on statistics. A complete description of planned course topics can be found at the course website: \url{https://jeswheel.github.io/4451\_s26/\#planned-topics-spring-2026}.
-    \item Both probability and statistics are, fundamentally, the study of with randomness... so, what's the difference? \mode<article>{\textbf{Depends on who you ask!}}
-    
-    \mode<presentation>{\vspace{1cm}}
-    
-    \begin{quote}
-      Statistical science was the peculiar aspect of human progress which gave to the twentieth century its special character... it is to the statistician that the present age turns for what is most essential in all its more important activities. -- \citet{fisher54}
-    \end{quote}
+    \item This class is all about developing techniques for answering scientific questions.
+    \begin{itemize}
+      \item Is a newly proposed drug a safe and effective cure for a disease?
+      \item Which combination of protein and carbohydrate sources provide the best nutrition for growing lambs?
+      \item How will long-distance telephone usage change if our company offers a different rate structure to our customers?
     \end{itemize}
+    \item Our goal is to help decision makers and researchers design good experiments, analyze them properly, and answer their research questions.
+    \item The course is based on the textbook ``A First Course in Design and Analysis of Experiments" \citep{oehlert2000}.
+  \end{itemize}
 \end{frame}
 
-\section{Probability and Statistics}
+\section{Experiments}
 
-\begin{frame}[allowframebreaks]{What is ``Statistics"?}
-
+\begin{frame}[allowframebreaks]{What is an ``Experiment" and why it matters}
   \begin{itemize}
-    \item First, what is statistics? 
+    \item Experiments are the gold-standard for scientific inference.
+    \item Origins of the design a study of experiments starting with R. A. Fisher in the 1920s--1940s at UK agricultural center.
+    \item His work developed the field of experimental design, which is used now in all forms of scientific investigations.
+    \item Large advances in medicine, science, and product quality improvements can be attributed to proper experimental design and analysis.
+  \end{itemize}
+    \framebreak
     
-
+    \begin{exampleblock}{Fisher's early examples}
+      Fisher found decades worth of fertilizer treatment data: 
+      \begin{itemize}
+        \item Fertilizer had been applied to a field one year, and not the next, in order to compare yield of grain produced in the two different years.
+        \item Fertilizer was applied to one field in one year, and not to a nearby field in the same year, again to compare the yield of grain produced in the same year.
+      \end{itemize}
+    \end{exampleblock}
     
     \framebreak
     
-    \mode<presentation>{
-      \vspace{2cm}
-    }
+    From a statistical perspective, there are three components that define an experiment: \alert{Treatments}, \alert{Experimental Units}, and \alert{Assignment Method}.
+   
+   \begin{block}{Experiment}
+    An \alert{experiment} is specified by the combination of treatments, experimental units, and assignment methods.
+   \end{block}
+   
+   \begin{itemize}
+    \item \alert{Note:} There is no mention of a \emph{method} for analyzing the results of an experiment. Strictly speaking, the analysis is not part of the design, though a wise experimenter will consider the analysis when planning an experiment.
+   \end{itemize}
     
-    \begin{quote}
-      ``The science of collecting, displaying, and analysing data." -- \citet{OxfordStat}
-    \end{quote}
-    
-    \mode<presentation>{
-      \vfill
-    }
-    
-    \begin{quote}
-      ``The discipline that concerns the collection, organization, analysis, interpretation, and presentation of data." -- \citet{statsWiki}
-    \end{quote}
-    
-    \mode<presentation>{
-      \vfill
-    }
-    
-    \begin{quote}
-    Something like: ``The study of extracting useful information from data in a rigorous way." -- Me (it's hard to define an entire discipline).
-    \end{quote}
-    
-  \end{itemize}
 \end{frame}
 
-\begin{frame}[allowframebreaks]{Probability vs Statistics}
-
-\begin{itemize}
-  \item Any of the above definitions (accurately) suggests that probability is a key part of statistics. So where do we draw the line? Does it matter?
-  \item \citet{pawitan01} dichotomizes the difference in terms of \emph{deductive} vs \emph{inductive} reasoning.
-  \item Roughly speaking, \emph{deductive} arguments moves from general principles (assumptions) to make specific conclusions.
-  In \emph{inductive} reasoning, we use specific observations (data) to make broader generalizations.
-\end{itemize}
-
-\framebreak
-
-\begin{exampleblock}{Traffic Accidents}
-  Suppose we are interested in the random quantity $X_i$, the number of accidents during week $i$ at a particular intersection.
-  From last semester, a common model for this situation is a Poisson-process.
-\end{exampleblock}
-
-\begin{itemize}
-  \item \emph{Probability (deductive)}: If $X_i$ follows a Poisson$(\lambda)$ distribution (general principle), then what is the expected number of accidents per week (specific conclusion)? What is the probability that we observe more than $10$ accidents?
-  
-  \item \emph{Statistics (inductive)}: Suppose we count the number of accidents over a 6 week period, observing: $3, 4, 2, 7, 3, 3$ accidents (specific observations).
-  What value $\lambda$ might describe the Poisson-process that generated the data (broader generalization)? Is the Poisson assumption reasonable given the data?
-\end{itemize}
-
-\begin{itemize}
-  \item From the example above, we can see both ideas used in conjunction for making informed decisions.
-  \item Many statistics problems rely on deductive reasoning in probability, geometry, topology, analysis, etc. to build theory for ways of performing inductive reasoning with specific observations (data).
-  \item Another example related to my own research in population modeling...
-\end{itemize}
-
-
-
-\begin{figure}[ht]
-\includegraphics[width=\textwidth]{ebola.png}
-\end{figure}
-
-\begin{itemize}
-  \item {\small (Statistics) Given the data (specific example), what can we learn about the dynamic system / generative process (generalization)?}
-  \item {\small (Probability) Under our assumed process / model (general principle), what is our prediction for the Ebola burden over the next year (specific conclusion)?}
-\end{itemize}
-
-\end{frame}
-
-\section{Statistics of Math 4451}
-
-\begin{frame}[allowframebreaks]{Statistics and Math 4451}
-
-  \begin{itemize}
-  \item \citet{pawitan01} further categorizes statistics in terms of five key `statistical activities' in the preface of his book:
-    \begin{itemize}
-      \item \emph{Planning}: making decisions about the study design or sampling protocol, what measurements to take, stratification, sample size, etc.
-      \item \emph{Describing}: summarizing the bulk of data in few quantities, finding or revealing meaningful patterns or trends, etc. 
-      \item \emph{Modeling}: developing mathematical models with few parameters to represent the patterns, or to explain the variability in terms of relationship between variables.
-      \item \emph{Inference}: assessing whether we are seeing a real or spurious pattern or relationship, which typically involves an evaluation of the uncertainty in the parameter estimates.
-      \item \emph{Model Checking}: assessing whether the model is sensible for the data.
-    \end{itemize}
-  \item A lot of early statistics were focused on the first two activities: \emph{planning} and \emph{describing}.
-  We will not spend much time this semester discussing methods related to these two activities.
-  \end{itemize}
-\end{frame}
-
-\begin{frame}[allowframebreaks]{Statistics and Uncertainty}
-  \begin{itemize}
-    \item Regardless of the type of ``statistical activity" we are doing, a recurring theme in statistics in \alert{uncertainty}.
-    \item Loosely speaking, we can characterize two distinct forms of uncertainty:
-    \begin{itemize}
-      \item \emph{Stocahstic uncertainty}: uncertainty due to inherent randomness in data used to make inference, resulting in different models and estimates. For example, what if we picked different weeks to observe traffic patterns at the intersection? We would likely get different data, resulting in different parameter estimates.
-      \item \emph{Inductive uncertainty}: uncertainty due to the inductive nature of our estimates. This is a result of having incomplete information (e.g., due traffic accidents at the intersection truly follow a Poisson-process?) We generally can't control this type of uncertainty, or even quantify it.
-    \end{itemize}
-    \item The first type can be thought of as the uncertainty present, conditioned on a specific model. The second is related to uncertainty involved in the model selection itself.
-  \end{itemize}
-\end{frame}
-
-\begin{frame}[allowframebreaks]{Traffic Deaths}
-  \begin{exampleblock}{Traffic Deaths and Cell-Phone usage}
-    Suppose instead of measuring total accidents at an intersection, what if we model the total number of deaths? We might be interested in estimating how cell-phone usage might be correlated with number of traffic deaths.
-  \end{exampleblock}
-  
-  \begin{itemize}
-    \item Ideally, we would like to do a randomized experiment, placing drivers into a control (no cell-phone), or treatment group (cell-phone). \textit{Recall from Math 3350, this is the best way to control for confounding.}
-    \item This isn't possible, so instead we rely on what is called a \alert{natural experiment}. The ``control" group will be the population of drivers the year before the invention of cell-phones, and the ``treatment" group is the population of drivers the year cell-phones were invented.
-    \item Thought experiment: What if the number of deaths increase from 170 in one year, to 190 the next? Is this enough to claim cell-phones increase accidents? What about 170 to 300? 170 to 174? What's the cutoff?
-    \framebreak
-    
-    \mode<article>{
-    \begin{itemize}
-      \item The question above is related to changes in observed data, not the model. That is, fixed on a model, we can make statements about what is considered a ``large enough" change in order to consider cell-phones having an impact.
-    \end{itemize}
-    }
-    
-    \item Now suppose the deaths increased from 170 to 300, but in the second year, a few major accident involved many cars, in which over 50 people died. 
-    Alternatively, what if the second year had a much longer winter, or there were more teen drivers? What other factors might change how we think about this?
-    
-    \mode<article>{
-    \begin{itemize}
-      \item This time, uncertainty arises because of model choice. We can increase model detail by splitting by age, month, etc., but the data then fall into smaller and smaller groups, increasing the stochastic uncertainty. We have to stop adding detail at some point, but where?
-    \end{itemize}
-    }
-  \end{itemize}
-  
-\end{frame}
-
-\section{Bayesian vs Frequentist Statistics}
-
-\begin{frame}[allowframebreaks]{Frequentist vs Bayesian}
-  \begin{itemize}
-    \item When we finally settle down on a model, we can deal with the inherent stochastic uncertainty in the data in a rigorous way.
-    \item Typically, this is done using probability.
-    \item Probability is a surprisingly abstract topic, however, and how to connect real-world outcomes to probability is non-trivial.
-    \item An at times frustrating (and possibly unique) feature of Statistics as a discipline is that experts cannot agree on the fundamental nature of their subject.
-    \item There are two groups of thought: \alert{Bayesian} and \alert{Frequentist} perspective. We will discuss approaches from both in this class.
-  \end{itemize}
-  
-  \framebreak
-  
-  In the extremes, interpretation of probability falls into two main categories:
-  
-  \begin{itemize}
-    \item \alert{Bayesian} perspective: probabilities correspond to a (subjective) degree of belief about an event.
-    \item \alert{Frequentist} perspective: probabilities are interpreted only in long-run frequency of events.
-  \end{itemize}
-  
-  \begin{itemize}
-    \item Note in the Bayesian perspective admits both perspectives, and many modern Bayesian approaches often consider the frequentist properties of their methods.
-    \item In \textit{my experience}, most statisticians actually fall somewhere in the middle.
-  \end{itemize}
-  
-  \framebreak
-  
-  \begin{exampleblock}{Tossing a coin}
-    Consider tossing a fair coin. We have some sense of uncertainty about the outcome of this experiment, and say that the probability of heads is $0.5$.
-  \end{exampleblock}
-  
-  \begin{itemize}
-    \item What does this mean in the purely frequentist sense? What about the uncertainty related to the \emph{next specific} coin toss?
-    
-    \mode<article>{
-      \textbf{Answer:} In the extreme frequentist paradigm, this is interpreted to mean that the long-run proportion of heads (many coin flips) is $0.5$. However, interpreting the uncertainty of the next \emph{specific} toss is difficult (something like: the next toss belongs to an infinite sequence of tosses of the same coin, which have a limiting frequency of $0.5$.)
-    }
-    
-    \item What does this mean in the purely Bayesian paradigm? 
-    
-    \mode<article>{
-      \textbf{Answer:} In the extreme Bayesian paradigm, a $0.5$ probability corresponds to a \emph{belief} about the behavior of the coin; this belief can be entirely subjective. Saying a probability of $0.5$ means that even in the next specific coin toss, our sense of uncertainty is $0.5$.
-      
-      \item \alert{Important}! Both approaches have their strengths and weaknesses, and some of the smartest scientists / mathematicians in the world can be found in either extreme.
-    Though most statisticians will claim to think one-way versus the other, most fall somewhere in the middle (frequentists' will often be founding making subjective probability statements, whereas Bayesians' often admit to caring about frequentist properties of their methods).
-    }
-  \end{itemize}
-  
-  \begin{itemize}
-
-  \framebreak
-
-    \item We will cover both approaches, and discuss strengths and weaknesses of each when relevant. However, the focus will be on frequentist statistics, as the vast majority of statistical methods in use in the 20th and 21st centuries are based on frequentism.
-    \item There's also a ``third way", sometimes called \alert{Fisherian}, or \alert{likelihoodist}. To some degree this is a compromise between the two more popular approaches, as it rejects the use of prior distributions, but still interprets likelihood as a way to measure belief about a parameter estimate \citep{pawitan01}.
-  \end{itemize}
-  
-  \framebreak
-  
-  \begin{exampleblock}{Probability of events}
-    Try to use both Bayesian and frequentist interpretations of probability to describe what is intended by the following statements.
-  \end{exampleblock}
-  
-  \begin{itemize}
-    \item My weather app states that there is a $40\%$ of rain tomorrow.
-    \item In a sporting event, ESPN says that the probability that team $A$ will win is $57\%$.
-    \item A particular blood test given by a doctor is said to have a $5\%$ probability of a false-positive result, and you just received a positive result.
-  \end{itemize}
-  
-\end{frame}
-
-\begin{frame}[allowframebreaks]{Introduction to Estimation}
-
-\begin{itemize}
-  \item The primary focus of this class will be \alert{parameter estimation}. That is, we collect data, pick a model to describe the data generating process, and use the data to ``fit" the model to data. 
-  \item Models can be complex: machine learning frameworks like random forest, neural networks, gradient boosting machines, etc. These are very good at prediction, but are often referred to as a \emph{black-box}.
-  \item In this class, we focus more on general principles of data analysis, which is most easily demonstrated using simple models.
-\end{itemize}
-
-\begin{exampleblock}{Flipping coins}
-  A friend gives you a coin from another country. You want to estimate the probability of heads for this particular coin, flip the coin $N$ times, observe $0 \leq n \leq N$ number of heads.
-\end{exampleblock}
-
-\mode<presentation>{
-\emph{Frequentist Solution:} 
-
-\framebreak
-
-\emph{Bayesian Solution:}
-
-}
-
-\mode<article>{
-\begin{itemize}
-  \item In this case, the model for the data is obvious and simple. We will use it for both the frequentist and Bayesian solutions. Assuming coin flips are independent and identically distributed, the data will come from a binomial distribution with $N$ total trials, probability of success $p$. We suppose each flip of a coin is independent, identically distributed. Let $X_i$ be the random variable that is one with probability $p$, and zero with probability $1-p$.
-  \item \emph{Frequentist Solution}:
-  \begin{itemize}
-    \item The probability of heads only has meaning as a long-run frequency of the number of heads (from the purely frequentist perspective, that's what probability means).
-    \item Thus, we'll estimate the probability $p$ by using the observed frequency of heads: $n / N$. That is, our estimate $\hat{p} = n / N = \sum_i X_i / N$.
-    \item We recognize that there is uncertainty in this estimate. This time, we flipped the coin $N$ times and saw $n$ heads, but what if we saw $n-1$, $n+3$, or some other number of heads? This is entirely possible! Probabilities are long-run frequencies, and we only have a finite sample, so what is the uncertainty associated with our estimate?
-    \item One approach is to use the CLT. Notably, the estimate $\hat{p}$ is just the average of the $X_i$, and therefore according to the CLT:
-    $$
-    \hat{p} \approx N\big(p, p(1-p)/N\big).
-    $$
-    \item With enough observations, our estimate is centered at the ``truth" $p$, and the variance of our estimate shrinks at a rate of $1/N$.
-    \item The biggest issue remaining is that the variance term relies on $p$, which is unknown. Since $\hat{p} \overset{a.s.}{\rightarrow} p$ (by the strong law of large numbers), we'll replace $p$ in the variance term to get the variance of the estimate to be approximately $\hat{p}(1 - \hat{p}) / N$.
-    \item Finally, because we know that $95\%$ of the area of a normal distribution lies within $1.96$ standard deviations of the mean, we can create an interval that describes some level of uncertainty:
-    $$
-    I_p := \hat{p} \pm 1.96 \times \sqrt{\hat{p}(1 - \hat{p}) / N}.
-    $$
-    \item We will call the interval above an approximate $95\%$ confidence interval for $p$. Approximate because we used the CLT, and approximated the variance of the estimate.
-    \item We'll talk more about confidence intervals later in the course, but while we are focusing on frequentist probability interpretation, let's talk about the interval.
-    \item We DO NOT say that there is an approximate $95\%$ probability that $p$ is in the interval $I_p$. Probability only exist in terms of long-term frequencies, and once the interval is built, the parameter is or is not in the interval; there are no long-term frequencies involved at this point, so we make no probability statement.
-    \item However, the interval $I_p$ itself is random! If we observed different data, we would have made a different random interval.
-    \item Thus, an approximate $95\%$ confidence interval is best interpreted as: ``Under the same data generating scenario, if we built a random interval in the same way that we just did, we would expect an approximate long-run frequency of 95\% of these intervals to contain the true parameter, $p$."
-    \item Example: Suppose we toss the coin 10 times, observe 8 heads. Then $\hat{p} = 8/10$, and then $\sqrt{\hat{p}(1 - \hat{p}) / N} = 0.126$, and our point estimate is $0.8$, with a confidence interval of $0.8\pm 1.96 \times 0.126 = (0.55, 1.05)$. Do we see a problem? 
-  \end{itemize}
-  \item \emph{Bayesian Solution}:
-  
-  \begin{itemize}
-    \item The Bayesian solution comes as a direct result of Bayes-Theorem, allowing us to account for our belief about the coin as a probability distribution.
-    \item The Bayesian approach is actually considered the first modern method to assimilate observed data for quantitative inductive reasoning \citep[Chapter~1.4,][]{pawitan01}.
-    \item Recall Bayes Theorem for two random events, $A$ and $B$:
-    $$
-    P(A|B) = \frac{P(A \cap B)}{P(B)} = \frac{P(B | A)P(A)}{P(B|A)P(A) + P(B | A^c)P(A^c)}.
-    $$
-    \item Now, assuming that probabilities represent beliefs about particular outcomes, we can represent our own belief about $p$ (the probability of observing a heads) using a probability distribution, $f_P(p)$. We can now think of events $B$ and $A$ being the event of observing $n$ heads in $N$ trials, and the event that $P = p$, respectively, and substitute this into Bayes theorem: 
-    $$
-    f_{P|x = n}(p|n) = \frac{f_{X|P}(n|p)f_P(p)}{\int f_{X|P}(n|p)f_P(p)\, dp},
-    $$
-    Where $X = \sum_i X$, and we are now able to get a posterior belief about the parameter $P$ after conditioning on the data.
-    \item A key question now is what is our prior belief about the problem? How do we specify $f_P(p)$, which is called the prior distribution?
-    \item A common approach is we say we don't know! We have no prior information, so we believe that any $P$ is equally likely. Thus, we will use a \emph{uniform-prior} over the support of $p$, which is the interval $[0, 1]$. Thus:
-    $$
-    f_P(p) = 1[0 \leq p \leq 1].
-    $$
-    \item Then, the function $f_{X|P}(n|p)$ is uniquely determined by our model. In this case, it corresponds to the binomial probability of observing $X = n$:
-    \begin{align*}
-      f_{P|x = n}(p|n) &= \frac{f_{X|P}(n|p)f_P(p)}{\int f_{X|P}(n|p)f_P(p)\, dp} \\
-      &= \frac{\binom{N}{n}p^n(1-p)^{N-n}}{\int^1_0 \binom{N}{n}p^n(1-p)^{N-n} \, dp} 1[0\leq p \leq 1] \\
-      &= \frac{p^n(1-p)^{N-n}}{\int^1_0 p^n(1-p)^{N-n} \, dp} 1[0\leq p \leq 1].
-    \end{align*}
-    \item It can be tricky to continue simplifying the density above. We'll look at some tricks later in the semester, but for now we will just recall the definition of the Beta-integral:
-    $$
-    B(z_1, z_2) = \frac{\Gamma(z_1)\Gamma(z_2)}{\Gamma(z_1 + z_2)} = \int_0^1 p^{z_1 - 1}(1 - p)^{z_2 - 1}\, dp,
-    $$
-    using this we simply the conditional density $P | X = n$ as:
-    $$
-    f_{P|x = n}(p|n) = \frac{\Gamma(N + 2)}{\Gamma(n+1)\Gamma(N-n+1)}p^n(1-p)^{N-n} 1[0\leq p\leq 1].
-    $$
-    \item You may recognize the distribution above to be a special case of the Beta-distribution, hence:
-    $$
-    P | X = n \sim \text{Beta}(n + 1, N - n + 1).
-    $$
-    \item To get a point estimate, we might consider taking the mean of the posterior distribution. The mean of a Beta$(\alpha, \beta)$ distribution is $\alpha / (\alpha + \beta)$, so our point estimate might be:
-    $$
-    \hat{p} = E[P | X = n] = \frac{n + 1}{N+2}.
-    $$
-    \item Note the similarity of this estimate to the frequentist estimate of $n/N$. Noticeably, the Bayesian estimate is ``shrunk towards 1/2".
-    \item To quantity uncertainty, we might want to find the lower $0.025$ percentile, and $0.975$ percentile, so that we have an interval where $95\%$ of the area is in-between these two numbers. We call this the \emph{credible interval}. There's no analytic way to do this, but it's easy to calculate in a statistical software environment.
-    \item Example: Suppose we observe $10$ flips, and $8$ are heads. Then our point estimate (posterior mean) is $\frac{8+1}{10+2} = \frac{9}{12} = 0.75$. We can calculate a 95\% credible in R.
-    \item Are there any issues with this approach? Is a uniform prior really appropriate measure of uncertainty you ``feel" about flipping a coin?
-    \item Do you recognize any relationship between the Bayesian point estimate and the approach taught in 3350 for small sample sizes? (If you didn't take Math 3350, consider looking up the ``plus-two" method)
-  \end{itemize}
-\end{itemize}
-}
-
-\end{frame}
-
-\begin{frame}[fragile]{R code}
-
-\mode<presentation>{
-\begin{itemize}
-  \item The R code for finding a credible interval:
-\end{itemize}
-}
-
-
-\begin{knitrout}\small
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hldef{n} \hlkwb{<-} \hlnum{8}
-\hldef{N} \hlkwb{<-} \hlnum{10}
-\hldef{lower_bound} \hlkwb{<-} \hlkwd{qbeta}\hldef{(}\hlnum{0.025}\hldef{, n}\hlopt{+}\hlnum{1}\hldef{, N}\hlopt{-}\hldef{n}\hlopt{+}\hlnum{1}\hldef{)}  \hlcom{# lower bound}
-\hldef{upper_bound} \hlkwb{<-} \hlkwd{qbeta}\hldef{(}\hlnum{0.975}\hldef{, n}\hlopt{+}\hlnum{1}\hldef{, N}\hlopt{-}\hldef{n}\hlopt{+}\hlnum{1}\hldef{)}  \hlcom{# upper bound}
-\end{alltt}
-\end{kframe}
-\end{knitrout}
-
-\begin{knitrout}\small
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{verbatim}
-95% Credible Interval for p: (0.48, 0.94)
-\end{verbatim}
-\end{kframe}
-\end{knitrout}
-
-\mode<article>{
-Some Helpful R tips: 
-\begin{itemize}
-  \item All common distributions in R follow a similar pattern: A single letter of the thing you want, followed by the name of the distribution.
-  \begin{itemize}
-    \item \texttt{r<dist>}: Get random sample from \texttt{<dist>}. Example: \texttt{rnorm(10, mean = 5, sd = 8)} will generate 10 random samples from a $N(5, 8^2)$ distribution. 
-    \item \texttt{d<dist>}: evaluate the density of a distribution at a particular point. Example: If $\phi(x)$ is the density of a standard normal, then $\phi(2) = $ \texttt{dnorm(2, mean = 0, sd = 1)} =  0.05.
-    \item\texttt{p<dist>}: Calculates the distribution function (CDF) of the distribution at a particular point. Example: If $\Phi(x)$ is the CDF of the standard normal, then $\Phi(1.95) = P(Z\leq 1.96) = $\texttt{pnorm(1.96, mean = 0, sd = 1)} = 0.975.
-    \item\texttt{q<norm>}: The quantile function of the desired distribution, which is the inverse of the CDF. Example: \texttt{qnorm(0.025, mean = 0, sd = 1)} = $-1.96$.
-  \end{itemize}
-  \item Available distributions include: \texttt{gamma}, \texttt{beta}, \texttt{unif}, \texttt{t}, \texttt{pois}, \texttt{exp}, \texttt{binom}, \texttt{nbinom}, \texttt{geom}, \texttt{hyper}, and several more.
-\end{itemize}
-}
-
-\end{frame}
-
-\begin{frame}[allowframebreaks]{Final Thoughts}
-
-\begin{itemize}
-  \item The differences between Bayesian vs Frequentist thinking matters, and some get very passionate about the debate.
-  \item In my opinion, most people fall somewhere in the middle.
-  \item Often practitioners choose a Bayes vs Frequentist methodologies not because of their personal interpretation of probability, but for convenience, existing standards, or it is the only way to solve a given problem.
-  \item ``All models are wrong but some are useful"  -- \citet{box79}, a famous 20th century statistician.
-  
-  \framebreak
-  
-  \item One example is the following Bayesian approach to image restoration for images with static noise introduced \citep[Chapter~15.6][]{keener10}, adapted from the seminal paper by \citet{geman84}.
+\begin{frame}[allowframebreaks]{Treatments}
   
   \mode<article>{
-    \item Let $X_{i, j}$ denote the value of the $(i, j)$th pixel in a digital image.
-    \item We will pick a simple (obviously incorrect) model that is very useful for performing image restoration. In particular, assume that, conditioned on a particular mean $\Theta_{(i, j)} = \theta_{(i, j)}$, each pixel has distribution:
-    $$
-    X_{i, j} \sim N(\theta_{i, j}, \sigma^2).
-    $$
-    \item In real images, pixels that are close together tend to be highly correlated. Thus, using a Bayesian set-up, we want to pick a prior for $\Theta_{(i, j)}$ that has this feature. 
-    It is a bit too technical to describe in detail here, but we can define a multi-variate normal prior for each $\Theta_{(i, j)}$, where adjacent pixels are correlated to each other, and far-away pixels are not. Assuming this structure is captured in the covariance matrix $\Sigma_\theta$, the prior for the matrix of pixels may be denoted:
-    $$
-    \Theta \sim N_{n\times m}\big(\mu_\theta, \Sigma_\theta\big),
-    $$
-    meaning an $n\times m$ dimensional 
-    \item The posterior distribution of $\Theta | X = x$ will also be normally distributed (normal model with normal priors = normal posterior). Direct computation of the mean and covariance of the posterior is possible, but Gibbs-sampling can instead be used to compute reliable approximations in faster time.
-    \item In this example, I don't think most would believe the model that was used is ``correct", nor do we necessarily have to accept the Bayesian interpretation of probability; instead, the method based on Bayesian theory allows us to ``smooth out" the image 
+    \begin{itemize} 
+      \item \emph{Treatments} are the different procedures we want to compare.
+      \begin{itemize}
+        \item There can be more than one treatment.
+        \item Each individual treatment is possibly determined by several \emph{factors}.
+        \item Treatments can be either categorical or numerical.
+      \end{itemize}
+      \item \textbf{EX:} In a fertilizer formula, one gets to choose whether or not to include one of 20 chemical additives. How many possible treatments are there?
+      \vspace{3cm}
+      \item \textbf{EX:} The baking treatment for a cake involves a given time at a given temperature. Considering 5 baking times and 5 temperatures, how many possible treatments can one include in an experiment?
+      \vspace{3cm}
+    \end{itemize}
   }
   
-\end{itemize}
+\end{frame}
 
-\framebreak
+\begin{frame}[allowframebreaks]{Experimental Units}
+  
+  \mode<article>{
+    \begin{itemize} 
+      \item \emph{Experimental Units} (EU) are the entities which a treatment will be applied. Examples:
+      \begin{itemize}
+        \item Plots of land receiving fertilizers.
+        \item Pens containing many pigs or other animals all getting the same diet (\emph{Individual animal is NOT an EU}).
+        \item Classroom containing many students, all being taught the same way (Individual student is \emph{NOT} an EU).
+        \item Individual patients in a clinic getting personalized treatments.
+      \end{itemize}
+      \vspace{3cm}
+    \end{itemize}
+  }
+  
+\end{frame}
 
-\begin{figure}[!ht]
-  \includegraphics[width=0.8\textwidth]{gibbsExample.png}
-  \caption{Bayesian image restoration, credit \citet{geman84}}
-\end{figure}
+\begin{frame}[allowframebreaks]{Assignment Methods}
+  
+  \mode<article>{
+    \begin{itemize} 
+      \item \emph{Assignment Method} defines how treatments are assigned to units (or units assigned to treatments). Examples (some good, some bad):
+      \begin{itemize}
+        \item Assign fertilizer one year, not the next, to the same plot of land.
+        \item Split a single field into several sub-plots, and randomly pick subplots to apply fertilizer. Repeat this over multiple years. 
+      \end{itemize}
+      \vspace{3cm}
+    \end{itemize}
+  }
+\end{frame}
 
+\begin{frame}[allowframebreaks]{Measurement Units vs Experimental Units}
+  
+  \begin{itemize}
+    \item A common source of difficulty and confusion is the distinction between \emph{experimental units} and \emph{measurement units}.
+  \end{itemize}
+  
+  \begin{block}{Definition: Measurement unit}
+    A measurement unit is the individual or piece of experiment material you actually measure.
+  \end{block}
+  
+  
+  \begin{itemize}
+    \item Consider an educational study, where 6 classrooms of first graders are assigned at random to two different reading programs, and all first graders are later evaluated via a common reading exam at the end of the year.
+    
+    \mode<article>{\vspace{3cm}}
+    
+      \framebreak
+    
+    \item In an animal nutrition experiment, different types of diets are given to pens that each contain many individual animals.
+    
+        \mode<article>{\vspace{3cm}}
+
+  \end{itemize}
+  
+\end{frame}
+
+\begin{frame}[allowframebreaks]{High-level and Low-level EU’s}
+  \begin{itemize}
+    \item The distinction between experimental units and measurement units can become complicated.
+    \item For example, in split-plot experiments (discussed later), there can be multiple layers of comparisons, with two or more types of experimental units with \alert{low-level EUs}, serving as measurement units for the \alert{high-level EUs}.
+  \end{itemize}
+  
+  \mode<presentation>{(Example on next slide)}
+  
+  \framebreak
+  
+  \begin{exampleblock}{Baking experiment}
+    A baking experiment is used to study the effect of high and low levels of three ingredients in a recipe ($2^3 = 8$ possible combinations), and the effect of baking temperature (6 different levels). You have an oven that can bake 8 batches at one time, at one temperature.
+    
+    In the experiment, you run the oven 6 times, each with 8 batches made up of the 8 combinations of ingredients randomly placed in the oven. 
+  \end{exampleblock}
+  
+  \textbf{What are the treatments, experimental units, and measurement units?}
+  
+  \mode<article>{
+  
+    \vspace{1cm}
+    
+    \begin{itemize}
+      \item The Treatments are temperature (6 levels, we call it a high-level treatment), and recipe (combinations of ingredients, a low-level treatment).
+      \item The \alert{high-level EUs} are the ``runs" of the oven at a given temperature.
+      \item The \alert{low-level EUs} are the individual ``batches" with unique ingredients that make up the 8 combinations.
+      \item The \alert{measurement units} are the 8 batches in an oven (the thing we measure), which is the same as the low-level EUs.
+    \end{itemize}
+  }
+  
 \end{frame}
 
 \newcommand\acknowledgments{
@@ -463,7 +212,7 @@ Some Helpful R tips:
 \mode<presentation>{
 \begin{frame}[allowframebreaks=0.8]{References and Acknowledgements}
   
-\bibliography{../bib4451}
+\bibliography{../bib5200}
 
 \vspace{3mm}
 
@@ -482,7 +231,7 @@ Some Helpful R tips:
 
 \newpage
 
-\bibliography{../bib4451}
+\bibliography{../bib5200}
 
 }
 
