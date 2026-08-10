@@ -43,7 +43,7 @@ registerS3method(
 str_opt <- getOption("str")
 str_opt$strict.width <- "cut"
 options(
-  width=65, # number of characters in R output before wrapping
+  width=55, # number of characters in R output before wrapping
   keep.source=TRUE,
   encoding="UTF-8",
   str=str_opt

@@ -1,0 +1,414 @@
+\input{../header}
+
+% \mode<beamer>{\usetheme{AnnArbor}}
+\mode<beamer>{\usetheme{metropolis}}
+\mode<beamer>{\metroset{block=fill}}
+% \mode<beamer>{\usecolortheme{wolverine}}
+
+\mode<beamer>{\setbeamertemplate{section in toc}[sections numbered]}
+\mode<beamer>{\setbeamertemplate{subsection in toc}[subsections numbered indented]}
+
+% \mode<beamer>{\usefonttheme{serif}}
+\mode<beamer>{\setbeamertemplate{footline}}
+\mode<beamer>{\setbeamertemplate{footline}[frame number]}
+\mode<beamer>{\setbeamertemplate{frametitle continuation}[from second][\insertcontinuationcountroman]}
+\mode<beamer>{\setbeamertemplate{navigation symbols}{}}
+
+\mode<handout>{\pgfpagesuselayout{2 on 1}[letterpaper,border shrink=5mm]}
+
+\newcommand\CHAPTER{1}
+% \newcommand\answer[2]{\textcolor{blue}{#2}} % to show answers
+% \newcommand\answer[2]{\textcolor{red}{#2}} % to show answers
+ \newcommand\answer[2]{#1} % to show blank space
+
+\title{\vspace{2mm} \link{https://jeswheel.github.io/5200_f26/}{Stat 5200: Analysis of Designed Experiments}}
+\author{Jesse Wheeler}
+\date{}
+
+\setbeamertemplate{footline}[frame number]
+
+
+
+
+\begin{document}
+
+\maketitle
+
+\mode<article>{\tableofcontents}
+
+% \mode<presentation>{
+%   \begin{frame}{Outline}
+%     \tableofcontents
+%   \end{frame}
+% }
+
+\section{Overview}
+
+\begin{frame}[allowframebreaks]{Objectives and overview}
+  \begin{itemize}
+    \item This material is based Chapter~2 on the textbook ``A First Course in Design and Analysis of Experiments" \citep{oehlert2000}.
+    \item Chapter outcomes include: 
+    \begin{itemize}
+      \item Understanding the importance of randomization to mitigate confounding and bias.
+      \item Understanding the important role randomization plays in statistical inference.
+      \item Reviewing basic inference concepts, such as hypothesis testing and basic $t$-procedures.
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\section{Randomization}
+
+\begin{frame}[allowframebreaks]{Randomization and Experiments}
+  
+\begin{itemize}
+  \item An experiment is called \alert{randonmized} when the assignment method to units involves explicit use of an \emph{understood} probability mechanism.
+  \item Proper randomization is essential to ensure that uncontrolled factors do not introduce systematic bias in your results.
+  \item \alert{Randomization is not ``haphazard" assignment}.
+  \item E.g.: Just assigning treatments sequentially to the next experimental unit does \emph{not} count as random, even if it appears to you there is no pattern among the units. \textbf{Consider the following assignment methods}:
+\end{itemize}
+  
+  \mode<presentation>{(Next slide)}
+  
+  \framebreak
+  
+  \mode<presentation>{
+  In all cases, suppose that we have four treatments that need to be assigned to 16 units.
+  }
+  \mode<article>{
+  \begin{itemize}
+    \item In all cases, suppose that we have four treatments that need to be assigned to 16 EUs.
+  }
+  
+  \begin{enumerate}[(i)]
+    \item Use 16 slips of paper marked with letters, 4 $A$'s, 4 $B$'s, 4 $C$'s, and 4 $D$'s.
+    You mix them thoroughly in a box or basket. 
+    For each EU, you pick a slip and assign it the treatment indicated.
+    
+    \item You assign $A$ to the first 4 units you have at hand, $B$ to the next 4, $C$ to the next 4, and $D$ to the last 4.
+    
+    \item If, when you get to an EU, the second hand is between 1 and 15, the unit gets $A$; if between 16 and 30, it gets $B$; if between 31 and 45, it gets $C$; and if between 46 and 60, it gets $D$.
+  \end{enumerate}
+  
+  \mode<article>{
+    \end{itemize}
+  }
+  
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Why Randomize?}
+  \begin{itemize}
+    \item ``Introducing more randomness into an experiment may seem like a perverse thing to do", however it has two useful consequences \citep{oehlert2000}:
+    \begin{enumerate}
+      \item Randomization protects against \alert{confounding}.
+      \item Randomization can form the basis for inference.
+    \end{enumerate}
+    The course focuses on the impact on confounding.
+  \end{itemize}
+  
+  \framebreak
+  
+  \begin{exampleblock}{Example: Protecting against confounding.}
+    Confounding occurs when the effect of one factor or treatment cannot be distinguished from that of another factor or treatment.
+    
+    \textbf{EX}: In a medical study, we wish to see if treatment $A$ (costly and invasive) or treatment $B$ (standard drug treatment) results in improved health outcomes.
+    We have 100 volunteers, each needs to be assigned a treatment ($A$ or $B$).
+    
+    \textbf{Q:} What may ``go wrong" if we don't randomize assignment (e.g., let the physician pick).
+  \end{exampleblock}
+  
+  \mode<article>{\vspace{3cm}}
+  
+  
+  \framebreak
+  
+  \begin{itemize}
+    \item If the assignment is truly randomized, then any factors other than the ones included in the treatments (i.e., lurking variables) will tend to average out so they affect all treatments equally and have little net effect.
+    
+    \mode<presentation>{
+      \vspace{3cm}
+      \item Randomization generally costs little in time and effort, but can greatly enhance your analysis and save us from disaster.
+    }
+    
+    \mode<article>{
+    For instance,
+    \begin{itemize}
+      \item If there are both male and female patients, and assignment is random, there will be approximately equal proportion of men and women getting each treatment. 
+      \item Average ages for each treatment will be close.
+      \item Other relevant health measures (e.g., blood type, blood pressure, BMI, etc.) will have similar averages across treatment groups.
+      \item \emph{All other factors} that are not observed, measured, or controlled will tend to affect all treatment groups \emph{equally}.
+    \end{itemize}
+    \item Randomization generally costs little in time and effort, but can greatly enhance your analysis and save us from disaster.
+
+    }
+    
+  \end{itemize}
+  
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Randmizing ``Other Things"}
+  \begin{itemize}
+    \item We have taken a simple view so far of experiments: ``assign treatments to units, and measure responses". 
+    \item Though naturally we do assignments randomly, additional things can and should be randomized: 
+    \begin{itemize}
+      \item If the EUs are not used simultaneously, you can randomize the order in which they are used.
+      \item If the EUs are not used at the same location, you can randomize the locations at which they are used.
+      \item If you use more than one measuring instrument (e.g., multiple machines or undergraduates), you can randomize which units are measured by which instrument.
+    \end{itemize}
+    \item Whenever we anticipate that some way the experiment is conducted or measured may potentially impact the response, we can \alert{design} that into the experiment (more to come later).
+    \item \alert{Advice:} Design for known problems, randomize everything else.
+  \end{itemize}
+\end{frame}
+
+\section{Randomization Methods}
+
+\begin{frame}[allowframebreaks]{Randomization methods and examples}
+  \begin{itemize}
+    \item Randomization methods largely fall into two categories: physical and numerical.
+    \item For modern designs and experiments, we generally use numeric approaches like a \alert{psuedorandom} number generator.
+    \item A few examples (2 treatments, $A$ and $B$). What are some potential advantages or disadvantes of each?
+    
+    \framebreak
+    
+    \begin{enumerate}[(i)]
+      \item Flip a coin for each patient, heads give treatment $A$, tails give treatment $B$.
+      
+      \vspace{1.5cm}
+      
+      \item Take patients in pairs, perhaps approximately matched by demographic or physical variables, flipping a coin to choose which gets $A$, then giving $B$ to the other patient.
+      
+      \vspace{1.5cm}
+      
+      \item If you have 30 patients, say select a random sample (without replacement) of size 15 to get $A$ and give $B$ to the remaining 15 patients. 
+      
+    \end{enumerate}
+   
+    \framebreak
+    
+    \item The analysis we perform depends on how we randomize.
+    
+    \mode<article>{
+      \begin{itemize}
+        \item Approaches (i) and (iii): two-sample $t$-procedures.
+        \item Approach (ii): paired $t$-test / one-sample $t$-test.
+      \end{itemize}
+    }
+    
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[allowframebreaks,fragile]{Computer Randomization}
+  \begin{itemize}
+    \item In 2026, our primary means of randomization will be using computers and \alert{pseudorandom} number generators.
+    \item One of the most important functions we will seed is \texttt{set.seed}, which allows our randomization to be \alert{reproducible}. 
+  
+\begin{knitrout}\small
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{set.seed}\hldef{(}\hlnum{123}\hldef{)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+    \item Pick any positive integer. Avoid ``Seed hacking".
+  
+  \end{itemize}
+
+\framebreak
+
+\begin{itemize}
+  \item Another key randomization function is \texttt{sample}. This is a flexible method that can be used in a variety of ways.
+  
+\begin{knitrout}\small
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{# 4 arguments:}
+\hlkwd{sample}\hldef{(x, size, replace, prob)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+  
+  \begin{itemize}
+    \item \texttt{x}: Any `R` object, typically a vector (character or numeric). The ``things" we want to randomly draw.
+    \item \texttt{size}: How many ``things" in \texttt{x} that we want to sample. Default is the same size as \texttt{x}.
+    \item \texttt{replace}: Do we want sampling with (\texttt{TRUE}) or without (\texttt{FALSE}, default) replacement.
+    \item \texttt{prob}: Do we want to have un-even sampling probabilities (e.g., biased coin?)
+  \end{itemize}
+  
+\end{itemize}
+  
+  \framebreak
+  
+  \begin{itemize}
+    \item \textbf{EX:} Suppose you have $N = 31$ EU's that you want to assign to 4 treatments, with $n_A = n_B = n_C = 7$ and $n_D = 10$. 
+    \item One way to do this physically: create slips of paper labelled $1, 2, \ldots, 31$, put them in a box, shuffle well, and draw numbers sequentially. The first 7 will be assigned treatment $A$, the next 7 treatment $B$, etc.
+    \item We can mimic this approach in R:
+  
+\begin{knitrout}\small
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{set.seed}\hldef{(}\hlnum{1111111}\hldef{)}
+\hlkwd{sample}\hldef{(}\hlnum{1}\hlopt{:}\hlnum{31}\hldef{)}  \hlcom{# permute the numbers 1 -- 31.}
+\end{alltt}
+\begin{verbatim}
+ [1] 28  4  9 23  1 30 11 31 12 15 22 14 19 16  7 25 21
+[18] 27 29  2 17  8  5  3 13  6 20 26 18 24 10
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+  
+\framebreak
+
+  \item Above, we're permuting the numbers (EUs), and then ``labeling" them sequentially with treatment.
+  \item An alternative approach can also be used to permute the treatments, and then sequentially assign EUs.
+
+\begin{knitrout}\small
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{set.seed}\hldef{(}\hlnum{1111111}\hldef{)}
+\hldef{treatments} \hlkwb{<-} \hlkwd{c}\hldef{(}
+  \hlkwd{rep}\hldef{(}\hlsng{"A"}\hldef{,} \hlnum{7}\hldef{),} \hlkwd{rep}\hldef{(}\hlsng{"B"}\hldef{,} \hlnum{7}\hldef{),}
+  \hlkwd{rep}\hldef{(}\hlsng{"C"}\hldef{,} \hlnum{7}\hldef{),} \hlkwd{rep}\hldef{(}\hlsng{"D"}\hldef{,} \hlnum{10}\hldef{)}
+  \hldef{)}
+\hlkwd{sample}\hldef{(treatments)}
+\end{alltt}
+\begin{verbatim}
+ [1] "D" "A" "B" "D" "A" "D" "B" "D" "B" "C" "D" "B"
+[13] "C" "C" "A" "D" "C" "D" "D" "A" "C" "B" "A" "A"
+[25] "B" "A" "C" "D" "C" "D" "B"
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+  \end{itemize}
+  
+  \framebreak
+  
+  \begin{itemize}
+    \item \textbf{EX:} Randomizing matched pairs. Assume that we have 30 workers, and two treatments ($A$ and $B$). We want to give each treatment to each worker, but in random order.
+    \begin{itemize}
+      \item Physically, we can use 30 coin flips. For the $n$th flip, if heads, assign treatment $A$ first, $B$ otherwise.
+      \item In R:
+    \end{itemize}
+    
+    
+\begin{knitrout}\small
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{set.seed}\hldef{(}\hlnum{222222}\hldef{)}
+\hlcom{# "prob" not set, each outcome equally likely}
+\hlkwd{sample}\hldef{(}\hlkwd{c}\hldef{(}\hlsng{"A"}\hldef{,} \hlsng{"B"}\hldef{),} \hlkwc{size} \hldef{=} \hlnum{30}\hldef{,} \hlkwc{replace} \hldef{=} \hlnum{TRUE}\hldef{)}
+\end{alltt}
+\begin{verbatim}
+ [1] "A" "A" "B" "A" "B" "B" "B" "A" "A" "A" "A" "B"
+[13] "A" "B" "A" "A" "A" "B" "B" "A" "A" "B" "A" "B"
+[25] "B" "A" "A" "A" "A" "B"
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+  
+  \framebreak
+  
+  \item If we instead want a ``biased" coin-flip:
+  
+\begin{knitrout}\small
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{set.seed}\hldef{(}\hlnum{222222}\hldef{)}
+\hlcom{# "probs" not set, each outcome equally likely}
+\hlkwd{sample}\hldef{(}
+  \hlkwd{c}\hldef{(}\hlsng{"H"}\hldef{,} \hlsng{"T"}\hldef{),} \hlkwc{size} \hldef{=} \hlnum{30}\hldef{,}
+  \hlkwc{replace} \hldef{=} \hlnum{TRUE}\hldef{,} \hlkwc{prob} \hldef{=} \hlkwd{c}\hldef{(}\hlnum{0.7}\hldef{,} \hlnum{0.3}\hldef{)}
+\hldef{)}
+\end{alltt}
+\begin{verbatim}
+ [1] "H" "H" "T" "H" "H" "H" "H" "H" "H" "H" "H" "H"
+[13] "H" "H" "H" "H" "T" "H" "H" "H" "T" "H" "T" "H"
+[25] "H" "H" "H" "H" "T" "H"
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+  
+  
+  \end{itemize}
+  
+\end{frame}
+
+\section{Randomization as basis for inference}
+
+\begin{frame}[allowframebreaks]{Frequentist statistics}
+  \begin{itemize}
+    \item Randomization also forms the basis of one form of statistical inference.
+  \end{itemize}
+  
+  \begin{block}{Review: Hypothesis testing and inference}
+    Suppose we want to compare two competing ideas (hypotheses), and come up with data-driven conclusions.
+    
+    We will call the prevailing standard idea the ``Null Hypothesis" ($H_0$), and the alternative the ``Alternative Hypothesis" ($H_1$).
+    \textbf{Framework:} Assume that $H_0$ is true; if so, how ``frequent" is the observed outcome relative to all possible outcomes? If it is a rare outcome under $H_0$, we assume $H_0$ is incorrect and favor $H_1$. 
+  \end{block}
+  
+  \framebreak
+  
+  \begin{itemize}
+    \item \textbf{EX:} Paired $t$-test for testing the effect of workplace conditions.
+    
+    \mode<article>{
+      \begin{itemize}
+        \item There are 30 individuals in the dataset, each with measurements under the standard (S) and ergonomic (E) conditions.
+        \item We are interested in comparing the run-stitching times under each condition.
+        \item Because each individual has measurements under both treatments (order randomly assigned), we can do a matched pairs test for the difference in observation times.
+        \item Let $d_i = X_{i,E} - X_{i, S}$ denote the difference in run-stitching times between the ergonimic and standard working conditions, respectively.
+        \item Our null-hypothesis is that the mean $\mu = E[d_i] = 0$, and the alternative is $H_1: \, \mu > 0$, because we expect the workers to be faster in the ergonomic workplace.
+      \end{itemize}
+    }
+    
+  \end{itemize}
+  
+\end{frame}
+
+\newcommand\acknowledgments{
+\begin{itemize}
+\item   Compiled on {\today} using \Rlanguage version 4.5.0.
+\item   \parbox[t]{0.75\textwidth}{Licensed under the \link{http://creativecommons.org/licenses/by-nc/4.0/}{Creative Commons Attribution-NonCommercial license}.
+    Please share and remix non-commercially, mentioning its origin.}
+    \parbox[c]{1.5cm}{\includegraphics[height=12pt]{../cc-by-nc}}
+\item We acknowledge \link{https://jeswheel.github.io/5200_f26/acknowledge.html}{students and instructors for previous versions of this course / slides}.
+\end{itemize}
+}
+
+\mode<presentation>{
+\begin{frame}[allowframebreaks=0.8]{References and Acknowledgements}
+  
+\bibliography{../bib5200}
+
+\vspace{3mm}
+
+\acknowledgments
+
+\end{frame}
+}
+
+\mode<article>{
+
+\newpage
+
+{\bf \Large \noindent Acknowledgments}
+
+\acknowledgments
+
+\newpage
+
+\bibliography{../bib5200}
+
+}
+
+
+
+\end{document}
+
+
+
+
+
+
+
