@@ -309,6 +309,15 @@ sample(
   \begin{itemize}
     \item \textbf{EX:} Paired $t$-test for testing the effect of workplace conditions.
     
+<<echo=FALSE>>=
+stichTimes <- c(
+  1.03, -.04, .26, .30, -.97, .04, -.57, 1.75, .01, .42, .45, -.8, .39, .25,
+  .18, .95, -.18, .71, .42, .43, -.48, -1.08, -.57, 1.10, .27, -.45, .62, .21, 
+  -.21, .82
+)
+@
+    
+    
     \mode<article>{
       \begin{itemize}
         \item There are 30 individuals in the dataset, each with measurements under the standard (S) and ergonomic (E) conditions.
@@ -316,6 +325,17 @@ sample(
         \item Because each individual has measurements under both treatments (order randomly assigned), we can do a matched pairs test for the difference in observation times.
         \item Let $d_i = X_{i,E} - X_{i, S}$ denote the difference in run-stitching times between the ergonimic and standard working conditions, respectively.
         \item Our null-hypothesis is that the mean $\mu = E[d_i] = 0$, and the alternative is $H_1: \, \mu > 0$, because we expect the workers to be faster in the ergonomic workplace.
+        \item For a parametric test like the $t$-test, we will need to make a parametric assumption like normality. \textbf{Qs:} Why normality? How important is this assumption? What about if the don't look like they come from a normal distribution?
+        \item Differences in runstitching times are given in Table~\ref{tab:runstitch}.
+        \item Mean difference: \Sexpr{mean(stichTimes) |> round(3)}, SD: \Sexpr{sd(stichTimes) |> round(3)}
+        
+        \begin{table}[ht]
+          \centering
+          \begin{tabular}{c}
+          % TODO: finish table
+          \end{tabular}
+        \end{table}
+        
       \end{itemize}
     }
     
