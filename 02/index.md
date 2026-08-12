@@ -11,7 +11,7 @@ Desired outcomes:
 
 - Students will know how to use randomization to eliminate bias and confounding.
 - Students will understand the role randomization has in statistical inference.
-- Students will review and understand how to compute paired and 2-sample $t$-procedures.
+- Students will review and understand basic $t$-procedures.
 
 **Expected reading:** Chapter 2 of Oehlert, G. W. (2020). *A First Course in Design and Analysis of Experiments*, [http://users.stat.umn.edu/~gary/book/fcdae.pdf](http://users.stat.umn.edu/~gary/book/fcdae.pdf).
 

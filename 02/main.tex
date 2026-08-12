@@ -364,19 +364,162 @@
         \item Our null-hypothesis is that the mean $\mu = E[d_i] = 0$, and the alternative is $H_1: \, \mu > 0$, because we expect the workers to be faster in the ergonomic workplace.
         \item For a parametric test like the $t$-test, we will need to make a parametric assumption like normality. \textbf{Qs:} Why normality? How important is this assumption? What about if the don't look like they come from a normal distribution?
         \item Differences in runstitching times are given in Table~\ref{tab:runstitch}.
-        \item Mean difference: 0.175, SD: 0.645
+        \item Summary Statistics: $\bar{d}_i = 0.175$, $s = 0.645$
+        \item Under the assumption of normality, $H_0: \mu = 0$, $T = \bar{d}_i / (s / \sqrt{n}) \sim t_{29}$. The value we observed was $T = 1.49$, which is larger than $92.6\%$ of the possible $T$ values we would expect under the null. \textbf{Q:} What now?
         
-        \begin{table}[ht]
-          \centering
-          \begin{tabular}{c}
-          % TODO: finish table
-          \end{tabular}
-        \end{table}
+% latex table generated in R 4.5.0 by xtable 1.8-4 package
+% Wed Aug 12 09:11:03 2026
+\begin{table}[ht]
+\centering
+\begin{tabular}{rrrrrrrrrr}
+  \hline
+  \hline
+1.03 & -0.04 & 0.26 & 0.30 & -0.97 & 0.04 & -0.57 & 1.75 & 0.01 & 0.42 \\ 
+  0.45 & -0.80 & 0.39 & 0.25 & 0.18 & 0.95 & -0.18 & 0.71 & 0.42 & 0.43 \\ 
+  -0.48 & -1.08 & -0.57 & 1.10 & 0.27 & -0.45 & 0.62 & 0.21 & -0.21 & 0.82 \\ 
+   \hline
+\end{tabular}
+\caption{Differences in runstitching times, Table 2.2 from Oehlert (2000).} 
+\label{tab:runstitch}
+\end{table}
+
+
         
       \end{itemize}
     }
     
   \end{itemize}
+  
+\end{frame}
+
+\begin{frame}[allowframebreaks,fragile]{Randomization as a form of inference}
+  \begin{itemize}
+    \item What was done: Create a null-hypothesis (means for both groups are the same), compare what we saw to the range of all possibilities. \textbf{Q:} Why the normal assumption?
+    \item The key to the procedure above is assuming the observations are random. We'll use this logic to create a \alert{randomization test}.
+    \begin{itemize}
+      \item This is an \emph{exact} statistical test, which doesn't require normality assumption!
+    \end{itemize}
+  \end{itemize}
+  
+  \framebreak
+  
+  \begin{block}{Randomization Test}
+    \begin{itemize}
+      \item Hypothesis: treatment has no effect. That is, the treatment can be thought of as a label, not something that would change outcomes.
+      \item Pick a statistic of interest (i.e., the mean, median, etc.). Compute this for the observed data.
+      \item Since treatments are just ``labels", and assuming we randomized these ``labels", compute the same statistic for \emph{all} possible assignments.
+      \item Compare statistics to get P-value: how abnormal is the actual data relative to all random assignment possibilities? 
+    \end{itemize}
+  \end{block}
+  
+  \framebreak
+  
+  \begin{itemize}
+    \item \emph{Advantage:} No normality assumption. No assumptions at all!
+    \item \emph{Disadvantage:} Can be extremely computationally intensive.
+    \mode<article>{
+    \begin{itemize}
+    \item For only two assignments, ``relabeling" is the same as picking the differences to be positive, or negative.
+    \item With only $n = 30$ differences, this requires checking all $2^{30} \approx 1.07$ billion possible combinations!
+    \end{itemize}
+    }
+  \end{itemize}
+  
+  \framebreak
+  
+  \begin{exampleblock}{Last 10 observations}
+  Here are differences for the last 10 observations:
+
+\begin{knitrout}\small
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{verbatim}
+ [1]  0.62  1.75  0.71  0.21  0.01  0.42 -0.21  0.42
+ [9]  0.43  0.82
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+  
+  \end{exampleblock}
+
+\framebreak
+
+
+
+
+\begin{itemize}
+  \item Even with $n = 10$, we require computing $2^{10} = 1024$.
+  \item Using software, we found that only $4/1024 \approx 0.004$ of the means were larger than what we observed.
+  \item This approach becomes computationally burdensome as $n$ grows.
+  \item Compare this to the P-value of a t-test: 0.007.
+\end{itemize}
+
+\framebreak
+
+\begin{itemize}
+  \item Is the an easier way?
+  \item Sometimes... We don't actually need to know the value of all possible permutations, only the percentage of them that are larger (or smaller) than or equal to what we saw.
+  \item Our data: 9 positive values, 1 negative value (-.21). 7 of the 9 positive values has magnitude larger than 0.21. The remaining numbers are: +0.21, +0.01 \mode<article>{Ways to not decrease the mean:
+  \begin{itemize}
+    \item Nothing changes.
+    \item -0.21 changes sign, everything else stays the same.
+    \item -0.21 changes sign, and +0.01 also changes sign OR +0.21 changes, but not both.
+  \end{itemize}
+  \item (Note that if any of the 7 positive values with magnitude $>0.21$ changes, then already the total mean must have decreased)
+  \item Thus, without actually computing anything, we can see the p-value is $4/1024$.
+  }
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[allowframebreaks,fragile]{Approximate tests}
+  \begin{itemize}
+    \item Even with clever strategies, it's likely computationally unfeasible for even small $n$ and two treatments.
+    \item We generally therefore resort to approximate methods. For instance, it can be argued that the $t$-test is an approximate test.
+  \end{itemize}
+  
+  \begin{block}{Approximate test: random subsamples}
+    Instead of computing $2^{30}$ possible combinations: randomly sample a subset $(10,000)$ assignments, and compare to the observed data as you would normally.
+  \end{block}
+  
+  \framebreak
+  
+  For our $n = 30$ data set, here's example R code (from scratch) that could compute an approximate randomization test:
+
+
+
+
+\begin{knitrout}\small
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{set.seed}\hldef{(}\hlnum{123}\hldef{)}
+\hldef{true_mean} \hlkwb{<-} \hlkwd{mean}\hldef{(data)}
+\hldef{null_means} \hlkwb{<-} \hlkwd{replicate}\hldef{(}\hlnum{10000}\hldef{, \{}
+  \hldef{random_signs} \hlkwb{<-} \hlkwd{sample}\hldef{(}\hlkwd{c}\hldef{(}\hlnum{1}\hldef{,} \hlopt{-}\hlnum{1}\hldef{),} \hlkwc{size} \hldef{=} \hlnum{30}\hldef{,} \hlkwc{replace} \hldef{=} \hlnum{TRUE}\hldef{)}
+  \hlkwd{mean}\hldef{(data} \hlopt{*} \hldef{random_signs)}
+\hldef{\})}
+
+\hlcom{# P-value}
+\hlkwd{mean}\hldef{(null_means} \hlopt{>} \hldef{true_mean)}
+\end{alltt}
+\begin{verbatim}
+[1] 0.0738
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+
+
+
+\mode<article>{
+  \begin{itemize}
+    \item Some final comments about these results:
+    \begin{itemize}
+      \item The final (approximate) P-value is \emph{random}; you will get slightly different answers with different seeds.
+      \item Following a binomial approximation, the standard deviation of this P-value is approximately $\sqrt{\hat{p}(1-\hat{p})/10000} = \sqrt{0.074(1-0.074)/10000} = 0.0026$
+      \item Compare this result to that of the $t$-test: 0.074. Recall this is only \emph{exact} if the data come from an normal distribution (unlikely).
+    \end{itemize}
+  \end{itemize}
+}
   
 \end{frame}
 
