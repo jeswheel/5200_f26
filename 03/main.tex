@@ -1,0 +1,153 @@
+\input{../header}
+
+% \mode<beamer>{\usetheme{AnnArbor}}
+\mode<beamer>{\usetheme{metropolis}}
+\mode<beamer>{\metroset{block=fill}}
+% \mode<beamer>{\usecolortheme{wolverine}}
+
+\mode<beamer>{\setbeamertemplate{section in toc}[sections numbered]}
+\mode<beamer>{\setbeamertemplate{subsection in toc}[subsections numbered indented]}
+
+% \mode<beamer>{\usefonttheme{serif}}
+\mode<beamer>{\setbeamertemplate{footline}}
+\mode<beamer>{\setbeamertemplate{footline}[frame number]}
+\mode<beamer>{\setbeamertemplate{frametitle continuation}[from second][\insertcontinuationcountroman]}
+\mode<beamer>{\setbeamertemplate{navigation symbols}{}}
+
+\mode<handout>{\pgfpagesuselayout{2 on 1}[letterpaper,border shrink=5mm]}
+
+\newcommand\CHAPTER{3}
+% \newcommand\answer[2]{\textcolor{blue}{#2}} % to show answers
+% \newcommand\answer[2]{\textcolor{red}{#2}} % to show answers
+ \newcommand\answer[2]{#1} % to show blank space
+
+\title{\vspace{2mm} \link{https://jeswheel.github.io/5200_f26/}{Stat 5200: Analysis of Designed Experiments}}
+\author{Jesse Wheeler}
+\date{}
+
+\setbeamertemplate{footline}[frame number]
+
+
+
+
+\begin{document}
+
+\maketitle
+
+\mode<article>{\tableofcontents}
+
+% \mode<presentation>{
+%   \begin{frame}{Outline}
+%     \tableofcontents
+%   \end{frame}
+% }
+
+\section{Overview}
+
+\begin{frame}[allowframebreaks]{Objectives and overview}
+  \begin{itemize}
+    \item This material is based Chapter~3 on the textbook ``A First Course in Design and Analysis of Experiments" \citep{oehlert2000}.
+    \item Chapter outcomes include: 
+    \begin{itemize}
+      \item TODO
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\section{Completely Randomized Designs}
+
+\begin{frame}[allowframebreaks]{Completely Randomized Design}
+  \begin{itemize}
+    \item Completely randomized design (CRD) is the simplest design for comparing treatments and is sometimes the preferred design. 
+    \item \alert{Setup:}
+    \begin{itemize}
+      \item There are $g$ treatment groups.
+      \item $N$ experimental units (EU)s available.
+      \item You want sample sizes of $n_1, n_2, \ldots, n_g$, with $\sum_{i = 1}^g n_i = N$. 
+    \end{itemize}
+  
+  \framebreak
+  
+    \item \alert{Idea}: All possible sub-group composition are equally as likely. 
+  \end{itemize}
+  
+  \begin{block}{Performing a Completely Randomized Design}
+    \begin{itemize}
+      \item Randomly choose $n_1$ EU's for treatment $1$.
+      \item Randomly choose $n_2$ EU's for treatment $2$.
+      \item $\ldots$
+      \item Randomly choose $n_{g-1}$ EU's for treatment $g-1$.
+      \item The remaining $n_g$ EU's are assigned to treatment $g$.
+    \end{itemize}
+  \end{block}
+  
+  \begin{itemize}
+    \item On a computer, this can be done by permuting $1, 2, \ldots, N$, and assigning the first $n_1$ numbers to treatment 1, the next $n_2$ to treatment 2, etc.
+  \end{itemize}
+  
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Advantages and Disadvantages}
+  \begin{itemize}
+    \item Advantages
+    \begin{itemize}
+      \item Simple to do; all you need is one random permutation.
+      \item Simple to explain and understand.
+      \item Simple to analyze.
+      \item No restrictions on the sample sizes (other designs may restrict $n_i$).
+      \item Easy with missing values.
+    \end{itemize}
+    \item Disadvantages
+    \begin{itemize}
+      \item Not always possible or cost-effective.
+      \item The accuracy of the expriment depends on variablility among the EUs, not just the variability among treatment groups. Thus, it may require more EUs (\$\$\$\$).
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\newcommand\acknowledgments{
+\begin{itemize}
+\item   Compiled on {\today} using \Rlanguage version 4.5.0.
+\item   \parbox[t]{0.75\textwidth}{Licensed under the \link{http://creativecommons.org/licenses/by-nc/4.0/}{Creative Commons Attribution-NonCommercial license}.
+    Please share and remix non-commercially, mentioning its origin.}
+    \parbox[c]{1.5cm}{\includegraphics[height=12pt]{../cc-by-nc}}
+\item We acknowledge \link{https://jeswheel.github.io/5200_f26/acknowledge.html}{students and instructors for previous versions of this course / slides}.
+\end{itemize}
+}
+
+\mode<presentation>{
+\begin{frame}[allowframebreaks=0.8]{References and Acknowledgements}
+  
+\bibliography{../bib5200}
+
+\vspace{3mm}
+
+\acknowledgments
+
+\end{frame}
+}
+
+\mode<article>{
+
+\newpage
+
+{\bf \Large \noindent Acknowledgments}
+
+\acknowledgments
+
+\newpage
+
+\bibliography{../bib5200}
+
+}
+
+
+
+\end{document}
+
+
+
+
+
+
+
