@@ -100,9 +100,74 @@
     \item Disadvantages
     \begin{itemize}
       \item Not always possible or cost-effective.
-      \item The accuracy of the expriment depends on variablility among the EUs, not just the variability among treatment groups. Thus, it may require more EUs (\$\$\$\$).
+      \item The accuracy of the experiment depends on variability among the EUs, not just the variability among treatment groups. Thus, it may require more EUs (\$\$\$\$).
     \end{itemize}
   \end{itemize}
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Example: Acid Rain}
+  \cite{wood74} studied the effect of acid rain on trees. 
+  One experiment used 240 six-week-old yellow birch seedlings. These seedlings were divided into five groups of 48 \emph{at random}, and the seedlings within each group received an acid mist treatment 6 hours a week for 17 weeks.
+  The five treatments differed by mist pH: 4.7, 4.0, 3.3, 3.0, and 2.3. Othwerwise, the seedlings were treated identically.
+  After the 17 weeks, the seedlings were weighed, and total plant (dry) weight was taken as response.
+  
+  \textbf{Questions:}
+  
+  \begin{itemize}
+    \item What type of design is this, and can you describe why?
+    \item What are the EUs, and how many are there?
+    \item What was the response?
+  
+  \framebreak
+    \item What compromises may have been made in this case?
+    
+    \mode<article>{
+      \begin{itemize}
+        \item Damage may vary by pH level, plant developmental stage, plant species, etc., yet only pH level was directly addressed.
+        \item The study wishes to study the impact of acid-rain, but the available treatment was a synthetic acid rain, which may have a slightly different impact.
+        \item Total plant weight is an important response, but other responses measuring tree health may also be available.
+      \end{itemize}
+        }
+        
+        \mode<presentation>{\vspace{2cm}}
+        
+        Like many experiments, the researchers necessarily have to narrow down an enormous question to a workable experiment using artificial acid rain under controlled conditions.
+        For any experiment, a considerable amount of non-statistical background work goes into the planning even the simplest experiment. 
+  
+  \end{itemize}
+\end{frame}
+
+\section{Models and Parameters}
+
+\begin{frame}[allowframebreaks]{Introduction and definitions}
+  \begin{itemize}
+    \item All formal statistical analysis is based on probability models.
+    \item \emph{EX:} The number of heads in ten tosses of a fair coin would be Binomial$(10, 0.5)$. Here, the model depends on 2 parameters: $N = 10$ the number of trials, $p = 0.5$ is the probability of heads.
+    \item In an experiment, we may posit several different models for the data, all with \emph{unknown} parameters. 
+    One of our objectives is often to describe which model is the best description of the data, and make \emph{inference} about parameters.
+  \end{itemize}
+  
+  \begin{block}{Definition: Inference}
+    Using data to learn properties of a probability distribution. In our case, using data to estimate parameters of a model.
+  \end{block}
+  
+  \framebreak
+  
+  \begin{itemize}
+    \item The models we will consider for experimental design will have two basic parts:
+    \begin{itemize}
+      \item A description of the expected value, or mean, of the data. Sometimes called ``model for the means".
+      \item A description of how data vary around the treatment means. Sometimes called `model for the errors". 
+    \end{itemize}
+    \item For the errors, we will generally assume that they are independent for different data values, have mean zero, and all have a common variance $\sigma^2$.
+    \item To perform formal tests and obtain confidence intervals, we will further assume a distribution of the errors.
+    Generally, we assume that the errors follow a \alert{Gaussian} (Normal) distribution.
+  \end{itemize}
+  
+  \framebreak
+  
+  TEST
+  
 \end{frame}
 
 \newcommand\acknowledgments{
