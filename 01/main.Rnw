@@ -57,6 +57,50 @@
   \end{itemize}
 \end{frame}
 
+\section{Course Notation}
+
+\begin{frame}{Useful course notation}
+  Basic notations we will use throughout the class:
+  \begin{itemize}
+    \item $y_{ij}$ 
+    \mode<presentation>{\vfill}
+    \mode<article>{
+    \begin{itemize}
+      \item A general observation, with two subscripts. For instance, this might be the $j$th observation for the $i$th treatment group. We will often use the letter $y$ for data, but in principle we could use any other letter, and we may do so when convinient. A comma is sometimes used if we use actual numbers; for instance, if $i = 1$ and $j=2$, then we would write $y_{1, 2}$ and not $y_{12}$, to avoid confusion.
+    \end{itemize}}
+    \item $j:k$, $y_{j:k}$, etc. 
+    \mode<presentation>{\vfill}
+    \mode<article>{
+    \begin{itemize} 
+      \item This is a convinient shorthand for a range of numbers. for instance, we may say $j:k$ is the set of numbers $j, j+1, \ldots, k-1, k$, with the understanding that if $k=j$, then $j:k = j$, and if $k < j$, then $j:k$ is the empty set. This will be used to say something like, ``for all $i$ in $1:k$." When used as a subsecript, this implies the collection of all numbers with the defined subscripts. For instance, $y_{2, 4:8}$ would be $y_{2, 4}$, $y_{2, 5}$, ..., $y_{2, 8}$, meaning the fourth through eighth observation of the second (treatment) group.
+    \end{itemize}}
+    \item $y_{\cdot j}$ and $y_{i\cdot}$ 
+    \mode<presentation>{\vfill}
+    \mode<article>{
+    \begin{itemize}
+      \item This is a special shorthand to denote ``all" of the indices in a particular group. For instance, $y_{\cdot j}$ might indicate ``all $j$th observations from each group", and $y_{i\cdot}$ is "all observations from the $i$th group". Note that if there are $g$ groups, then the following would be considered equivalent: $y_{1:g, j} = y_{\cdot j}$.
+    \end{itemize}}
+    \item $\bar{y}$, $\bar{y}_{i \cdot}$, etc. 
+    \mode<presentation>{\vfill}
+    \mode<article>{
+      \begin{itemize}
+        \item The bar above a number is intended to be an average. For instance, $\bar{y}_{i, \cdot}$ is the average value of $y$ in group $i$, and $\bar{y}_{\cdot, \cdot}$ would be the average of all $y$. Sometimes due to pure laziness on my part, I may indicate $\bar{y} = \bar{y}_{\cdot, \cdot}$ If there is any confusion, don't be afraid to ask. 
+      \end{itemize}
+    }
+    \item $y^*_{ij}$
+    \mode<presentation>{\vfill}
+    \mode<article>{
+      \begin{itemize}
+        \item Personal favorite, though probbaly won't be used much in this class. $y_{ij}$ might represent any arbitrary value, whereas the ``star" version $y^*_{ij}$ is used to emphasize that it's not just an arbitrary value, but a real data point. This is particularly relevant if we are using function notation; $f(y_{ij})$ could be a function for any arbitrary input $y_{ij}$, whereas $f(y^*_{ij})$ is used to emphasize that it's not just any value, but the data plugged into that function.
+      \end{itemize}}
+    \item $\mathbb{R}$ 
+    \mode<article>{
+      \begin{itemize} 
+        \item All real numbers.
+      \end{itemize}}
+  \end{itemize}
+\end{frame}
+
 \section{Experiments}
 
 \begin{frame}[allowframebreaks]{What is an ``Experiment" and why it matters}
