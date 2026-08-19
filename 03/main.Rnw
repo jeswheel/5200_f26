@@ -165,9 +165,164 @@
   \end{itemize}
   
   \framebreak
+
+  \begin{itemize}
+    \item For a CRD, we start with two basic models. 
+    \item Recall: $g$ treatment groups, $N$ EUs.
+  \end{itemize}
+    
+    \mode<presentation>{
+      % \item Let $y_{ij}$ be the $j$th response, $i$th treatment group.
+      \begin{enumerate}
+        \item \alert{The Full Model} (separate group means)
+
+      \framebreak
+
+        \item \alert{The Reduced Model} (single mean model)
+
+     \end{enumerate}
+
+    \framebreak
+    }
+    
+    \mode<article>{
+      Let $y_{ij}$ be:
+      \begin{itemize}
+        \item The $j$th response,
+        \item In the $i$th treatment group.
+      \end{itemize}
+      Thus, $i$ runs between 1 and $g$, and $j$ runs between $1$ and $n_i$, in treatment group $i$.
+      There are many possible models for the mean-treatment effect that we could consider.
+      We will focus on two basic ones:
+      \begin{enumerate}
+        \item We assume that each treatment has its own mean response $\mu_i$, and that the errors are normally distributed.
+        These assumptions give rise to the \emph{model for the data}:
+      $$
+      y_{ij} \sim N\big(\mu_i, \sigma^2\big).
+      $$
+      We can alternatively write this same model as:
+      $$
+      y_{ij} = \mu_i + \epsilon_{ij},
+      $$
+      where $\epsilon_{ij} \sim N(0, \sigma^2)$ are the independent, normally  distributed errors with mean zero and variance $\sigma^2$.
+      \begin{itemize}
+        \item This is a model with separate group means, which we will sometimes call the \alert{full model}.
+      \end{itemize}
+      \item The next basic model for the means is the \alert{single mean model}, also called the \alert{reduced} model.
+      This model assumes all treatments have the same mean, $\mu$.
+      Combined with the error structure, the single mean model implies that the data are independent and normally distributed with mean $\mu$ and constant variance $\sigma^2$:
+      $$
+      y_{ij} \sim N(\mu, \sigma^2).
+      $$
+      Again, we may alternatively write this model as:
+      $$
+      y_{ij} = \mu + \epsilon_{ij}, \quad \epsilon_{ij} \sim N(0, \sigma^2).
+      $$
+      \begin{itemize}
+        \item Note that this single mean model is a special case (or restriction) of the group means model: all of the $\mu_i$s equal eachother.
+        \item \alert{Model comparison is easiest when one of the models is a restricted or reduced form of the other!}
+      \end{itemize}
+      \end{enumerate}
+    }
+    
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Defining overall mean}
+
+  \begin{itemize}
   
-  TEST
-  
+  \item It's sometimes useful to express the group means $\mu_i$ as:
+        $$
+        \mu_i = \mu^* + \alpha_i.
+        $$
+        In this case, we call $\mu^*$ the \emph{overall mean}, and the $\alpha_i$'s are the $i$th \emph{treatment effects}.
+        
+  \mode<presentation>{\item This introduces an extra parameter (g+1 total), which we need to address. Generally, we do this by defining $\mu^*$ and require that $\alpha_i = \mu_i - \mu^*$.}
+        
+        \mode<article>{
+        The restricted model in this case implies $\alpha_i = 0$ for all $i \in 1:g$.
+        
+        Note that if there are $g$ $\alpha_i$'s, and one overall mean $\mu^*$, this means there are $g+1$ parameters.
+        This is problematic because they are not uniquely determined.
+        We will avoid this issue by imposing an additional mathematical structure on the set of $g$ group means.
+        Specifically, we either define $\mu^*$ and require that $\alpha_i = \mu_i - \mu^*$, or we define $\alpha_i$ and then set $\mu^* = \mu_i - \alpha_i$.
+        These are really just two-sides of the same coin, and mathematically give us the same information.
+        However, some software will do one or the other, and you should think carefully about what's happening.
+        Ultimately it doesn't matter as long as we can identify which choice is in use at any given time.
+        That is, as long as we can determine the treatment means, the differences of treatment means, and compare the models, it doesn't matter.
+        }
+        
+        \framebreak
+        
+        \item One classic choice is to define $\mu^*$ as the mean of the treatment means:
+        
+        \framebreak
+        \mode<article>{
+        $$
+        \mu^* = \sum_{i = 1}^g \mu_i / g,
+        $$
+        which, defining $\alpha_i = \mu_i - \mu^*$, implies
+        $$
+        \sum_{i = 1}^g \alpha_i = 0.
+        $$
+        }
+        
+        \item An alternative choice (that can sometimes make hand-work simpler) instead describes $\mu^*$ as the weighted average:
+        
+        \mode<article>{
+        $$
+        \mu^* = \sum_{i = 1}^g n_i \mu_i / N,
+        $$
+        in which case the weighted sum of the treatment effects will be zero:
+        $$
+        \sum_{i = 1}^g n_i \alpha_i =  0.
+        $$
+        In our current model, defining $\alpha_i$ is a bit of an over-complication, but it will be useful later.
+        }
+        
+        \framebreak
+        
+        \item Another common choice in software is to set $\mu^* = \mu_j$, for some $j \in 1:g$. Many software just use the last mean: $\mu^* = \mu_g$.
+        
+        \mode<article>{
+        With this choice, we still have our standard restriction:
+        $$
+        \alpha_i = \mu_i - \mu^*, \quad \text{for all } i \in 1:g.
+        $$
+        Thus, we have:
+        $$
+        \alpha_i = \begin{cases}
+          \mu_j - \mu_j = 0 & \text{if } i = j \\
+          \mu_i - \mu_j & \text{otherwise}
+        \end{cases}
+        $$
+        
+        Importantly, it doesn't really matter which is used as long as you know the version being used. You can always re-frame / recover the other form if you prefer it.
+        For instance, the last option is particularly useful if treatment $j$ is some form of control; this way, the treatment effect is always compared to the control.
+        
+        Notably, the added constraints on $\alpha_i$s imply that not all are free to vary.
+        With $\mu^*$ being fixed (or pre-selected), only $g-1$ of them are free to vary, the last treatment effect is then determined by whatever is needed to satisfy the constraint.
+        We express this by saying that the treatment effects have $g-1$ \alert{degrees of freedom}.
+        }
+        
+      \end{itemize}
+
+    
+\end{frame}
+
+\section{Parameter Estimation}
+
+\begin{frame}[allowframebreaks]{Estimating parameters}
+  \begin{itemize}
+    \item We want to use data to estimate $\mu_i$'s and the variance $\sigma^2$. From these, we'll compute $\mu^*$ and $\alpha_i$'s.
+    \item We will focus on computing \alert{unbiased} estimates of these parameters. \mode<article>{Though there is a technical definition of \emph{unbiased estimators}, we will simply use this to mean that if we were to average the values of the estimates across all \emph{potential} random errors, we would get the true parameter values.}
+    \mode<article>{We will use the ``hat" notation ($\hat{\cdot}$) throughout the class, to distinguish a true parameter value from it's estimate. For instance, $\hat{\mu}$ is an estimator of $\mu$.}
+    \item Estimate for $\mu_i$:
+    \mode<article>{
+      $$\hat{\mu}_i = \bar{y}_{i \cdot} = \frac{1}{n_i}\sum_{j = 1}^{n_i} y_{ij}$$
+    }\mode<presentation>{\vspace{2cm}}
+    \item The estimate for $\mu^*$ is fixed, so it depends on how we defined it. 
+  \end{itemize}
 \end{frame}
 
 \newcommand\acknowledgments{
