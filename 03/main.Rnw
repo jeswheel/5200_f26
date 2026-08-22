@@ -321,7 +321,54 @@
     \mode<article>{
       $$\hat{\mu}_i = \bar{y}_{i \cdot} = \frac{1}{n_i}\sum_{j = 1}^{n_i} y_{ij}$$
     }\mode<presentation>{\vspace{2cm}}
-    \item The estimate for $\mu^*$ is fixed, so it depends on how we defined it. 
+    \item The estimate for $\mu^*$ is fixed, so it depends on how we defined it.
+    
+    \framebreak
+    
+    \mode<article>{
+      \begin{itemize}
+        \item Unweighted average.
+        $$
+        \hat{\mu}^* = \frac{1}{g}\sum_{i = 1}^{n_i} \hat{\mu}_i = \frac{1}{g}\sum_{i = 1}^{n_i}\bar{y}_{i\cdot},
+        $$
+        $$
+        \hat{\alpha}_j = \hat{\mu}_j - \hat{\mu}^* = \bar{y}_{j\cdot} - \frac{1}{g}\sum_{i = 1}^{n_i} \bar{y}_{i\cdot}
+        $$
+        \item Weighted average.
+          $$\hat{\mu}^* = \frac{1}{N} \sum_{i = 1}^g n_i \hat{\mu}_i \\
+                      = \frac{1}{N} \sum_{i = 1}^g n_i \bar{y}_{i\cdot} \\
+                      = \frac{1}{N} \sum_{i = 1}^g \sum_{j = 1}^{n_i} y_{ij} \\
+                      = \bar{y}_{\cdot \cdot}$$
+        $$
+        \hat{\alpha}_j = \hat{\mu}_j - \hat{\mu}^* = \bar{y}_{j\cdot} - \bar{y}_{\cdot \cdot}
+        $$
+        \item Reference Group.
+        $$
+        \hat{\mu}^* = \hat{\mu}_j = \bar{y}_{j\cdot}
+        $$
+        $$
+        \hat{\alpha}_j = \hat{\mu}_j - \hat{\mu}^* = 0
+        $$
+        $$
+        \hat{\alpha}_i = \hat{\mu}_i - \hat{\mu}^* = \bar{y}_{i\cdot} - \bar{y}_{j \cdot}
+        $$
+      \end{itemize}
+    }
+    
+    \mode<presentation>{
+    \item Unweighted average
+    
+    \vfill
+    
+    \item Weighted average
+    
+    \vfill
+    
+    \item Reference Group
+    
+    \vfill
+    }
+    
   \end{itemize}
 \end{frame}
 
