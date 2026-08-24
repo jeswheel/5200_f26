@@ -310,16 +310,32 @@
     
 \end{frame}
 
+\begin{frame}{Model Recap}
+  However you choose to define $\mu^*$ and $\alpha_i'$s, we end up with the following models for the data:
+  
+  \begin{itemize}
+    \item \emph{The full model}:
+    $$
+    y_{ij} = \mu^* + \alpha_i + \epsilon_{ij}
+    $$
+    \item \emph{The reduced model}:
+    $$
+    y_{ij} = \mu + \epsilon_{ij}
+    $$
+  \end{itemize}
+\end{frame}
+
 \section{Parameter Estimation}
 
 \begin{frame}[allowframebreaks]{Estimating parameters}
   \begin{itemize}
+    \mode<article>{\item We now want to consider how to compare these two models using data. The classic tool that we will be using is called ANalysis Of VAriance (ANOVA). In practice, we will just be using some form of statistical software (in this class, it will be R). Part of the output of ANOVA will be parameter estimates and other important statistics, so we will first describe what these estimates are and how we express them mathematically.}
     \item We want to use data to estimate $\mu_i$'s and the variance $\sigma^2$. From these, we'll compute $\mu^*$ and $\alpha_i$'s.
     \item We will focus on computing \alert{unbiased} estimates of these parameters. \mode<article>{Though there is a technical definition of \emph{unbiased estimators}, we will simply use this to mean that if we were to average the values of the estimates across all \emph{potential} random errors, we would get the true parameter values.}
-    \mode<article>{We will use the ``hat" notation ($\hat{\cdot}$) throughout the class, to distinguish a true parameter value from it's estimate. For instance, $\hat{\mu}$ is an estimator of $\mu$.}
+    \mode<article>{We will use the ``hat" notation ($\hat{\bullet}$) throughout the class, to distinguish a true parameter value from it's estimate. For instance, $\hat{\mu}$ is an estimator of $\mu$.}
     \item Estimate for $\mu_i$:
     \mode<article>{
-      $$\hat{\mu}_i = \bar{y}_{i \cdot} = \frac{1}{n_i}\sum_{j = 1}^{n_i} y_{ij}$$
+      $$\hat{\mu}_i = \bar{y}_{i \bullet} = \frac{1}{n_i}\sum_{j = 1}^{n_i} y_{ij}$$
     }\mode<presentation>{\vspace{2cm}}
     \item The estimate for $\mu^*$ is fixed, so it depends on how we defined it.
     
@@ -329,28 +345,28 @@
       \begin{itemize}
         \item Unweighted average.
         $$
-        \hat{\mu}^* = \frac{1}{g}\sum_{i = 1}^{n_i} \hat{\mu}_i = \frac{1}{g}\sum_{i = 1}^{n_i}\bar{y}_{i\cdot},
+        \hat{\mu}^* = \frac{1}{g}\sum_{i = 1}^{n_i} \hat{\mu}_i = \frac{1}{g}\sum_{i = 1}^{n_i}\bar{y}_{i\bullet},
         $$
         $$
-        \hat{\alpha}_j = \hat{\mu}_j - \hat{\mu}^* = \bar{y}_{j\cdot} - \frac{1}{g}\sum_{i = 1}^{n_i} \bar{y}_{i\cdot}
+        \hat{\alpha}_j = \hat{\mu}_j - \hat{\mu}^* = \bar{y}_{j\bullet} - \frac{1}{g}\sum_{i = 1}^{n_i} \bar{y}_{i\bullet}
         $$
         \item Weighted average.
           $$\hat{\mu}^* = \frac{1}{N} \sum_{i = 1}^g n_i \hat{\mu}_i \\
-                      = \frac{1}{N} \sum_{i = 1}^g n_i \bar{y}_{i\cdot} \\
+                      = \frac{1}{N} \sum_{i = 1}^g n_i \bar{y}_{i\bullet} \\
                       = \frac{1}{N} \sum_{i = 1}^g \sum_{j = 1}^{n_i} y_{ij} \\
-                      = \bar{y}_{\cdot \cdot}$$
+                      = \bar{y}_{\bullet \bullet}$$
         $$
-        \hat{\alpha}_j = \hat{\mu}_j - \hat{\mu}^* = \bar{y}_{j\cdot} - \bar{y}_{\cdot \cdot}
+        \hat{\alpha}_j = \hat{\mu}_j - \hat{\mu}^* = \bar{y}_{j\bullet} - \bar{y}_{\bullet \bullet}
         $$
         \item Reference Group.
         $$
-        \hat{\mu}^* = \hat{\mu}_j = \bar{y}_{j\cdot}
+        \hat{\mu}^* = \hat{\mu}_j = \bar{y}_{j\bullet}
         $$
         $$
         \hat{\alpha}_j = \hat{\mu}_j - \hat{\mu}^* = 0
         $$
         $$
-        \hat{\alpha}_i = \hat{\mu}_i - \hat{\mu}^* = \bar{y}_{i\cdot} - \bar{y}_{j \cdot}
+        \hat{\alpha}_i = \hat{\mu}_i - \hat{\mu}^* = \bar{y}_{i\bullet} - \bar{y}_{j \bullet}
         $$
       \end{itemize}
     }
@@ -369,7 +385,27 @@
     \vfill
     }
     
+  \framebreak
+  
+  \item The only parameter left to estimate is $\sigma^2$:
+  \mode<article>{
+  $$
+  \hat{\sigma}^2 = \text{MS}_\text{E} = \frac{\text{SS}_\text{E}}{N - g} = \frac{\sum_{i = 1}^g \sum_{j = 1}^{n_i}(y_{ij} - \bar{y}_{i\bullet})^2}{N-g}
+  $$
+  We use the notation $\text{SS}_\text{E}$ to denote the ``Sum of Squares for Error", and $\text{MS}_{\text{E}}$ to mean the ``Mean Square for Error".
+  The denominator includes $N-g$ as the number of \alert{degrees of freedom}.
+  Consider the summand: $(y_{ij} - \bar{y}_{i\bullet})^2$. This is the deviations from the group mean, and they must add to zero in any group. 
+  Thus, any $n_i - 1$ of them determine the remaining value, so that in each group, there are only $n_i - 1$ degrees of freedom, or that there are $N - g$ degrees of freedom for error for the experiment.
+  }
+  
+  \framebreak
+  
+  \item Above, we have described \alert{point estimates}. In some sense, these are our ``best guess" as to the value of a particular parameter.
+  \item We also want some measure of uncertainty of this estimate. The standard frequentist way of doing this is a \alert{confidence interval}.
+  
+  
   \end{itemize}
+  
 \end{frame}
 
 \newcommand\acknowledgments{
