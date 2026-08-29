@@ -17,6 +17,10 @@ PREREQ: Earn a minimum grade of C- one of the following:
 
 - STAT 2000, STAT 3000, DATA 3100, PSY 3010, SOC 3120
 
+### Additional Course Information:
+
+- [Course Syllabus](syllabus.pdf)
+
 ------
 
 ## Class notes
@@ -35,19 +39,8 @@ PREREQ: Earn a minimum grade of C- one of the following:
 [Midterm II Review](midterm02/Midterm2Review.pdf)
 --> 
 
-------
-
-### Additional Course Information:
-
-- [Course Syllabus](syllabus.pdf)
-
---------------
-
-<!--
-
--->
-
 --------
+
 
 ## Homework and participation assignments
 
@@ -74,6 +67,8 @@ Please read the [grading rubric](rubric_homework.html) before submitting homewor
 
 ## Midterm
 
+TODO: Specify midterm time
+
 <!--
 
 * [Review](midterm/MidtermReview.pdf).
@@ -87,8 +82,6 @@ Please read the [grading rubric](rubric_homework.html) before submitting homewor
 ## Final Exam
 
 TODO: Update. 
-
-The final exam will be help in our regular classroom on Dec 18, 10:00 a.m. -- 12:00 p.m. The final exam will be comprehensive, closed book.
 
 ---------
 
