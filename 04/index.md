@@ -14,7 +14,7 @@ Learning Objectives
 
 **Expected reading:** Chapter 8 of Oehlert, G. W. (2020). *A First Course in Design and Analysis of Experiments*, [http://users.stat.umn.edu/~gary/book/fcdae.pdf](http://users.stat.umn.edu/~gary/book/fcdae.pdf).
 
-<!--
+<!-- 
 
 | &nbsp;           | &nbsp;                          |
 |:-----------------------|:------------------------:|
@@ -22,9 +22,9 @@ Learning Objectives
 | Lecture notes    | [pdf](notes.pdf) |
 <!-- | Annotated Slides | [pdf](annotatedSlides.pdf) | -->
 <!-- | Discussion Problems | [pdf](discussionProbs.pdf) | -->
+
 ----------------------
 
--->
 
 
 ----------------------
