@@ -25,16 +25,16 @@ PREREQ: Earn a minimum grade of C- one of the following:
 1. [Introduction](01/index.html)
 2. [Randomization and Hypothesis Testing](02/index.html)
 3. [Completely Randomized Design](03/index.html)
+4. [Factorial Designs](04/index.html)
 
-<!---
-4. [The Completely Randomized Design](04/index.html)
-5. [Factorial Designs](05/index.html)
-6. [Random Effects Models](06/index.html)
-7. [General Mixed Effects Models](07/index.html)
-8. [Designs with Nested Factors](08/index.html)
-9. [Block Designs](09/index.html)
-10. [Factorial Designs](05/index.html)
+<!--
+5. [Random Effects Models](05/index.html)
+6. [General Mixed Effects Models](06/index.html)
+7. [Designs with Nested Factors](07/index.html)
+8. [Block Designs](08/index.html)
+-->
 
+<!--
 [Midterm II Review](midterm02/Midterm2Review.pdf)
 --> 
 
