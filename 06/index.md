@@ -31,7 +31,7 @@ Learning Objectives
 
 [Back to course homepage](../index.html)  
 [Acknowledgements](../acknowledge.html)  
-[Source code for these notes](http://github.com/jeswheel/5200_f26/tree/main/03/)
+[Source code for these notes](http://github.com/jeswheel/5200_f26/tree/main/06/)
 
 
 ----------------------
