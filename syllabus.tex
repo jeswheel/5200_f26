@@ -1,4 +1,9 @@
+\DocumentMetadata{tagging=on,
+    lang=en-US
+}
 \documentclass[11pt]{article}\usepackage[]{graphicx}\usepackage[]{xcolor}
+
+
 % maxwidth is the original width if it is less than linewidth
 % otherwise use linewidth (to make sure the graphics do not exceed the margin)
 \makeatletter
@@ -23,7 +28,7 @@
 \newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
 \newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
 \newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
-\newcommand{\Rlogo}{\protect\includegraphics[height=1.8ex,keepaspectratio]{Rlogo.png}}
+\newcommand{\Rlogo}{\protect\includegraphics[actualtext=B,height=1.8ex,keepaspectratio]{Rlogo.png}}
 \let\hlipl\hlkwb
 
 \usepackage{framed}
@@ -135,7 +140,7 @@
 \vspace{-20mm}
 
 \begin{center}
-\includegraphics[width=0.25\textwidth, alt={Utah State University Logo.}]{USUletterhead.jpeg}
+\includegraphics[artifact,width=0.25\textwidth]{USUletterhead.jpeg}
 \end{center}
 
 % \vspace{10mm}
@@ -259,14 +264,16 @@ A full breakdown of assessment category weighting is given in Table~\ref{tab:wei
 
 \begin{table}[h!]
 \centering
+% Explicitly tell the tagger that the first 1 row is a header
+\tagpdfsetup{table/header-rows=1}
 \begin{tabular}{|c|c|}
 \hline
 \textbf{Grade} & \textbf{Percentage Range} \\
 \hline
-Participation & $10\%$ \\
-Homework & $35\%$ \\
-Midterm 1 & $25\%$ \\
-Final & $30\%$ \\
+Participation & 10\% \\
+Homework & 35\% \\
+Midterm 1 & 25\% \\
+Final & 30\% \\
 \hline
 \end{tabular}
 \caption{\label{tab:weights}Assignment Weights}
@@ -359,11 +366,11 @@ Other types of calculators or programming languages are permitted, but it is not
 \section{Grading Scale}
 
 
-
 The grading scale follows the USU standard scale, in Table~\ref{tab:letters}.
 
 \begin{table}[h!]
 \centering
+\tagpdfsetup{table/header-rows=1}
 \begin{tabular}{|c|c|}
 \hline
 \textbf{Grade} & \textbf{Percentage Range} \\

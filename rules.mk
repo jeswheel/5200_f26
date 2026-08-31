@@ -2,6 +2,9 @@
 # For some reason, --vanilla fails on my Mac 
 REXE = Rscript --no-save --no-restore --no-init-file
 ROOT_DIR := $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
+COMPILER = pdflatex
+# Override compiler specifically for the notes
+syllabus.pdf: COMPILER = lualatex
 
 slides.pdf handout.pdf notes.pdf: main.tex
 
@@ -25,14 +28,14 @@ slides.pdf handout.pdf notes.pdf: main.tex
 %.pdf: export BSTINPUTS=$(ROOT_DIR)
 
 %.pdf: %.tex
-	pdflatex $*
+	$(COMPILER) $*
 	bibtex $*
-	pdflatex $*
-	pdflatex $*
+	$(COMPILER) $*
+	$(COMPILER) $*
 
 syllabus.pdf: syllabus.tex
-	pdflatex syllabus
-	pdflatex syllabus
+	$(COMPILER) syllabus
+	$(COMPILER) syllabus
 
 clean:
 	$(RM) *.bak

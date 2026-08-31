@@ -486,7 +486,7 @@ SE <- round(sqrt(p_est * (1 - p_est) / 10000), 4)
 \item   Compiled on {\today} using \Rlanguage version \Sexpr{getRversion()}.
 \item   \parbox[t]{0.75\textwidth}{Licensed under the \link{http://creativecommons.org/licenses/by-nc/4.0/}{Creative Commons Attribution-NonCommercial license}.
     Please share and remix non-commercially, mentioning its origin.}
-    \parbox[c]{1.5cm}{\includegraphics[height=12pt]{../cc-by-nc}}
+    \parbox[c]{1.5cm}{\includegraphics[artifact,height=12pt]{../cc-by-nc}}
 \item We acknowledge \link{https://jeswheel.github.io/5200_f26/acknowledge.html}{students and instructors for previous versions of this course / slides}.
 \end{itemize}
 }
