@@ -20,6 +20,7 @@ PREREQ: Earn a minimum grade of C- one of the following:
 ### Additional Course Information:
 
 - [Course Syllabus](syllabus.pdf)
+- [Instructor Introduction](Introduction.pdf)
 
 ------
 
