@@ -74,17 +74,17 @@
     \begin{itemize} 
       \item This is a convinient shorthand for a range of numbers. for instance, we may say $j:k$ is the set of numbers $j, j+1, \ldots, k-1, k$, with the understanding that if $k=j$, then $j:k = j$, and if $k < j$, then $j:k$ is the empty set. This will be used to say something like, ``for all $i$ in $1:k$." When used as a subsecript, this implies the collection of all numbers with the defined subscripts. For instance, $y_{2, 4:8}$ would be $y_{2, 4}$, $y_{2, 5}$, ..., $y_{2, 8}$, meaning the fourth through eighth observation of the second (treatment) group.
     \end{itemize}}
-    \item $y_{\cdot j}$ and $y_{i\cdot}$ 
+    \item $y_{\bullet j}$ and $y_{i\bullet}$ 
     \mode<presentation>{\vfill}
     \mode<article>{
     \begin{itemize}
-      \item This is a special shorthand to denote ``all" of the indices in a particular group. For instance, $y_{\cdot j}$ might indicate ``all $j$th observations from each group", and $y_{i\cdot}$ is "all observations from the $i$th group". Note that if there are $g$ groups, then the following would be considered equivalent: $y_{1:g, j} = y_{\cdot j}$.
+      \item This is a special shorthand to denote ``all" of the indices in a particular group. For instance, $y_{\bullet j}$ might indicate ``all $j$th observations from each group", and $y_{i\bullet}$ is "all observations from the $i$th group". Note that if there are $g$ groups, then the following would be considered equivalent: $y_{1:g, j} = y_{\bullet j}$.
     \end{itemize}}
-    \item $\bar{y}$, $\bar{y}_{i \cdot}$, etc. 
+    \item $\bar{y}$, $\bar{y}_{i \bullet}$, etc. 
     \mode<presentation>{\vfill}
     \mode<article>{
       \begin{itemize}
-        \item The bar above a number is intended to be an average. For instance, $\bar{y}_{i, \cdot}$ is the average value of $y$ in group $i$, and $\bar{y}_{\cdot, \cdot}$ would be the average of all $y$. Sometimes due to pure laziness on my part, I may indicate $\bar{y} = \bar{y}_{\cdot, \cdot}$ If there is any confusion, don't be afraid to ask. 
+        \item The bar above a number is intended to be an average. For instance, $\bar{y}_{i, \bullet}$ is the average value of $y$ in group $i$, and $\bar{y}_{\bullet, \bullet}$ would be the average of all $y$. Sometimes due to pure laziness on my part, I may indicate $\bar{y} = \bar{y}_{\bullet, \bullet}$ If there is any confusion, don't be afraid to ask. 
       \end{itemize}
     }
     \item $y^*_{ij}$
@@ -299,7 +299,7 @@
 
 \newcommand\acknowledgments{
 \begin{itemize}
-\item   Compiled on {\today} using \Rlanguage version 4.5.0.
+\item   Compiled on {\today} using \Rlanguage version 4.6.1.
 \item   \parbox[t]{0.75\textwidth}{Licensed under the \link{http://creativecommons.org/licenses/by-nc/4.0/}{Creative Commons Attribution-NonCommercial license}.
     Please share and remix non-commercially, mentioning its origin.}
     \parbox[c]{1.5cm}{\includegraphics[height=12pt]{../cc-by-nc}}
