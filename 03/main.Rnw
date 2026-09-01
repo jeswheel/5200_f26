@@ -408,9 +408,228 @@
   \text{unbiased estimate} \pm \text{multiplier} \times (estimated) \text{SE of estimate}.
   $$
   }
-  
   \end{itemize}
   
+\end{frame}
+
+\section{Comparing Models: ANOVA}
+
+\begin{frame}[allowframebreaks]{Analysis of Variance}
+  \begin{itemize}
+    \item In our analysis of a CRD, our models focus on the \emph{mean responses} of the treatment groups.
+    \item A basic question we might want answered: \alert{Are all the means the same, or are some different}?
+    \item We can express this same question mathematically: \mode<presentation>{\vspace{1cm}}
+    \mode<article>{
+      Is the reduced model (single mean) an adequate description of the data, or do we need the model of separate treatment group means?
+      \item Recall that the single-mean model is just a special case of the separate mean model!
+      \item \emph{Analysis of Variance}, abbreviated ANOVA, is a method for comparing the fit of two models, one a reduced version of the other.
+    }
+    
+    \framebreak
+    
+    \item The basic idea for many statistical tests (including ANOVA) follows \emph{Occam's Razor}: we use the simplest model that is consistent with the data; we will only use a more complicated model if the data indicate that the more complicated model is needed.
+    \item How do we know if a more complex model is needed? We compare \alert{residuals}.
+    
+    \mode<article>{
+    A \emph{residual} $r_{ij}$ is the difference between the data $y_{i j}$ and the fitted mean-model.
+    Using the weighted average definition for the mean (e.g., $\hat{\mu}^* = \bar{y}_{\bullet \bullet}$):
+    \begin{itemize}
+      \item For the single-mean model, our best prediction is $\hat{y}_{ij} = \hat{\mu}^* = \bar{y}_{\bullet \bullet}$. Thus, the residual is
+      $$
+      r^{(1)}_{ij} = y_{ij} - \hat{y}_{ij} = y_{ij} - \bar{y}_{\bullet \bullet}.
+      $$
+      \item For the separate means model, the fitted values are the means of each group: $\hat{y}_{ij} = \hat{\mu}_i = \bar{y}_{i\bullet}$, and the residuals are:
+      $$
+      r^{(2)}_{ij} = y_{ij} - \hat{y}_{ij} = y_{ij} - \bar{y}_{i\bullet}
+      $$
+    \end{itemize}
+    
+    \item We then compare model ``closeness" by looking at the sum of square residuals (SSR):
+    $$
+    SSR = \sum_{i = 1}^g\sum_{j = 1}^{n_j} r^2_{ij}.
+    $$
+    \item \textbf{Question:} Why square the residuals?
+    \item Recall that there is some uncertainty in our estimates themselves, and it's not necessarily the only way to estimate these parameters. \textbf{Question:} Why these estimates? \textbf{Answer:} The estimates presented are \emph{least squares} estimators, meaning that they are picked to minimize the SSR for for specific model choice.
+    }
+    
+    \framebreak
+    
+    \item The lower the SSR, the more of the variance in the data is explained by the model.
+    \item Importantly, the SSR for the reduced (single mean) model can \emph{never} be lower than the separate model, and in practice, is nearly always larger.
+    \item What we need now is a way to consistently decide when the separate means model is sufficiently ``better" than the single means model.
+    \item To do so, we will set up a statistical hypothesis test:
+    
+    \mode<article>{
+      We will let the ``null model" be that the single mean model is true, vs the alternative hypotheses that the separate means model is true.
+      We first need to express this hypothesis in terms of parameters, rather than models.
+      
+      Using the $\mu_i = \mu + \alpha_i$ notation for group means, we can express the null hypothesis $H_0$ mathematically as:
+      $$
+      H_0: \, \alpha_i = 0, \quad \text{for all } i
+      $$
+      against
+      $$
+      H_1: \, \alpha_i \neq 0, \quad \text{for some } i
+      $$
+      \textbf{Important:} The alternative isn't that all $\alpha_i$s are different, only that there is at least one treatment group with non-zero $\alpha_i$.
+      
+      Note that we have taken our original model point of view (checking if one model has less residual variation),  and converted to a parameter point of view (checking if there is sufficiently great variation between the observed group means).
+      Really, these are the same thing. 
+    }
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[allowframebreaks]{ANOVA mechanics}
+  \begin{itemize}
+    \item ANOVA works by partitioning the total variance in the data into parts that mimic the model.
+    \item For instance, in the separate mean model, the model says the data differ from the grand mean by a random error and a treatment effect:\mode<presentation>{\vspace{1cm}}
+    \mode<article>{
+    $$
+      y_{ij} - \mu = \alpha_i + \epsilon_{ij}
+    $$
+    }
+    ANOVA will have a similar decomposition: one part dealing with group means, one part with deviations from those means:
+    
+    \mode<article>{
+      \begin{align}
+      y_{ij} - \bar{y}_{\bullet \bullet} &= \big(\bar{y}_{i\bullet} - \bar{y}_{\bullet \bullet}\big) + \big(y_{ij} - \bar{y}_{i\bullet}\big) \label{eq:ANOVA1}\\
+      &= \hat{\alpha}_i + r_{ij} \label{eq:ANOVA2}
+      \end{align}
+      On the left, we have the deviation of a single response from the grand mean. If we square them, then add them up, we get the \textbf{Total Sum of Squares} ($SS_T$):
+      $$
+      SS_T = \sum_{i = 1}^g \sum_{j = 1}^{n_i} (y_{ij} - \bar{y}_{\bullet \bullet})^2. 
+      $$
+      The first difference on the right is the estimated treatment effect, $\hat{\alpha}_i$. If we square the treatment effects, and add them up, we get the \textbf{Treatment Sum of Squares} ($SS_{Trt}$):
+      \begin{align*}
+      SS_{Trt} &= \sum_{i = 1}^{g}\sum_{j = 1}^{n_i}\big(\bar{y}_{i\bullet} - \bar{y}_{\bullet \bullet}\big)^2\\
+               &= \sum_{i = 1}^{g} n_i\big(\bar{y}_{i\bullet} - \bar{y}_{\bullet \bullet}\big)^2 \\
+               &= \sum_{i = 1}^g n_i \hat{\alpha}_i^2
+      \end{align*}
+      The last expression can be readily interpreted as: square each treatment effect, multiply by the number of units receiving that effect, and add over the levels of the effect.
+      
+      The second difference on the right of Eqs.~\ref{eq:ANOVA1}--\ref{eq:ANOVA2} is the $ij$th residual from the model, $r_{ij}$. If you squared and added these, we get the \textbf{Error Sum of Squares} ($SS_E$):
+      $$
+      SS_E = \sum_{i = 1}^g\sum_{j = 1}^{n_i} \big(y_{ij} - \bar{y}_{i\bullet}\big)^2
+      $$
+      Note that this is the same $SS_E$ that we used to estimate $\sigma^2$.
+    }
+  \end{itemize}
+  
+  \framebreak
+  
+  \framebreak
+  
+    \begin{itemize}
+      \item Recall from Eq.~\ref{eq:ANOVA2}, we have:
+      $$
+      y_{ij} - \bar{y}_{\bullet \bullet} = \hat{\alpha}_i + r_{ij}, 
+      $$
+      
+      \mode<article>{
+      so squaring both sides gives:
+      $$
+      \big(y_{ij} - \bar{y}_{\bullet \bullet})^2 = \hat{\alpha}^2_i + r_{ij}^2 + 2\hat{\alpha}_i r_{ij}.
+      $$
+      \item Adding over $i$ and $j$:
+      $$
+      SS_T = SS_{Trt} + SS_E + 2\sum_{i = 1}^g\sum_{j = 1}^{n_i}\hat{\alpha}_i r_{ij}
+      $$
+      It turns out that the last sum is equal to zero (6200-HW problem). This means:
+      $$
+      SS_T = SS_{Trt} + SS_E
+      $$
+      }
+    \end{itemize}
+
+\framebreak
+
+\begin{itemize}
+  \item Finally, we can connect this back to the residuals.
+  \item The Sum of Squared Residuals (SSR) depended on our model:
+  $$
+  SSR_{\text{single means}} = \sum_{i = 1}^g \sum_{j = 1}^{n_i} \big(y_{ij} - \bar{y}_{\bullet \bullet}\big)^2 = SS_T.
+  $$
+  $$
+  SSR_{\text{separate means}} = \sum_{i = 1}^g \sum_{j = 1}^{n_i} \big(y_{ij} - \bar{y}_{i\bullet}\big) = SS_E
+  $$
+  \mode<article>{
+  Thus,
+  $$
+    SS_T = SS_{Trt} + SS_E \quad \implies SS_{Trt} = SSR_{\text{single means}} - SSR_{\text{separate means}}.
+  $$
+  so we have found a link between testing equality of group means and comparing models via $SSR$ of two models: If we fix a dataset, then $SS_T$ is fixed. If there is a lot of variation \emph{between} groups (i.e., large $SS_{Trt}$), then that must mean there is less variation from the treatment means (i.e., smaller $SS_E$). 
+  }
+\end{itemize}
+  
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Calibrating Effect Size}
+  \begin{itemize}
+    \item We have established: 
+    \begin{itemize}
+      \item We will compare single mean against separate mean by comparing their SSRs.
+      \item Comparing SSR can be done by decomposing total error into two parts: $SS_T = SS_{Trt} + SS_E$, and if the separate model is ``much better" than the $SS_{Trt}$ will be large.
+    \end{itemize}
+      \item \textbf{How large is large enough?} \mode<article>{Part of the problem is that $SS_{Trt}$ is data specific. For instance, if our response being measured is some type of length, the size of $SS_{Trt}$ will change if we chose to use inches or centimeters. Even for the same units, what constitutes a large difference depends heavily on the problem being asked! Consider drawing two diagrams, both with the same treatment means. Even though $SS_{Trt}$ may be the same in each diagram, how confident we are depends on the spread of data around each mean ($SS_E$). If the spread is small, we should readily detect differences in treatment means, whereas if the spread is large it becomes difficult to tell if the means are truly different.}
+      
+      \framebreak
+      
+      \item The answer also lies in the decomposition of sum of squares.
+      
+      \mode<article>{
+        Following the single-mean model ($H_0$),
+        $$
+        y_{ij} \sim N(\mu, \sigma^2).
+        $$
+        This implies that
+        $$
+        \frac{SS_E}{\sigma^2} =\sum_{i = 1}^g \sum_{j = 1}^{n_i} \frac{\big(y_{ij} - \bar{y}_{i \bullet})^2}{\sigma^2} \sim \chi^2_{N-g},
+        $$
+        and
+        $$
+        \frac{SS_{Trt}}{\sigma^2} = \sum_{i = 1}^{g}\sum_{j = 1}^{n_i}\frac{\big(\bar{y}_{i\bullet} - \bar{y}_{\bullet \bullet}\big)^2}{\sigma^2} \sim \chi^2_{g-1},
+        $$
+        and therefore
+        \begin{align*}
+        F &= \frac{\big(\frac{SS_{Trt}}{\sigma^2}\big)/(g - 1)}{\big(\frac{SS_{E}}{\sigma^2}\big)/(N - g)} \\
+          &= \frac{SS_{Trt} / (g - 1)}{SS_E / (N - g)} \\
+          &= \frac{MS_{Trt}}{MS_E} \sim F_{g-1, N-g}
+        \end{align*}
+        Where $MS_{Trt}$ and $MS_{E}$ correspond to the mean-square treatment and mean-square error, respectively, using the degrees of freedom of each as the denominator.
+        For this to hold, the numerator and denominator need to be independent random variables; fortunately for us, our null model $(H_0)$ implies this is the case.
+      }
+      
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[allowframebreaks]{ANOVA variable recap}
+
+  \begin{itemize}
+    
+    \item Sum of Square Residuals: 
+    $$
+    SSR = \sum_{i = 1}^g\sum_{j = 1}^{n_i} \big(y_{ij} - \hat{y}_{ij}\big)^2
+    $$
+    \item Treatment Sum of Squares:
+      $$
+      SS_{Trt} = \sum_{i = 1}^g\sum_{j = 1}^{n_i} \big(\bar{y}_{i\bullet} - \bar{y}_{\bullet \bullet}\big)^2 = \sum_{i = 1}^g n_i \hat{\alpha}^2_i.
+      $$
+      
+    \item Error Sum of Squares:
+      $$
+      SS_E = \sum_{i = 1}^g \sum_{j = 1}^{n_i} \big(y_{ij} - \bar{y}_{i \bullet})^2
+      $$
+    
+    \item Total Sum of Squares:
+    $$
+    SS_T = SS_{Trt} + S_E = \sum_{i = 1}^g\sum_{j = 1}^{n_i} \big(y_{ij} - \bar{y}_{\bullet \bullet}\big)^2
+    $$
+    
+    \item F-statistic:
+    $$
+    \frac{SS_{Trt} / (g - 1)}{SS_E / (N - g)} \sim F_{g-1, N-g}.
+    $$
+  \end{itemize}
 \end{frame}
 
 \newcommand\acknowledgments{

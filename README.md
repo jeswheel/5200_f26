@@ -20,5 +20,18 @@ Unfortunately, it's not currently working for the `notes.pdf` files.
 The problem is there is a conflict with `beamerarticle` package that doesn't allow the `\\DocumentMetadata` command.
 Thus, it will currently work for accessible `syllabus.pdf`, but not `notes.pdf`. 
 
+### TODOs
+
+- [ ] **major item, spring 2027**. The `main.Rnw -> notes.pdf` workflow should be made more accessible.
+`latex-lab` should make this somewhat simple. 
+However, a major problem is that `\DocumentMetadata` triggers the `latex-lab` modules, which overwrite low-level components such as lists and blocks.
+This specifically has a conflict with the `beamerarticle` package, which is needed to convert the beamer-like code to a the notes pdf.
+Can this framework be updated / modified?
+
+
 ### Notes to self
+
+- Lecture 0: syllabus. I think this went fairly well. Introduction and syllabus took about an hour, left 15 minutes to introduce R.
+Next time, have a ready .csv file to demonstrate loading, etc. Slightly more organized R / R Studio introduction. About 20 students stayed.
+
 
