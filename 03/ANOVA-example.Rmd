@@ -14,10 +14,8 @@ output:
 Before running any models, it is crucial to understand the structure of your data.
 
 ```{r setup, message=FALSE}
-# Load packages
-library(dplyr)  # OPTIONAL
-
 # Load the data
+# CHECK YOUR FILE PATH!!!
 resin <- read.csv('resin.csv')
 
 colnames(resin)
@@ -127,72 +125,119 @@ model.tables(model, type = "effects")
 
 ------------------------------------------------------------------------
 
-## Computing ANOVA "By-Hand" in R
 
-To understand the formulas from the lecture, we can calculate the Sum of Squares ($SS$) and Mean Squares ($MS$) using basic R functions before letting `aov()` do the heavy lifting.
+<!-- ## Computing ANOVA "By-Hand" in R -->
 
-### Step A: Calculate the Means and Treatment Effects
+<!-- To understand the formulas from the lecture, we can calculate the Sum of Squares ($SS$) and Mean Squares ($MS$) using basic R functions before letting `aov()` do the heavy lifting. -->
 
-Recall that the treatment effect is $\hat{\alpha}_i = \bar{y}_{i\bullet} - \bar{y}_{\bullet\bullet}$.
+<!-- ### Step A: Calculate the Means and Treatment Effects -->
+
+<!-- Recall that the treatment effect is $\hat{\alpha}_i = \bar{y}_{i\bullet} - \bar{y}_{\bullet\bullet}$. -->
+
+<!-- ```{r} -->
+<!-- # 1. Grand Mean (y_bar_dot_dot) -->
+<!-- grand_mean <- mean(resin$time) -->
+
+<!-- # 2. Group Means (y_bar_i_dot) -->
+<!-- group_means <- tapply(resin$time, resin$temperature, mean) -->
+
+<!-- # 3. Treatment Effects (alpha_hat_i) -->
+<!-- alpha_hat <- group_means - grand_mean -->
+
+<!-- print(alpha_hat) -->
+
+<!-- ``` -->
+
+<!-- ### Step B: Calculate the Sum of Squares -->
+
+<!-- We will partition the variance into Total ($SS_T$), Treatment ($SS_{Trt}$), and Error ($SS_E$). -->
+
+<!-- ```{r} -->
+<!-- # Total Sum of Squares (SS_T): deviation of every point from the grand mean -->
+<!-- SS_T <- sum((resin$time - grand_mean)^2) -->
+
+<!-- # Treatment Sum of Squares (SS_Trt): variance explained by the groups -->
+<!-- # Formula: sum(n_i * alpha_hat^2) -->
+<!-- n_i <- table(resin$temperature) -->
+<!-- SS_Trt <- sum(n_i * (alpha_hat)^2) -->
+
+<!-- # Error Sum of Squares (SS_E): what's left over (SS_T = SS_Trt + SS_E) -->
+<!-- SS_E <- SS_T - SS_Trt -->
+
+<!-- # We can also calculate SS_E directly by finding the variance within each group -->
+<!-- # group_vars <- tapply(resin$time, resin$temperature, var) -->
+<!-- # SS_E_direct <- sum((n_i - 1) * group_vars) -->
+
+<!-- ``` -->
+
+<!-- ### Step C: Calculate the F-Statistic -->
+
+<!-- To find the $F$-statistic, we divide our Sum of Squares by their respective degrees of freedom to get the Mean Squares ($MS$). -->
+
+<!-- ```{r} -->
+<!-- # Number of groups (g) -->
+<!-- g <- length(levels(resin$temperature)) -->
+<!-- N <- nrow(resin) -->
+
+<!-- # Degrees of Freedom -->
+<!-- df_trt <- g - 1 -->
+<!-- df_error <- N - g -->
+
+<!-- # Mean Squares -->
+<!-- MS_Trt <- SS_Trt / df_trt -->
+<!-- MS_E <- SS_E / df_error -->
+
+<!-- # F-Statistic -->
+<!-- F_stat <- MS_Trt / MS_E -->
+<!-- print(paste("Calculated F-Statistic:", round(F_stat, 3))) -->
+
+<!-- ``` -->
+
+<!-- ------------------------------------------------------------------------ -->
+
+## Defining and Testing Contrasts
+
+Aside from manual computations, there are a few ways that we can compute a contrast in R. 
+We will use the `emmeans` (estimated marginal means) package, which is useful for analyzing experiments and computing contrasts.
 
 ```{r}
-# 1. Grand Mean (y_bar_dot_dot)
-grand_mean <- mean(resin$time)
+# Install if needed: install.packages("emmeans")
+library(emmeans)
 
-# 2. Group Means (y_bar_i_dot)
-group_means <- tapply(resin$time, resin$temperature, mean)
+# Compute the estimated marginal means from the ANOVA model
+emm <- emmeans(model, ~ temperature)
 
-# 3. Treatment Effects (alpha_hat_i)
-alpha_hat <- group_means - grand_mean
+# Define the custom contrasts as a list of weight vectors
+custom_contrasts <- list(
+  "1 vs 2" = c(1, -1, 0, 0, 0),
+  "2 vs 3" = c(0, 1, -1, 0, 0),
+  "3 vs 4" = c(0, 0, 1, -1, 0),
+  "Avg first 2 vs Avg last 3" = c(3/6, 3/6, -2/6, -2/6, -2/6) # Incorporates the divisor=6
+)
 
-print(alpha_hat)
+# Test the contrasts
+contrast(emm, method = custom_contrasts)
 
+plot(contrast(emm, method = custom_contrasts))
 ```
 
-### Step B: Calculate the Sum of Squares
-
-We will partition the variance into Total ($SS_T$), Treatment ($SS_{Trt}$), and Error ($SS_E$).
+Note that computing one-sided confidence intervals and tests for contrasts is also possible.
+For instance:
 
 ```{r}
-# Total Sum of Squares (SS_T): deviation of every point from the grand mean
-SS_T <- sum((resin$time - grand_mean)^2)
+# Define the custom contrasts
+custom_contrasts <- list(
+  "1 vs 2" = c(1, -1, 0, 0, 0),
+  "2 vs 3" = c(0, 1, -1, 0, 0)
+)
 
-# Treatment Sum of Squares (SS_Trt): variance explained by the groups
-# Formula: sum(n_i * alpha_hat^2)
-n_i <- table(resin$temperature)
-SS_Trt <- sum(n_i * (alpha_hat)^2)
+# Create the contrast object
+my_contrasts <- contrast(emm, method = custom_contrasts)
 
-# Error Sum of Squares (SS_E): what's left over (SS_T = SS_Trt + SS_E)
-SS_E <- SS_T - SS_Trt
+# Get one-sided Confidence Intervals (e.g., upper bound only, testing if < 0)
+confint(my_contrasts, side = "<")
 
-# We can also calculate SS_E directly by finding the variance within each group
-# group_vars <- tapply(resin$time, resin$temperature, var)
-# SS_E_direct <- sum((n_i - 1) * group_vars)
-
+# Get one-sided p-values for hypothesis testing
+test(my_contrasts, side = "<")
 ```
-
-### Step C: Calculate the F-Statistic
-
-To find the $F$-statistic, we divide our Sum of Squares by their respective degrees of freedom to get the Mean Squares ($MS$).
-
-```{r}
-# Number of groups (g)
-g <- length(levels(resin$temperature))
-N <- nrow(resin)
-
-# Degrees of Freedom
-df_trt <- g - 1
-df_error <- N - g
-
-# Mean Squares
-MS_Trt <- SS_Trt / df_trt
-MS_E <- SS_E / df_error
-
-# F-Statistic
-F_stat <- MS_Trt / MS_E
-print(paste("Calculated F-Statistic:", round(F_stat, 3)))
-
-```
-
-------------------------------------------------------------------------
 
