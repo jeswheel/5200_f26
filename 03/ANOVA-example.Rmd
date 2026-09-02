@@ -1,0 +1,198 @@
+---
+title: "Performing ANOVA in R"
+author: "Jesse Wheeler"
+date: "`r Sys.Date()`"
+output:
+  bookdown::html_document2:
+    toc: true
+    toc_float: true
+  bookdown::pdf_document2: default
+---
+
+## Getting to Know the Data
+
+Before running any models, it is crucial to understand the structure of your data.
+
+```{r setup, message=FALSE}
+# Load packages
+library(dplyr)  # OPTIONAL
+
+# Load the data
+resin <- read.csv('resin.csv')
+
+colnames(resin)
+dim(resin)
+head(resin)
+```
+
+R tries to figure out the correct thing to do based on data type. In our lectures on ANOVA, we focused on computing means of **treatment group**:
+
+$$y_{ij} \sim N\big(\mu, \sigma^2\big) \quad \text{vs} \quad y_{ij} \sim N\big(\mu_i, \sigma^2\big)$$ For this data, our response $y_{ij}$ is the `time` variable, and the treatment is temperature.
+
+**PROBLEM: temperature may be *numeric* type**
+
+```{r}
+class(resin$temperature)
+```
+
+Because it is an `integer` type, R is going to treat this like a number for regression, **not** a treatment group / category. **This is a fairly common issue: treatment levels may be numbers, but we need to treat them like labels, not regression variables**.
+
+**Solution: Convert to a `factor`**
+
+```{r}
+resin$temperature <- as.factor(resin$temperature)
+class(resin$temperature)
+```
+
+When a variable is a `factor` type, we can use the `table()` function to give categorical counts:
+
+```{r}
+table(resin$temperature)
+```
+
+The top row is the category (called a `level` in R), and the bottom row is the number of observations that are in that category, so we have $g = 5$ and
+
+$$n_1 = 8, \, n_2 = 8, \, n_3 = 8, \, n_4 = 7, \, n_5 = 6$$
+
+With the following treatment groups (`levels`):
+
+```{r}
+levels(resin$temperature)
+```
+
+------------------------------------------------------------------------
+
+## Performing ANOVA with `aov()`
+
+In class, we described ANOVA in terms of a few key quantities: Degrees of Freedom, Sum of Squares, and F-statistics, as summarized in the table below.
+This table represents a fairly generic ANOVA table, output that you would get in many different programing languages.
+
+| Source | DF | SS | MS | F |
+|:---|:---:|:---:|:---:|:---:|
+| **Treatments** | $g - 1$ | $SS_{Trt}$ | $SS_{Trt}/(g - 1) = MS_{Trt}$ | $MS_{Trt} / MS_E$ |
+| **Error** | $N - g$ | $SS_E$ | $SS_E/(N - g) = MS_E$ | |
+
+To get this table in R, we can use the `aov` function:
+
+```{r}
+# Run the built-in ANOVA function
+model <- aov(time ~ temperature, data = resin)
+summary(model)
+```
+
+**Why `as.factor()` is critical:** If your treatment levels are numeric (e.g., temperatures of 150, 175, 200), R will default to treating them as a continuous variable. It will attempt to fit a single regression line rather than estimating separate categorical group means ($\mu_i$). Wrapping the variable in `as.factor()` forces R to treat each temperature as a distinct, independent treatment group ($i = 1, \dots, g$).
+
+------------------------------------------------------------------------
+
+## Mapping the R Output to ANOVA Mechanics
+
+Running `summary(model)` produces the classic ANOVA table. This table directly computes the Sum of Squares ($SS$) and Mean Squares ($MS$) used to compare the fit of the reduced model versus the full model.
+
+| R Output Column | Slide Notation | Interpretation |
+|------------------------|------------------------|------------------------|
+| **Df** | $g-1$ and $N-g$ | Degrees of freedom for treatments and error, respectively. |
+| **Sum Sq** | $SS_{Trt}$ and $SS_E$ | $SS_{Trt}$ (Temperature row) measures variance *between* group means. $SS_E$ (Residuals row) measures variance *within* groups. |
+| **Mean Sq** | $MS_{Trt}$ and $MS_E$ | The Sum of Squares divided by their respective Degrees of Freedom. $MS_E$ is our unbiased estimate of the variance, $\hat{\sigma}^2$. |
+| **F value** | $F$ | $MS_{Trt} / MS_E$. A larger $F$ indicates the separate means model explains significantly more variance than the single mean model. |
+| **Pr(\>F)** | $p$-value | The probability of seeing this $F$-statistic if the single mean model ($H_0: \alpha_i = 0$) were true. |
+
+------------------------------------------------------------------------
+
+## Estimating Parameters: Means and Treatment Effects
+
+We have defined ANOVA using group means defined as: $\mu_i = \mu^* + \alpha_i$, where $\mu^*$ is the overall mean and $\alpha_i$ is the specific treatment effect.
+This is the **weighted average** approach, and it is also what is used by the R `aov` function. 
+
+### Finding the Group Means ($\hat{\mu}_i$)
+
+To find the separate group means ($\bar{y}_{i\bullet}$), we can aggregate the data:
+
+```{r getGroupMeans}
+# Returns the mean 'time' for each 'temperature' group
+tapply(resin$time, resin$temperature, mean)
+```
+
+### Finding the Treatment Effects ($\hat{\alpha}_i$)
+
+By default, the `aov()` function paired with `model.tables()` uses the **weighted average** approach for the overall mean ($\hat{\mu}^* = \bar{y}_{\bullet\bullet}$), where $\sum n_i \hat{\alpha}_i = 0$.
+
+```{r estimateTreatmentEffects}
+# Computes the estimated treatment effects (alpha_hat) for each group
+model.tables(model, type = "effects")
+```
+
+*Note on Reference Groups:* If you instead run `lm(time ~ as.factor(temperature))`, R defaults to the **Reference Group** parameterization ($\hat{\mu}^* = \bar{y}_{1\bullet}$). In that summary, the intercept is the mean of the first group, and the coefficients are the treatment effects ($\hat{\alpha}_i$) representing the difference between group $i$ and the first group.
+
+
+
+------------------------------------------------------------------------
+
+## Computing ANOVA "By-Hand" in R
+
+To understand the formulas from the lecture, we can calculate the Sum of Squares ($SS$) and Mean Squares ($MS$) using basic R functions before letting `aov()` do the heavy lifting.
+
+### Step A: Calculate the Means and Treatment Effects
+
+Recall that the treatment effect is $\hat{\alpha}_i = \bar{y}_{i\bullet} - \bar{y}_{\bullet\bullet}$.
+
+```{r}
+# 1. Grand Mean (y_bar_dot_dot)
+grand_mean <- mean(resin$time)
+
+# 2. Group Means (y_bar_i_dot)
+group_means <- tapply(resin$time, resin$temperature, mean)
+
+# 3. Treatment Effects (alpha_hat_i)
+alpha_hat <- group_means - grand_mean
+
+print(alpha_hat)
+
+```
+
+### Step B: Calculate the Sum of Squares
+
+We will partition the variance into Total ($SS_T$), Treatment ($SS_{Trt}$), and Error ($SS_E$).
+
+```{r}
+# Total Sum of Squares (SS_T): deviation of every point from the grand mean
+SS_T <- sum((resin$time - grand_mean)^2)
+
+# Treatment Sum of Squares (SS_Trt): variance explained by the groups
+# Formula: sum(n_i * alpha_hat^2)
+n_i <- table(resin$temperature)
+SS_Trt <- sum(n_i * (alpha_hat)^2)
+
+# Error Sum of Squares (SS_E): what's left over (SS_T = SS_Trt + SS_E)
+SS_E <- SS_T - SS_Trt
+
+# We can also calculate SS_E directly by finding the variance within each group
+# group_vars <- tapply(resin$time, resin$temperature, var)
+# SS_E_direct <- sum((n_i - 1) * group_vars)
+
+```
+
+### Step C: Calculate the F-Statistic
+
+To find the $F$-statistic, we divide our Sum of Squares by their respective degrees of freedom to get the Mean Squares ($MS$).
+
+```{r}
+# Number of groups (g)
+g <- length(levels(resin$temperature))
+N <- nrow(resin)
+
+# Degrees of Freedom
+df_trt <- g - 1
+df_error <- N - g
+
+# Mean Squares
+MS_Trt <- SS_Trt / df_trt
+MS_E <- SS_E / df_error
+
+# F-Statistic
+F_stat <- MS_Trt / MS_E
+print(paste("Calculated F-Statistic:", round(F_stat, 3)))
+
+```
+
+------------------------------------------------------------------------
+
