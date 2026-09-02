@@ -632,6 +632,148 @@
   \end{itemize}
 \end{frame}
 
+
+\section{Contrasts}
+
+\begin{frame}[allowframebreaks]{Introduction to Contrasts}
+  \begin{itemize}
+    \item An ANOVA can give us a good overview as to whether all the treatment groups have the same mean response.
+    \item However, an ANOVA by itself does not tell which treatments are different or in what ways they differ.
+    \item One method to examine treatment effects is called a \alert{contrast}.
+    \item A contrast is a formula which compares two or more treatment means or effects in a way that does not depend on the overall level $\mu$.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Formal Definition}
+  \begin{itemize}
+    \item A contrast is a linear combination of treatment means $\mu_i$'s:
+    $$
+    W(\mu_i) = \sum_i w_i \mu_i, \quad \sum_i w_i = 0
+    $$
+    \item The condition $\sum_i w_i = 0$ guarantees that $W(\mu_i)$ does not depend on $\mu$.
+    \item Often the weights $w_i$ themselves are referred to as a contrast.
+    \item An observed contrast or estimated contrast is defined as:
+    $$
+    W(\bar{y}_{i\bullet}) = \sum_i w_i \bar{y}_{i\bullet} = \sum_i w_i \hat{\alpha}_i = W(\{\hat{\alpha}_i\})
+    $$
+  \end{itemize}
+\end{frame}
+
+\section{Common Contrasts}
+
+\begin{frame}[allowframebreaks]{Types of Common Contrasts}
+  \begin{block}{Pairwise Contrasts}
+    \begin{itemize}
+        \item It is often of interest to compare all pairs of groups.
+        \item For a total of $g$ treatment groups, there are $\frac{1}{2}g(g-1)$ different pairwise contrasts.
+    \end{itemize}
+  \end{block}
+
+  \begin{block}{Comparison with a Control}
+    \begin{itemize}
+        \item Let's suppose treatment 1 is a control.
+        \item An obvious idea is to compare the mean or effect of the control with the average mean or effect of all non-controls.
+        \item Individual pairwise comparisons with the control would probably be of interest too.
+        \item Notice that multiplying the coefficients of a contrast by a common factor (usually to produce integer coefficients) will result in an equivalent contrast.
+    \end{itemize}
+  \end{block}
+  
+  \framebreak
+
+  \begin{block}{Factorial Treatments}
+    \begin{itemize}
+        \item Suppose there are two treatment factors, A and B, each at two levels.
+        \item There will be 4 treatments with means $\mu_{11}, \mu_{12}, \mu_{21}, \mu_{22}$.
+        \item Natural contrasts in such experiments include:
+        \begin{itemize}
+            \item Average of row 1 vs average of row 2.
+            \item Average of column 1 vs average of column 2.
+            \item Difference between effects of A for the two levels of B.
+        \end{itemize}
+        \item When this contrast is not zero, it means the effect of A depends on the level of B, or equivalently, the effect of B depends on the level of A.
+        \item When such a situation occurs, we say there is interaction between factors A and B, and we call it an interaction contrast.
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Linear Contrasts}
+  \begin{itemize}
+    \item Suppose the treatments are determined by a quantitative variable $X$ with levels $x_1, x_2, \ldots, x_g$.
+    \item Then, if you fit a regression line, the least squares estimate of the slope is:
+    $$
+    b = \frac{\sum_i n_i (x_i - \bar{x}) \bar{y}_{i\bullet}}{\sum_i n_i (x_i - \bar{x})^2}
+    $$
+    \item This is a contrast with weights proportional to $(x_i - \bar{x})$.
+    \item This is called a linear contrast.
+    \item It will be large when there is a high degree of linear dependence of the means on $X$.
+  \end{itemize}
+\end{frame}
+
+\section{Variance and Confidence Intervals}
+
+\begin{frame}[allowframebreaks]{Inference on Contrasts}
+  \begin{itemize}
+    \item Under the null hypothesis and normality assumption, we can use Student's t with $df = N-g$ in tests or confidence intervals.
+    \item Under the null hypothesis, $W(\mu_i) = \sum_i w_i \mu_i = 0$.
+    \item The standardized estimated contrast follows a student-t distribution with $df = N-g$:
+    $$
+    t = \frac{\sum_i w_i \bar{y}_{i\bullet}}{s_p \sqrt{\sum_i w_i^2 / n_i}}
+    $$
+    
+    \framebreak
+
+    \item A $1-\alpha$ confidence interval for a contrast $W(\mu_i)$ has the usual form:
+    $$
+    \text{estimate} \pm \text{critical value} \times \text{standard error}
+    $$
+  \end{itemize}
+\end{frame}
+
+\section{Orthogonality}
+
+\begin{frame}[allowframebreaks]{Orthogonal Contrasts}
+  \begin{itemize}
+    \item Two contrasts $W^{(1)}$ and $W^{(2)}$ are orthogonal if:
+    $$
+    \sum_{i=1}^g \frac{w_i^{(1)}w_i^{(2)}}{n_i} = 0
+    $$
+    \item When the sample sizes are equal, this simplifies to:
+    $$
+    \sum_{i=1}^g w_i^{(1)}w_i^{(2)} = 0
+    $$
+    \item When the ANOVA assumptions are satisfied, two orthogonal contrasts are independent.
+    \item With independent errors (but not normality), orthogonal contrasts are uncorrelated.
+    
+    \framebreak
+    
+    \item \textbf{Example:} With a factorial design, there are $g=4$ treatments defined by all combinations of two factors A and B each at two levels.
+    \item An important family of contrasts for this case are defined by:
+    \begin{itemize}
+        \item $W^{(1)} = \{\frac{1}{2}, \frac{1}{2}, -\frac{1}{2}, -\frac{1}{2}\}$ or $\{1, 1, -1, -1\}$.
+        \item $W^{(2)} = \{\frac{1}{2}, -\frac{1}{2}, \frac{1}{2}, -\frac{1}{2}\}$ or $\{1, -1, 1, -1\}$.
+        \item $W^{(3)} = \{1, -1, -1, 1\}$.
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\section{Polynomial Contrasts}
+
+\begin{frame}[allowframebreaks]{Polynomial Contrasts}
+  \begin{itemize}
+    \item Polynomial contrasts are particularly useful when the treatments are determined by levels of a quantitative variable $X$.
+    \item We looked at a linear contrast, whose coefficients are proportional to $w_i = x_i - \bar{x}$.
+    \item Similarly, there are contrasts that focus on the quadratic, cubic and higher order terms.
+    \item When treatments are equally spaced, there are tables of polynomial contrast coefficients (Table D6, pp. 630).
+    \item But these don't help when the treatments are not equally spaced.
+    
+    \framebreak
+    
+    \item In either case, the SAS function \texttt{orpol} can compute the coefficients of a polynomial contrast.
+    \item Polynomial contrasts are all mutually orthogonal.
+    \item \textbf{Note:} Polynomial contrasts should be tested from higher order to lower order and stopped at the first significant order.
+  \end{itemize}
+\end{frame}
+
 \newcommand\acknowledgments{
 \begin{itemize}
 \item   Compiled on {\today} using \Rlanguage version \Sexpr{getRversion()}.
