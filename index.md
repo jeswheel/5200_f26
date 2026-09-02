@@ -29,7 +29,7 @@ PREREQ: Earn a minimum grade of C- one of the following:
 0. [Software tutorials and installation (R + RStudio)](00/index.html)
 1. [Introduction](01/index.html)
 2. [Randomization and Hypothesis Testing](02/index.html)
-3. [Completely Randomized Design](03/index.html)
+3. [Completely Randomized Design and ANOVA](03/index.html)
 4. [Factorial Designs](04/index.html)
 5. [Random Effects Models](05/index.html)
 6. [General Mixed Effects Models](06/index.html)

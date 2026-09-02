@@ -1,5 +1,5 @@
 ---
-title: "Completely Randomized Designs"
+title: "Completely Randomized Designs and ANOVA"
 author: "Jesse Wheeler"
 output: html_document
 ---
@@ -30,6 +30,5 @@ We will also introduce our first form of analysis for a designed experiment: Ana
 [Back to course homepage](../index.html)  
 [Acknowledgements](../acknowledge.html)  
 [Source code for these notes](http://github.com/jeswheel/5200_f26/tree/main/03/)
-
 
 ----------------------

@@ -21,7 +21,7 @@
 % \newcommand\answer[2]{\textcolor{red}{#2}} % to show answers
  \newcommand\answer[2]{#1} % to show blank space
 
-\title{\vspace{2mm} \link{https://jeswheel.github.io/5200_f26/}{Stat 5200: Analysis of Designed Experiments}}
+\title{\vspace{2mm} \link{https://jeswheel.github.io/5200_f26/}{Stat 5200, Module 3: Completely Randomized Designs and ANOVA}}
 \author{Jesse Wheeler}
 \date{}
 
