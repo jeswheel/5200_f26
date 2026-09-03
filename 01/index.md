@@ -18,7 +18,7 @@ This section is intended to introduce to course and topics. Desired outcomes:
 |:-----------------------|:------------------------:|
 | Lecture slides   | [pdf](slides.pdf) |
 | Lecture notes    | [pdf](notes.pdf) |
-<!-- | Annotated Slides | [pdf](annotatedSlides.pdf) | -->
+| Annotated Slides | [pdf](annotatedSlides.pdf) |
 <!-- | Discussion Problems | [pdf](discussionProbs.pdf) | -->
 ----------------------
 
