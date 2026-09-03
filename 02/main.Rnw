@@ -145,7 +145,7 @@
   
 \end{frame}
 
-\begin{frame}[allowframebreaks]{Randmizing ``Other Things"}
+\begin{frame}[allowframebreaks]{Randomizing ``Other Things"}
   \begin{itemize}
     \item We have taken a simple view so far of experiments: ``assign treatments to units, and measure responses". 
     \item Though naturally we do assignments randomly, additional things can and should be randomized: 
