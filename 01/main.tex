@@ -87,17 +87,20 @@
         \item The bar above a number is intended to be an average. For instance, $\bar{y}_{i, \bullet}$ is the average value of $y$ in group $i$, and $\bar{y}_{\bullet, \bullet}$ would be the average of all $y$. Sometimes due to pure laziness on my part, I may indicate $\bar{y} = \bar{y}_{\bullet, \bullet}$ If there is any confusion, don't be afraid to ask. 
       \end{itemize}
     }
-    \item $y^*_{ij}$
-    \mode<presentation>{\vfill}
-    \mode<article>{
-      \begin{itemize}
-        \item Personal favorite, though probbaly won't be used much in this class. $y_{ij}$ might represent any arbitrary value, whereas the ``star" version $y^*_{ij}$ is used to emphasize that it's not just an arbitrary value, but a real data point. This is particularly relevant if we are using function notation; $f(y_{ij})$ could be a function for any arbitrary input $y_{ij}$, whereas $f(y^*_{ij})$ is used to emphasize that it's not just any value, but the data plugged into that function.
-      \end{itemize}}
     \item $\mathbb{R}$ 
     \mode<article>{
       \begin{itemize} 
         \item All real numbers.
       \end{itemize}}
+    \item $\in$
+    \mode<article>{
+      \begin{itemize}
+        \item This is the mathematical symbol for ``in", or more formally ``is an element of".
+        If I write $x \in \R$, that can be read ``$x$ is an element of the set of real numbers",
+        meaning that ``$x$ is a real number".
+        Similarly, $n \in 1:N$ implies that $n$ is an integer in the set $\{1, 2, \ldots, N\}$.
+      \end{itemize}
+    }
   \end{itemize}
 \end{frame}
 
@@ -299,7 +302,7 @@
 
 \newcommand\acknowledgments{
 \begin{itemize}
-\item   Compiled on {\today} using \Rlanguage version 4.6.1.
+\item   Compiled on {\today} using \Rlanguage version 4.5.0.
 \item   \parbox[t]{0.75\textwidth}{Licensed under the \link{http://creativecommons.org/licenses/by-nc/4.0/}{Creative Commons Attribution-NonCommercial license}.
     Please share and remix non-commercially, mentioning its origin.}
     \parbox[c]{1.5cm}{\includegraphics[height=12pt]{../cc-by-nc}}
