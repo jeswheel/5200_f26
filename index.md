@@ -26,7 +26,6 @@ PREREQ: Earn a minimum grade of C- one of the following:
 
 ## Class notes
 
-0. [Software tutorials and installation (R + RStudio)](00/index.html)
 1. [Introduction](01/index.html)
 2. [Randomization and Hypothesis Testing](02/index.html)
 3. [Completely Randomized Design and ANOVA](03/index.html)
