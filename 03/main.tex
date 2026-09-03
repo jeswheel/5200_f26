@@ -838,6 +838,398 @@
 %   \end{itemize}
 % \end{frame}
 
+\section{Multiple Comparisons}
+
+\begin{frame}[allowframebreaks]{The Need for Multiple Comparisons}
+  \begin{itemize}
+    \item When picking contrasts, it is important to consider the issue of \alert{multiple comparisons}.
+    \item Idea: we pick a $\alpha$ value to test at (e.g., $\alpha = 0.05$). That means, for a single test, there is only a $5\%$ chance ($1/20$) that we will ``incorrectly reject" a true null.
+    \textbf{What if we conduct 15 tests?}
+    
+    \framebreak
+    
+    \item A test of a single hypothesis is characterized by two error rates: the Type I error rate ($\alpha$) and the Type II error rate ($\beta$).
+
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Types of Error Rates}
+When there are $K$ hypotheses, the situation becomes more complicated, and we must define which type of error rate we are trying to control.
+  \begin{itemize}
+    \item \alert{Per Comparison Error Rate}: The probability of a Type I error relative to any single, specific hypothesis. In the context of multiple comparisons, this is just our standard $\alpha$.
+    \item \alert{Familywise Error Rate (FWER)}: The probability of rejecting at least one true null hypothesis when all null hypotheses are true. This is also referred to as the experimentwise error rate.
+    \item \alert{Strong Familywise Error Rate}: The probability of making any false discoveries (rejecting at least one true $H_0$), regardless of how many correct rejections are made.
+    \item \alert{False Discovery Rate (FDR)}: The expected proportion of false discoveries among all the rejected hypotheses.
+  \end{itemize}
+  
+  \mode<article>{
+    An important condition of the standard familywise error rate is the assumption that \emph{all} null hypotheses are true, which is often unrealistic. The Strong FWER does not rely on this assumption; if controlling the strong FWER at $\epsilon$, one true rejection cannot make false rejections more likely. 
+    
+    Alternatively, controlling the FDR allows for some incorrect rejections as the number of true rejections increases. For example, if we control the FDR at 0.05, we are allowed one incorrect rejection with 19 correct rejections. 
+  }
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Bonferroni Method}
+  \begin{itemize}
+    \item The Bonferroni method relies on the Bonferroni Inequality, which states that for $K$ events, $P(E_1 \cup E_2 \cup \ldots \cup E_K) \le \sum_{i=1}^K P(E_i)$.
+    \item If you test $K$ true null hypotheses at level $\alpha$, the probability of rejecting one or more is bounded by $K\alpha$.
+    \item To control the familywise error rate at $\alpha$ for $K$ simultaneous contrasts, the Bonferroni method uses $\alpha/K$ as the significance level for each individual comparison.
+    \item Equivalently, you can multiply each ordinary P-value by $K$ to obtain a "Bonferronized P-value".
+    \item \textbf{Usage Rule:} The Bonferroni method is designed for a family of K contrasts chosen in advance of seeing the data. When you are testing 6 or fewer pre-chosen contrasts, Bonferroni is better than HSD (Tukey).
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Tukey's Honestly Significant Difference (HSD)}
+  \begin{itemize}
+    \item Tukey's HSD is based on the Studentized range distribution ($Q$), which is characterized by the number of groups $g$ and the degrees of freedom for error, independent of $\mu$ or $\sigma$.
+    \item For equal sample sizes, we reject the null hypothesis if the maximum mean minus the minimum mean is greater than or equal to the HSD.
+    \item The formula is: $HSD = q_{1-\alpha}(g, N-g) \frac{s_p}{\sqrt{n}}$.
+    \item \textbf{Unequal Sample Sizes:} Its disadvantage is that it assumes equal sample sizes. When this is violated, the extension of Tukey-Cramer method can be considered.
+    \item \textbf{Usage Rule:} HSD (Tukey) is designed just for pairwise comparisons, although it can be extended to all contrasts. Most often, HSD is the preferred method.
+  \end{itemize}
+  
+  \framebreak 
+  
+  \mode<article>{
+    Mathematically, the Studentized range is defined as $Q = \frac{\max\{X_i\} - \min\{X_i\}}{S}$. John Tukey named this method the ``Honestly Significant Difference'' because he believed the widely used Least Significant Difference (LSD) method (first formalized by R. A. Fisher) often found more significant differences than was not quite ``honest''.
+    
+    \textbf{Practical Application of HSD:}
+    \begin{enumerate}
+      \item Order the means from smallest to largest: $\bar{y}_{(1)\bullet} \le \bar{y}_{(2)\bullet} \le \ldots \le \bar{y}_{(g)\bullet}$.
+      \item Find all means that are not significantly different from the smallest mean ($\bar{y}_{(i)\bullet} - \bar{y}_{(1)\bullet} < HSD$) and draw a line under them.
+      \item Then all means $\bar{y}_{(i)\bullet}$ with $i>2$ such that $\bar{y}_{(i)\bullet} - \bar{y}_{(2)\bullet} < HSD$ are considered not significantly different from $\bar{y}_{(2)\bullet}$, and a line is drawn under them. If a line is completely under another line, there is no need to draw.
+    \end{enumerate}
+    
+    A natural path to extend the Tukey method to unequal sample sizes is to use the standard error $SE = \sqrt{s_p^2 (\frac{1}{n_i} + \frac{1}{n_j})}$ in place of $\sqrt{s_p^2 (\frac{2}{n})}$ (equal sample sizes) in computing the HSD.
+  }
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Scheffé Method and Simultaneous Confidence Intervals}
+  \begin{itemize}
+    \item \textbf{Scheffé Method}: Controls the familywise error rate for the infinite set of all contrasts. 
+    \item The constant used in the method is computed based on F distribution, and is called Scheffe Significant Difference (SSD).
+    \item \textbf{Usage Rule:} There are only two situations in which you should consider the Scheffe method:
+    \begin{enumerate}
+      \item You want to test K preplanned contrasts where K is substantially greater than the number of pairwise contrasts.
+      \item You want to test one or more contrasts selected after seeing the data.
+    \end{enumerate}
+    
+    \framebreak 
+    
+    \item \textbf{Simultaneous Confidence Intervals}: A set of intervals $I_1, I_2, \ldots, I_k$ are $1-\epsilon$ level simultaneous confidence intervals if the probability that \emph{all} intervals cover the true parameters is $\ge 1-\epsilon$.
+  \end{itemize}
+\end{frame} 
+
+\begin{frame}[allowframebreaks]{Summary: Choosing a Method}
+  \begin{itemize}
+    \item None of these methods is ``best'' and they should look to see what level of agreement there is among the methods.
+    \item If they disagree, then it is up to the experimenter to decide the level of comfort with controlling Type I error or getting more power.
+    \item \textbf{General Guidelines:}
+    \begin{itemize}
+      \item \textbf{Few Pre-planned Contrasts ($\le 6$):} Bonferroni is better than HSD (Tukey).
+      \item \textbf{All Pairwise Comparisons:} Most often, HSD is the preferred method (use Tukey-Cramer if sample sizes are unequal).
+      \item \textbf{Data Snooping / Many Contrasts:} Scheffé method aims at controlling the familywise error rate for the infinite set of all contrasts.
+    \end{itemize}
+    \item \textit{Note: If you only have one or two pre-planned orthogonal contrasts, some practitioners choose not to adjust for multiple comparisons at all, accepting the per comparison error rate. However, controlling the familywise rate remains the safer statistical practice.}
+  \end{itemize}
+\end{frame}
+
+\section{Applied Example: Plant Growth}
+
+\begin{frame}[fragile, allowframebreaks]{Example 1: Data Setup and the F-Test}
+  \begin{itemize}
+    \item We will use R's built-in \texttt{PlantGrowth} dataset, measuring dried plant yields under a control and two different treatment conditions.
+    \item As discussed, a Completely Randomized Design (CRD) is the simplest design for comparing treatments. We have $g=3$ groups and $N=30$ total plants.
+  \end{itemize}
+  
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{# Load data and check the structure}
+\hlkwd{data}\hldef{(PlantGrowth)}
+\hlkwd{str}\hldef{(PlantGrowth)}
+\end{alltt}
+\begin{verbatim}
+'data.frame':	30 obs. of  2 variables:
+ $ weight: num  4.17 5.58 5.18 6.11 4.5 4.61 5.17 4.5..
+ $ group : Factor w/ 3 levels "ctrl","trt1",..: 1 1 1..
+\end{verbatim}
+\begin{alltt}
+\hlcom{# Ensure the treatment is a factor (categorical)}
+\hlkwd{class}\hldef{(PlantGrowth}\hlopt{$}\hldef{group)}
+\end{alltt}
+\begin{verbatim}
+[1] "factor"
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+  \framebreak
+  
+  \begin{itemize}
+    \item We first test the null hypothesis that all group means are equal using an omnibus ANOVA F-test.
+  \end{itemize}
+
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{# Run the ANOVA model}
+\hldef{pg_model} \hlkwb{<-} \hlkwd{aov}\hldef{(weight} \hlopt{~} \hldef{group,} \hlkwc{data} \hldef{= PlantGrowth)}
+
+\hlcom{# View the ANOVA table}
+\hlkwd{summary}\hldef{(pg_model)}
+\end{alltt}
+\begin{verbatim}
+            Df Sum Sq Mean Sq F value Pr(>F)  
+group        2  3.766  1.8832   4.846 0.0159 *
+Residuals   27 10.492  0.3886                 
+---
+Signif. codes:  
+0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+  \begin{itemize}
+    \item \textbf{Interpretation:} With a $p$-value of 0.0159, we reject the null hypothesis. There is a significant difference in plant yields between at least some of the groups. But which ones?
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile, allowframebreaks]{Example 2: Formulating Custom Contrasts}
+  \begin{itemize}
+    \item We know from our model that the single mean model is inadequate, so we want to estimate the separate group means.
+    \item Let's test a specific contrast: Is the control group significantly different from the average of the two experimental treatments?
+  \end{itemize}
+  
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{library}\hldef{(emmeans)}
+
+\hlcom{# Get estimated marginal means}
+\hldef{pg_emm} \hlkwb{<-} \hlkwd{emmeans}\hldef{(pg_model,} \hlopt{~} \hldef{group)}
+
+\hlcom{# Define contrast: Control (1) vs Average of Trt1 (2) and Trt2 (3)}
+\hlcom{# Weights must sum to zero}
+\hldef{custom_list} \hlkwb{<-} \hlkwd{list}\hldef{(}\hlsng{"Control vs Average Trt"} \hldef{=} \hlkwd{c}\hldef{(}\hlnum{1}\hldef{,} \hlopt{-}\hlnum{0.5}\hldef{,} \hlopt{-}\hlnum{0.5}\hldef{))}
+
+\hlcom{# Test the contrast}
+\hlkwd{contrast}\hldef{(pg_emm,} \hlkwc{method} \hldef{= custom_list)}
+\end{alltt}
+\begin{verbatim}
+ contrast               estimate    SE df t.ratio
+ Control vs Average Trt  -0.0615 0.241 27  -0.255
+ p.value
+  0.8009
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+  \begin{itemize}
+    \item \textbf{Interpretation:} The $p$-value is 0.2644. We do not have sufficient evidence to say the control is different from the \emph{average} of the two treatments.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile, allowframebreaks]{Example 3: Multiple Comparisons}
+  \begin{itemize}
+    \item What if we want to compare all individual pairs of treatments? 
+    \item We must adjust for multiple comparisons to control the familywise error rate. Tukey's HSD is the preferred method for all pairwise comparisons.
+  \end{itemize}
+
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{# Run all pairwise comparisons with Tukey adjustment}
+\hldef{pg_pairwise} \hlkwb{<-} \hlkwd{contrast}\hldef{(pg_emm,} \hlkwc{method} \hldef{=} \hlsng{"pairwise"}\hldef{)}
+
+\hlkwd{summary}\hldef{(pg_pairwise)}
+\end{alltt}
+\begin{verbatim}
+ contrast    estimate    SE df t.ratio p.value
+ ctrl - trt1    0.371 0.279 27   1.331  0.3909
+ ctrl - trt2   -0.494 0.279 27  -1.772  0.1980
+ trt1 - trt2   -0.865 0.279 27  -3.103  0.0120
+
+P value adjustment: tukey method for comparing a family of 3 estimates 
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+  \begin{itemize}
+    \item \textbf{Interpretation:} After applying the Tukey penalty, only the difference between \texttt{trt1} and \texttt{trt2} is statistically significant ($p = 0.0120$). The control is not significantly different from either individual treatment.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Other Common Scenarios (See Textbook)}
+  \begin{itemize}
+    \item While Bonferroni, Tukey, and Scheffé cover the majority of basic experimental designs, there are specialized methods for other common scenarios.
+    \item \textbf{Comparing to a Control:} If your experiment has one baseline control group and several treatments, you rarely need all pairwise comparisons. \textbf{Dunnett's Test} is specifically designed to control the familywise error rate for this exact scenario, providing more power than Bonferroni or Tukey.
+    \item \textbf{High-Throughput Testing (FDR):} If you are running hundreds or thousands of tests (e.g., genomics), controlling the FWER is too strict. Methods like the \textbf{Benjamini-Hochberg procedure} control the False Discovery Rate instead.
+    \item \textbf{Sequential / Step-Down Methods:} Procedures like \textbf{Holm's method} provide a uniformly more powerful alternative to the standard Bonferroni correction by evaluating $p$-values sequentially.
+    \item \textbf{Further Reading:} We will not cover the mathematical derivations of these methods in class, but you can find their details, applications, and statistical tables in Oehlert (2000).
+  \end{itemize}
+  
+  \mode<article>{
+    When you encounter these scenarios in your own research, modern statistical software (like the \texttt{emmeans} package in R) makes applying them straightforward. For instance, comparing treatments to a control can be done using \texttt{method = "trt.vs.ctrl"} in \texttt{emmeans}, which automatically applies Dunnett's adjustment. Refer to Oehlert for the underlying theory and to ensure your experimental design meets the assumptions for these specialized methods.
+  }
+\end{frame}
+
+\section{Testing Model Assumptions}
+
+\begin{frame}[fragile, allowframebreaks]{Core Assumptions of the Errors}
+  \begin{itemize}
+    \item The validity of ANOVA results, including contrasts and some forms of multiple testing, depends on our model assumptions.
+    \item For the one-way ANOVA CRD model: $y_{ij} = \mu^* + \alpha_i + \epsilon_{ij}$.
+    \item Our main assumptions for this model include:
+    \begin{itemize}
+      \item All $\epsilon_{ij}$ are independent \mode<article>{meaning that different observations in the same group are independent, and data from different groups are independent.}
+      \item The variances of $\epsilon_{ij}$'s are all the same.
+      \item The $\epsilon_{ij}$'s are normally distributed.
+    \end{itemize}
+    
+    \mode<article>{
+      We can combine these three assumptions into a single statement:
+      \begin{quote}
+      $\epsilon_{ij}$'s are an independent and identically distributed (i.i.d.) random sample from $N(0, \sigma^2)$. 
+      \end{quote}
+    }
+    
+    \framebreak
+    
+    \item Listing the assumptions in decreasing order of importance:
+    \begin{enumerate}
+      \item \textbf{Independence} (most important) \mode<article>{Achieved by randomization}.
+      \item \textbf{Constant variance} (next most important).
+      \item \textbf{Normal distribution} (least important).
+    \end{enumerate}
+    
+    \mode<article>{
+    Probably all of these assumptions are never \emph{exactly} true, we are more concerned with serious violations of these assumptions.
+    }
+  \end{itemize}
+  
+
+\end{frame}
+
+\begin{frame}[fragile, allowframebreaks]{Diagnosing Violations}
+  \begin{itemize}
+    \item Essentially all methods for diagnosing violation of assumptions are based on study of the \underline{\hspace{3cm}}.
+    \item Conceptually: $r_{ij} = \underline{\hspace{2.5cm}} - \underline{\hspace{2.5cm}}$.
+    \item \textbf{Tests vs. Plots:} There are tests for normality and equal variances, but they have limitations (small sample sizes lack power; large sample sizes detect trivial problems).
+    \item Therefore, formal tests are \underline{\hspace{3cm}}, while plots are \underline{\hspace{3cm}}.
+  \end{itemize}
+
+  \mode<article>{
+    \textbf{Fill-in Answers \& Notes:}
+    \begin{itemize}
+      \item Diagnosing violations is based on the study of the \textbf{residuals} ($r_{ij}$).
+      \item Conceptually: $r_{ij} = \textbf{observed} - \textbf{predicted}$.
+      \item The residual ($r_{ij} = y_{ij} - \bar{y}_{i\cdot}$) is the sample version of the errors. Intuitively, if your model is appropriate, $r_{ij}$ should resemble $\epsilon_{ij}$.
+      \item Formal tests are \textbf{supplemental}, while plots are \textbf{principal}.
+    \end{itemize}
+  }
+\end{frame}
+
+\begin{frame}[fragile, allowframebreaks]{R Code: Principal Plots for Diagnostics}
+  \begin{itemize}
+    \item We can generate the principal diagnostic plots (Residual vs Predicted and Normal QQ Plot) directly from our ANOVA model object in R.
+  \end{itemize}
+
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{# Using the pg_model (PlantGrowth) from earlier}
+\hlkwd{par}\hldef{(}\hlkwc{mfrow} \hldef{=} \hlkwd{c}\hldef{(}\hlnum{1}\hldef{,} \hlnum{2}\hldef{))} \hlcom{# Put plots side-by-side}
+
+\hlcom{# 1. Residual vs Predicted (Fitted) plot for constant variance}
+\hlkwd{plot}\hldef{(pg_model,} \hlkwc{which} \hldef{=} \hlnum{1}\hldef{,} \hlkwc{main} \hldef{=} \hlsng{"Residual vs Predicted"}\hldef{)}
+
+\hlcom{# 2. Normal probability (QQ) plot for normality}
+\hlkwd{plot}\hldef{(pg_model,} \hlkwc{which} \hldef{=} \hlnum{2}\hldef{,} \hlkwc{main} \hldef{=} \hlsng{"Normal QQ Plot"}\hldef{)}
+\end{alltt}
+\end{kframe}
+
+{\centering \includegraphics[width=\maxwidth]{tmp/figure/pg_assumptions_plots-1} 
+
+}
+
+
+\begin{kframe}\begin{alltt}
+\hlkwd{par}\hldef{(}\hlkwc{mfrow} \hldef{=} \hlkwd{c}\hldef{(}\hlnum{1}\hldef{,} \hlnum{1}\hldef{))}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+  \begin{itemize}
+    \item \textbf{Supplemental Tests:} If you need formal statistical tests, you can use the Shapiro-Wilk test for normality and Levene's test for equal variances.
+  \end{itemize}
+
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{# Supplemental Test for Normality on residuals}
+\hlkwd{shapiro.test}\hldef{(}\hlkwd{resid}\hldef{(pg_model))}
+\end{alltt}
+\begin{verbatim}
+
+	Shapiro-Wilk normality test
+
+data:  resid(pg_model)
+W = 0.96607, p-value = 0.4379
+\end{verbatim}
+\begin{alltt}
+\hlcom{# Supplemental Test for Equal Variances (requires 'car' package)}
+\hlkwd{library}\hldef{(car)}
+\hlkwd{leveneTest}\hldef{(weight} \hlopt{~} \hldef{group,} \hlkwc{data} \hldef{= PlantGrowth)}
+\end{alltt}
+\begin{verbatim}
+Levene's Test for Homogeneity of Variance (center = median)
+      Df F value Pr(>F)
+group  2  1.1192 0.3412
+      27               
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+\end{frame}
+
+\begin{frame}[fragile, allowframebreaks]{Checking Specific Assumptions}
+  \begin{itemize}
+    \item \textbf{Variance and Normality:} Heteroskedasticity (changing variances) and non-normality usually come hand-in-hand. Heteroskedasticity is more important and takes priority for remedies.
+    \item \textbf{Independence:} Independence of the $\epsilon_{ij}$'s cannot be checked by \underline{\hspace{4cm}}.
+    \item Proper randomization is the best protection against lack of independence.
+  \end{itemize}
+
+  \mode<article>{
+    \textbf{Fill-in Answers \& Notes:}
+    \begin{itemize}
+      \item Independence of the $\epsilon_{ij}$'s cannot be checked by \textbf{residuals}. 
+      \item Why? Because for each group $i$, the residuals sum to zero ($\sum_{j=1}^{n_i} r_{ij} = 0$). This forces $r_{in_i} = -\sum_{j \ne n_i} r_{ij}$. 
+      \item Consequently, the residuals are negatively correlated: $Corr(r_{ij_1}, r_{ij_2}) = -1/(n_i - 1)$. Even when true errors are independent, residuals are not.
+    \end{itemize}
+  }
+\end{frame}
+
+\begin{frame}[fragile, allowframebreaks]{Remedies: Data Transformations}
+  \begin{itemize}
+    \item The principle remedial tool is re-expression (transformation) of the response.
+    \item If two transformations $\tilde{y}_1 = f_1(y)$ and $\tilde{y}_2 = f_2(y)$ have a linear relationship ($\tilde{y}_2 = \frac{\tilde{y}_1 - a}{b}$), they are completely equivalent for correcting assumptions.
+    \item For log transformations, the base \underline{\hspace{4cm}}.
+    \item The Box-Cox power family of transformations for a positive response variable is defined as: \underline{\hspace{5cm}}.
+  \end{itemize}
+
+  \mode<article>{
+    \textbf{Fill-in Answers \& Notes:}
+    \begin{itemize}
+      \item For log transformations, the base \textbf{does not matter; only try natural log ($\ln$)}.
+      \item For example, $\tilde{y}_1 = \log_e(y)$ and $\tilde{y}_2 = \log_{10}(y)$ are equivalent transformations because $\tilde{y}_1 = \ln(10) \tilde{y}_2$.
+      \item The Box-Cox power family is defined as: 
+      $$ \tilde{y} = \begin{cases} (y^p - 1)/p, & p \ne 0 \\ \ln(y), & p = 0 \end{cases} $$.
+      \item Note that $(y^p - 1)/p$ is equivalent to just $y^p$.
+    \end{itemize}
+  }
+\end{frame}
+
 \newcommand\acknowledgments{
 \begin{itemize}
 \item   Compiled on {\today} using \Rlanguage version 4.5.0.

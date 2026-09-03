@@ -241,3 +241,58 @@ confint(my_contrasts, side = "<")
 test(my_contrasts, side = "<")
 ```
 
+## Adjusting for Multiple Comparisons
+
+The ANOVA F-test is just the beginning, as it only tests the null hypothesis that all treatment means are exactly the same. Once we reject that null hypothesis, we naturally want to run contrasts to understand the specific pattern of differences.
+
+However, doing this introduces the multiple testing problem. Every time we test a single contrast, we have a per comparison Type I error rate (typically $\alpha = 0.05$). If we test multiple contrasts simultaneously, the probability of making at least one Type I error (a false positive) across all our tests increases dramatically. This combined probability is known as the Familywise Error Rate (FWER).
+
+To protect our analysis from false discoveries, we must adjust our $p$-values or confidence intervals to control the FWER.
+
+### Applying the Bonferroni Correction
+
+The Bonferroni method is a simple and versatile way to control the Familywise Error Rate for a specific, pre-planned family of contrasts. It works by using a stricter significance level for each individual comparison, effectively multiplying each ordinary $p$-value by the number of tests ($K$).
+
+You can apply the Bonferroni correction directly to the custom contrasts we built earlier by passing the `adjust` argument into the `summary()` or `test()` function:
+
+```{r}
+# 1. Compute the estimated marginal means
+emm <- emmeans(model, ~ temperature)
+
+# 2. Define the custom contrasts 
+custom_contrasts <- list(
+  "1 vs 2" = c(1, -1, 0, 0, 0),
+  "2 vs 3" = c(0, 1, -1, 0, 0),
+  "3 vs 4" = c(0, 0, 1, -1, 0),
+  "Avg first 2 vs Avg last 3" = c(3/6, 3/6, -2/6, -2/6, -2/6)
+)
+
+# 3. Create the contrast object
+my_contrasts <- contrast(emm, method = custom_contrasts)
+
+# 4. Apply the Bonferroni adjustment
+summary(my_contrasts, adjust = "bonferroni")
+
+```
+
+Notice that the $p$-values in this output will be larger than the unadjusted versions, reflecting the stricter penalty we incur for running four simultaneous tests.
+
+### All Pairwise Comparisons (Tukey's HSD)
+
+The Bonferroni method is generally best when you are testing 6 or fewer pre-chosen contrasts. However, experiments often require us to compare *every* treatment against *every other* treatment. In these cases, Tukey's Honestly Significant Difference (HSD) is the preferred method.
+
+The `emmeans` package handles this effortlessly. Instead of typing out all $\binom{5}{2} = 10$ pairwise contrasts manually, you can use the built-in `"pairwise"` method. By default, `emmeans` automatically applies the Tukey adjustment when you ask for all pairwise comparisons:
+
+```{r}
+# Generate all pairwise comparisons with automatic Tukey HSD adjustment
+pairwise_results <- contrast(emm, method = "pairwise")
+
+# View the results
+summary(pairwise_results)
+
+# Plot the pairwise comparisons
+plot(pairwise_results)
+
+```
+
+The output will now list every possible combination of temperatures. Because it applies Tukey's adjustment, you can interpret these results safely, knowing the familywise error rate for the entire set of 10 comparisons is rigorously controlled at $\alpha = 0.05$. This workflow ultimately bridges the gap from the initial omnibus ANOVA F-test to the exact, mathematically sound differences driving your experimental results.
