@@ -46,9 +46,10 @@ PREREQ: Earn a minimum grade of C- one of the following:
 
 Please read the [grading rubric](rubric_homework.html) before submitting homework.
 
-<!--
 * [Homework 1](hw01/hw01.pdf), due Wed Jan 28, 11:59pm.
 [TeX file](hw01/hw01.tex)
+
+<!--
 * [Homework 2](hw02/hw02.pdf), due Wed Feb 04, 11:59pm.
 [TeX file](hw02/hw02.tex)
 * [Homework 3](hw03/hw03.pdf), due Wed Feb 18, 11:59pm.
