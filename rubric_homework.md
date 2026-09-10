@@ -1,6 +1,6 @@
 ---
 title: "Rubric for homework grades"
-subtitle: "[Math 5200, Fall 2026](index.html)"
+subtitle: "[Stat 5200 / 6200, Fall 2026](index.html)"
 output: html_document
 
 ---
@@ -56,11 +56,9 @@ In addition, failure to list any resources / collaborations that were used will 
 
 -----------
 
-## Contribution (9 points)
+## Contribution
 
 This is standard homework grading except for an additional requirement to demonstrate contribution of original effort beyond any source you use.
-
-(9 points). All solutions are correct. If checked against a source, the homework is explicit about how the individual solution differs from the source and what (if anything) was learned from the source. The student has found a way to show that they contributed beyond any source used. In particular, the two should not look too similar---by consulting a source, you acquire an obligation to differentiate your own work, which could be by adding original material relevant to the question and going beyond the source.
 
 Points are subtracted for each error or omission or failure to explain a contribution beyond the sources used. 
 
