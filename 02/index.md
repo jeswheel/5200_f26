@@ -20,6 +20,7 @@ Desired outcomes:
 | Lecture slides   | [pdf](slides.pdf) |
 | Lecture notes    | [pdf](notes.pdf) |
 | Annotated Slides | [pdf](annotatedSlides.pdf) | 
+| t-Test Example Code | [R code](t-test-example.R)
 <!-- | Discussion Problems | [pdf](discussionProbs.pdf) | -->
 ----------------------
 
