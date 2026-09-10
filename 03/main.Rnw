@@ -134,10 +134,10 @@
       \end{itemize}
         }
         
-        \mode<presentation>{\vspace{2cm}}
+        \mode<presentation>{\vfill}
         
         Like many experiments, the researchers necessarily have to narrow down an enormous question to a workable experiment using artificial acid rain under controlled conditions.
-        For any experiment, a considerable amount of non-statistical background work goes into the planning even the simplest experiment. 
+        \mode<article>{For any experiment, a considerable amount of non-statistical background work goes into the planning even the simplest experiment.}
   
   \end{itemize}
 \end{frame}
@@ -1488,6 +1488,39 @@ leveneTest(weight ~ group, data = PlantGrowth)
   \end{itemize}
 
 \end{frame}
+
+% \begin{frame}[fragile]{Diagnosing Normality: Acceptable vs. Problematic}
+%   \begin{itemize}
+%     \item \textbf{Acceptable:} Straight lines (Normal) or an "S" shape indicating light/short tails.
+%     \item \textbf{Problematic:} Severe curves (Skewness) or an inverted "S" shape indicating heavy tails and outliers.
+%   \end{itemize}
+
+<<qq_examples, eval=FALSE, echo=FALSE, fig.align="center">>=
+set.seed(42)
+par(mfrow = c(2, 2), mar = c(4, 4, 2, 1))
+
+# 1. Ideal (Normal)
+y_norm <- rnorm(50)
+qqnorm(y_norm, main = "Ideal (Normal) - Acceptable")
+qqline(y_norm, col = "blue", lwd = 2)
+
+# 2. Short-tailed (Uniform)
+y_unif <- runif(50)
+qqnorm(y_unif, main = "Short-Tailed - Acceptable")
+qqline(y_unif, col = "blue", lwd = 2)
+
+# 3. Heavy-tailed (t-distribution, df=2)
+y_heavy <- rt(50, df = 2)
+qqnorm(y_heavy, main = "Heavy-Tailed (Outliers) - Problematic")
+qqline(y_heavy, col = "red", lwd = 2)
+
+# 4. Right Skewed (Exponential)
+y_skew <- rexp(50)
+qqnorm(y_skew, main = "Skewed - Problematic")
+qqline(y_skew, col = "red", lwd = 2)
+@
+
+% \end{frame}
 
 \begin{frame}[fragile, allowframebreaks]{Remedies: Data Transformations}
   \begin{itemize}
