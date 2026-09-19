@@ -20,7 +20,7 @@ We will also introduce our first form of analysis for a designed experiment: Ana
 |:-----------------------|:------------------------:|
 | Lecture slides   | [pdf](slides.pdf) |
 | Lecture notes    | [pdf](notes.pdf) |
-<!-- | Annotated Slides | [pdf](annotatedSlides.pdf) | -->
+| Annotated Slides | [pdf](annotatedSlides.pdf) |
 <!-- | Discussion Problems | [pdf](discussionProbs.pdf) | -->
 ----------------------
 
