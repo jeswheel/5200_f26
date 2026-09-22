@@ -555,7 +555,7 @@
   SSR_{\text{single means}} = \sum_{i = 1}^g \sum_{j = 1}^{n_i} \big(y_{ij} - \bar{y}_{\bullet \bullet}\big)^2 = SS_T
   $$
   $$
-  SSR_{\text{separate means}} = \sum_{i = 1}^g \sum_{j = 1}^{n_i} \big(y_{ij} - \bar{y}_{i\bullet}\big) = SS_E
+  SSR_{\text{separate means}} = \sum_{i = 1}^g \sum_{j = 1}^{n_i} \big(y_{ij} - \bar{y}_{i\bullet}\big)^2 = SS_E
   $$
   \mode<article>{
   Thus,
