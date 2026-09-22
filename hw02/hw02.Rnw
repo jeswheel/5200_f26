@@ -1,0 +1,196 @@
+\documentclass[10pt,twoside]{article}
+\usepackage[marginparsep=1em]{geometry}
+\geometry{lmargin=1.0in,rmargin=1.0in, bmargin=1.2in,  tmargin=1.2in}
+\usepackage[dvipsnames,svgnames,table]{xcolor}
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{epstopdf}
+\usepackage{verbatim}
+\usepackage{enumerate}
+\usepackage{bm}
+\usepackage{amsthm}
+\usepackage{float}
+\usepackage{amsmath}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+\usepackage{mathtools}
+\usepackage{booktabs}
+            
+%%%%  SHORTCUT COMMANDS  %%%%
+\newcommand{\ds}{\displaystyle}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\T}{\mathcal{T}}
+\newcommand{\arc}{\rightarrow}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\RP}{\mathbb{R}(+)}
+\newcommand{\Rs}{\mathbb{R}^{**}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\B}{\mathcal{B}}
+\newcommand{\PX}{\mathcal{P}(X)}
+\newcommand*\rot{\rotatebox{90}}
+\newcommand*\OK{\ding{51}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\Answer}{\vspace{2mm}\textbf{\underline{Answer}}\\}
+\newcolumntype{L}{>{$}l<{$}}
+\newcolumntype{C}{>{$}c<{$}}
+\newcommand{\GL}{\text{GL}}
+\newcommand{\SL}{\text{SL}}
+
+\newcommand{\stirling}[2]{\genfrac{\{}{\}}{0pt}{}{#1}{#2}}
+
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\sectionmark}[1]{\markright{\thesection.\ #1}}
+\lhead{\fancyplain{}{}} 
+\fancyhead[RE,RO]{Stat 5200/6200, Fall 2026}
+\fancyfoot[RE,RO]{\thepage}
+
+
+\begin{document}
+\begin{flushright}
+\begin{minipage}{.33\textwidth}
+\rightline{YOUR NAME}
+\rightline{\href{mailto:YOUR EMAIL}{YOUR EMAIL}}
+\rightline{\today}
+\end{minipage}
+\end{flushright}
+
+\begin{center}
+{\large{\textbf{Homework 2}}}
+\end{center}
+
+\textbf{Don't forget an academic integrity statement} (see syllabus for more details)!
+
+\begin{enumerate}
+
+  \item Suppose we have conducted a completely randomized design, with $N$ total experimental units, and $g$ total treatment groups. One of the models we are considering (the \emph{full} or \emph{separate means} model) is:
+  $$
+  y_{ij} = \mu^* + \alpha_i + \epsilon_{ij}, \quad \epsilon_{ij} \overset{iid}{\sim} N(0, \sigma^2).
+  $$
+  
+  \begin{enumerate}
+    \item Using words, describe what the following symbols mean in the context of this model:
+    \begin{enumerate}
+      \item $\mu^*$
+      \vspace{12mm}
+      \item $\bar{y}_{3 \bullet}$ 
+      \vspace{12mm}
+      \item $\hat{\mu}_{k}$, for $k \in 1:g$
+      \vspace{12mm}
+      \item \emph{iid}
+      \vspace{12mm}
+    \end{enumerate}
+    
+    \item For this problem, we will define the global mean $\mu^*$ to be the \emph{weighted} average of the group means:
+  $$
+  \mu^* = \sum_{i = 1}^g \frac{n_i}{N} \mu_i,
+  $$
+  and that $\alpha = \mu_i - \mu^*$, and $\hat{\mu}_i = \bar{y}_{i \bullet}$
+  
+  \begin{enumerate}
+    \item Show that if $\hat{\mu}^* = \sum_{i = 1}^g \frac{n_i}{N}\hat{\mu}_i$, then:
+    $$
+    \hat{\mu}^* = \bar{y}_{\bullet \bullet}
+    $$
+    and describe in words what this means (HINT: both of these are in the notes. However, I encourage you to try using the basic definitions of averages and those provided here to work it out on your own). 
+    
+ \newpage
+  
+  \item (\textbf{6200 students only:}) Let $r_{ij} = y_{ij} - \hat{y}_{ij} = y_{ij} - \bar{y}_{i\bullet}$  
+  
+  \vspace{2mm}
+  
+  In class, we claimed:
+  $$
+  \sum_{i = 1}^g \sum_{j = 1}^{n_i} \hat{\alpha}_{i} r_{ij} = 0
+  $$
+  
+  Show that the statement above is true. 
+  
+  \end{enumerate}
+  
+  
+  \vspace{4cm}
+  
+  
+<<echo=FALSE>>=
+library(knitr)
+set.seed(123)
+x1 <- rnorm(3, mean = 10, sd = 2) |> round(2)
+x2 <- rnorm(5, mean = 4, sd = 1.5) |> round(2)
+@
+
+ \item \big(Using the weighted average approach from problem (b)\big) Suppose $g = 2$ (i.e., there are two treatment groups.), and we observed data:
+    $$
+    y_{1, 1:3} = \{\Sexpr{paste0(x1, collapse = ', ')}\}, \quad y_{2, 1:5} = \{\Sexpr{paste0(x2, collapse = ', ')}\}
+    $$
+  
+  Compute the following quantities \big(using global mean defined in problem 1(b)\big)
+  
+  \begin{itemize}
+    \item $\frac{n_2}{N}$ (relative weight of the second group on the grand mean)
+    \vfill
+    \item $\hat{\mu}_1$
+    \vfill
+    \item $\hat{\mu}^*$
+    \vfill
+    \item $SS_T$ (Total Sum of Squares).
+    \vfill
+    \item $SS_{Trt}$ (Sum of Squares for Treatment)
+    \vfill
+    \item $SS_{E}$ (Sum of Squares for Error)
+    \vfill
+  \end{itemize}
+  
+
+\newpage
+
+    % \item \textbf{(For 6000 level only):} Use your calculations above to finish an ANOVA table by hand. 
+
+  \end{enumerate}
+
+
+<<echo=FALSE>>=
+df_rats <- read.csv('rats.csv')
+@
+
+
+\item (From Exercise 3.1 of textbook) Rats were given one of four different diets at random, and the response measure was liver weight as a percentage of body weight.
+The recorded responses are provided in Table~\ref{tab:rats}, as well as the \texttt{rats.csv} file on Canvas.
+
+<<echo=FALSE>>=
+# Reshape data into wide format
+lst <- split(df_rats$percent, df_rats$treatment)
+max_len <- max(sapply(lst, length))
+df_wide <- as.data.frame(lapply(lst, function(x) {
+  length(x) <- max_len
+  return(x)
+}))
+
+colnames(df_wide) <- paste("Treatment", 1:4)
+
+# Replace NAs with empty strings for blank cells
+df_wide[is.na(df_wide)] <- ""
+
+# Output table without 5-row separation gaps
+kable(
+  df_wide,
+  format = "latex",
+  booktabs = TRUE,
+  linesep = "",
+  caption = "Liver weight as a percentage of body weight values across the 4 treatment groups",
+  align = "cccc",
+  label = 'rats'
+)
+@
+
+\textbf{Describe the model you will use for inference (e.g., what is the model equation, how many treatment groups are there, and how many EU's for each treatment, etc.) and the associated assumptions. State the null and alternative hypotheses. Then, carry out an ANOVA test for your specified hypotheses. 
+What would you conclude about the four diets?
+}
+
+\end{enumerate}
+
+
+\end{document}
