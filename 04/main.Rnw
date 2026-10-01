@@ -1,14 +1,11 @@
 \input{../header}
 
-% \mode<beamer>{\usetheme{AnnArbor}}
 \mode<beamer>{\usetheme{metropolis}}
 \mode<beamer>{\metroset{block=fill}}
-% \mode<beamer>{\usecolortheme{wolverine}}
 
 \mode<beamer>{\setbeamertemplate{section in toc}[sections numbered]}
 \mode<beamer>{\setbeamertemplate{subsection in toc}[subsections numbered indented]}
 
-% \mode<beamer>{\usefonttheme{serif}}
 \mode<beamer>{\setbeamertemplate{footline}}
 \mode<beamer>{\setbeamertemplate{footline}[frame number]}
 \mode<beamer>{\setbeamertemplate{frametitle continuation}[from second][\insertcontinuationcountroman]}
@@ -17,11 +14,9 @@
 \mode<handout>{\pgfpagesuselayout{2 on 1}[letterpaper,border shrink=5mm]}
 
 \newcommand\CHAPTER{4}
-% \newcommand\answer[2]{\textcolor{blue}{#2}} % to show answers
-% \newcommand\answer[2]{\textcolor{red}{#2}} % to show answers
- \newcommand\answer[2]{#1} % to show blank space
+\newcommand\answer[2]{#1} % to show blank space
 
-\title{\vspace{2mm} \link{https://jeswheel.github.io/5200_f26/}{Stat 5200: Analysis of Designed Experiments}}
+\title{\vspace{2mm} \link{https://jeswheel.github.io/5200_f26/}{Stat 5200, Module 4: Factorial Design and Analysis}}
 \author{Jesse Wheeler}
 \date{}
 
@@ -36,23 +31,345 @@
 
 \mode<article>{\tableofcontents}
 
-% \mode<presentation>{
-%   \begin{frame}{Outline}
-%     \tableofcontents
-%   \end{frame}
-% }
-
 \section{Overview}
 
 \begin{frame}[allowframebreaks]{Objectives and overview}
   \begin{itemize}
-    \item This material is based Chapter~TODO on the textbook ``A First Course in Design and Analysis of Experiments" \citep{oehlert2000}.
-    \item Chapter outcomes include: 
+    \item This material is based on Chapter 8 of the textbook ``A First Course in Design and Analysis of Experiments" \citep{oehlert2000}.
+    \item Module outcomes include:
     \begin{itemize}
-      \item TODO
+      \item You will understand complete and incomplete factorial treatment structures.
+      \item You will develop an intuitive and formal understanding of \alert{interaction effects}.
+      \item You will be able to specify and fit additive and non-additive two-way ANOVA models.
+      \item You will learn how to construct and interpret main effect contrasts and interaction contrasts.
+      \item You will master the model testing sequence (testing interaction first).
+      \item You will know how to fit and analyze factorial designs in R using \texttt{aov()} and \texttt{emmeans()}.
     \end{itemize}
   \end{itemize}
 \end{frame}
+
+\section{Factorial Treatment Structure}
+
+\begin{frame}[allowframebreaks]{Introduction to Factorial Structures}
+  \begin{itemize}
+    \item In many experiments, we want to evaluate the effect of \alert{two or more explanatory factors} simultaneously.
+    \item A \alert{factorial treatment structure} defines treatments as combinations of levels of each factor.
+    \item Suppose Factor A has $a$ levels and Factor B has $b$ levels.
+    \item A \alert{complete factorial design} includes all $g = a \times b$ possible treatment combinations.
+  \end{itemize}
+
+  \begin{block}{Example 1: $2 \times 3$ Diet Experiment}
+    \begin{itemize}
+      \item Factor 1: Protein Source (Beef, Cereal, Pork) $\implies b = 3$.
+      \item Factor 2: Protein Intake (High, Low) $\implies a = 2$.
+      \item Total treatment combinations: $g = 2 \times 3 = 6$ unique diets.
+    \end{itemize}
+  \end{block}
+
+  \framebreak
+
+  \begin{block}{Example 2: $2 \times 2$ Fertilizer Experiment}
+    \begin{itemize}
+      \item Factor A: Superphosphate (P) $\rightarrow$ Levels: \{Not Added, Added\}
+      \item Factor B: Potash (K) $\rightarrow$ Levels: \{Not Added, Added\}
+      \item $g = 2 \times 2 = 4$ treatments:
+      \begin{enumerate}
+        \item None ($P_1 K_1$)
+        \item Superphosphate only ($P_2 K_1$)
+        \item Potash only ($P_1 K_2$)
+        \item Both Superphosphate and Potash ($P_2 K_2$)
+      \end{enumerate}
+    \end{itemize}
+  \end{block}
+
+  \mode<article>{
+    Notice the power of a factorial design: instead of running two separate experiments (one for Superphosphate and one for Potash), we run a single experiment that evaluates both factors simultaneously using the exact same experimental units. This yields higher statistical efficiency and allows us to study whether the two factors work together or interfere with each other.
+  }
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Notation for Two-Way Factorials}
+  \begin{itemize}
+    \item To identify observations in a two-way design, we use three subscripts:
+    $$y_{ijk}$$
+    \begin{itemize}
+      \item $i = 1, \dots, a$: level of Factor A
+      \item $j = 1, \dots, b$: level of Factor B
+      \item $k = 1, \dots, n$: replication number within treatment combination $(i, j)$
+    \end{itemize}
+
+    \item Summary Notation:
+    \begin{itemize}
+      \item Sample mean for treatment $(i, j)$: $\bar{y}_{ij\bullet} = \frac{1}{n} \sum_{k=1}^n y_{ijk}$
+      \item Marginal mean for level $i$ of Factor A: $\bar{y}_{i\bullet\bullet} = \frac{1}{bn} \sum_{j=1}^b \sum_{k=1}^n y_{ijk}$
+      \item Marginal mean for level $j$ of Factor B: $\bar{y}_{\bullet j\bullet} = \frac{1}{an} \sum_{i=1}^a \sum_{k=1}^n y_{ijk}$
+      \item Overall grand mean: $\bar{y}_{\bullet\bullet\bullet} = \frac{1}{abn} \sum_{i=1}^a \sum_{j=1}^b \sum_{k=1}^n y_{ijk}$
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\section{Understanding Interaction Effects}
+
+\begin{frame}[allowframebreaks]{What is an Interaction Effect?}
+  \begin{itemize}
+    \item \alert{Definition:} An interaction effect occurs when the effect of one factor on the response depends on the level of another factor.
+    \item Ask yourself: \emph{"Does the difference between levels of Factor A stay the same regardless of Factor B?"}
+    \begin{itemize}
+      \item If \textbf{YES}: The factors are \alert{additive} (No Interaction).
+      \item If \textbf{NO}: There is an \alert{interaction} between factors.
+    \end{itemize}
+  \end{itemize}
+
+  \framebreak
+
+  \begin{block}{Intuition: "Difference of Differences"}
+    Consider a $2 \times 2$ design with population means $\mu_{ij}$:
+    \begin{itemize}
+      \item Simple main effect of A when Factor B is at level 1: $\mu_{11} - \mu_{21}$
+      \item Simple main effect of A when Factor B is at level 2: $\mu_{12} - \mu_{22}$
+    \end{itemize}
+    The \alert{interaction effect} is the difference between these two simple effects:
+    $$(\mu_{11} - \mu_{21}) - (\mu_{12} - \mu_{22})$$
+    If this difference equals zero, the effect of A is constant across levels of B. If non-zero, an interaction exists.
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile, allowframebreaks]{Graphical Diagnosis: Interaction Plots}
+  \begin{itemize}
+    \item An \alert{interaction plot} displays treatment group means across levels of one factor, with lines connecting levels of the second factor.
+    \item \textbf{Parallel lines} $\implies$ No Interaction (Additive).
+    \item \textbf{Non-parallel or crossing lines} $\implies$ Interaction present.
+  \end{itemize}
+
+<<interaction_plot_demo, fig.height=4, fig.width=8, echo=FALSE, eval=FALSE>>=
+par(mfrow = c(1, 2))
+# Additive Scenario
+means_add <- matrix(c(10, 15, 20, 25), nrow = 2, byrow = TRUE)
+interaction.plot(x.factor = gl(2, 1, labels = c("A1", "A2")),
+                 trace.factor = gl(2, 1, labels = c("B1", "B2")),
+                 response = c(10, 20, 15, 25),
+                 type = "b", pch = c(1, 19), col = c("blue", "red"),
+                 legend = TRUE, main = "Additive (No Interaction)",
+                 xlab = "Factor A", ylab = "Mean Response")
+
+# Interaction Scenario
+interaction.plot(x.factor = gl(2, 1, labels = c("A1", "A2")),
+                 trace.factor = gl(2, 1, labels = c("B1", "B2")),
+                 response = c(10, 25, 20, 15),
+                 type = "b", pch = c(1, 19), col = c("blue", "red"),
+                 legend = TRUE, main = "Interaction Present",
+                 xlab = "Factor A", ylab = "Mean Response")
+par(mfrow = c(1, 1))
+@
+
+\end{frame}
+
+\section{The Two-Way ANOVA Model}
+
+\begin{frame}[allowframebreaks]{Model Specification}
+  \begin{itemize}
+    \item We model the response $y_{ijk}$ as:
+    $$y_{ijk} = \mu + \alpha_i + \beta_j + (\alpha\beta)_{ij} + \epsilon_{ijk}$$
+    where:
+    \begin{itemize}
+      \item $\mu$: Overall grand mean.
+      \item $\alpha_i$: Main effect of level $i$ of Factor A.
+      \item $\beta_j$: Main effect of level $j$ of Factor B.
+      \item $(\alpha\beta)_{ij}$: Interaction effect between level $i$ of A and level $j$ of B.
+      \item $\epsilon_{ijk} \stackrel{iid}{\sim} N(0, \sigma^2)$: Random errors.
+    \end{itemize}
+
+    \framebreak
+
+    \item \alert{Parameter Identification Restrictions (Sum-to-Zero Constraints):}
+    $$\sum_{i=1}^a \alpha_i = 0, \quad \sum_{j=1}^b \beta_j = 0, \quad \sum_{i=1}^a (\alpha\beta)_{ij} = 0 \text{ for all } j, \quad \sum_{j=1}^b (\alpha\beta)_{ij} = 0 \text{ for all } i$$
+
+    \item \alert{Hierarchy of Models}:
+    \begin{enumerate}
+      \item \textbf{Full (Non-additive) Model}: $y_{ijk} = \mu + \alpha_i + \beta_j + (\alpha\beta)_{ij} + \epsilon_{ijk}$
+      \item \textbf{Additive Model}: $y_{ijk} = \mu + \alpha_i + \beta_j + \epsilon_{ijk}$
+      \item \textbf{Main Effect A Model}: $y_{ijk} = \mu + \alpha_i + \epsilon_{ijk}$
+      \item \textbf{Constant Model}: $y_{ijk} = \mu + \epsilon_{ijk}$
+    \end{enumerate}
+  \end{itemize}
+\end{frame}
+
+\section{Factorial Contrasts}
+
+\begin{frame}[allowframebreaks]{Main Effects vs. Interaction Contrasts}
+  \begin{itemize}
+    \item A contrast in a factorial design is a linear combination of treatment means $\sum_i \sum_j w_{ij} \mu_{ij}$ subject to $\sum_i \sum_j w_{ij} = 0$.
+    \item \alert{Main Effect Contrasts for A}:
+    Weights for a given level of A are identical across all levels of B.
+    $$\sum_{i=1}^a w_i = 0, \quad w_{ij} = w_i \quad \text{for all } j$$
+    \item \alert{Interaction Contrasts ("Contrast of Contrasts")}:
+    Weights are constructed as products of main effect contrast weights: $w_{ij} = w_{A,i} \times w_{B,j}$.
+    Row sums and column sums of weights must \textbf{all equal zero}:
+    $$\sum_{i=1}^a w_{ij} = 0 \text{ for all } j, \quad \text{and} \quad \sum_{j=1}^b w_{ij} = 0 \text{ for all } i$$
+  \end{itemize}
+
+  \framebreak
+
+  \begin{block}{Example: $2 \times 2$ Factorial Weight Matrices}
+    \begin{columns}
+      \begin{column}{0.33\textwidth}
+        \centering
+        \textbf{Main Effect A ($W\_A$)}
+        \begin{tabular}{|c|c|}
+          \hline
+          1 & 1 \\
+          \hline
+          -1 & -1 \\
+          \hline
+        \end{tabular}
+      \end{column}
+
+      \begin{column}{0.33\textwidth}
+        \centering
+        \textbf{Main Effect B ($W\_B$)}
+        \begin{tabular}{|c|c|}
+          \hline
+          1 & -1 \\
+          \hline
+          1 & -1 \\
+          \hline
+        \end{tabular}
+      \end{column}
+
+      \begin{column}{0.33\textwidth}
+        \centering
+        \textbf{Interaction ($W\_{AB}$)}
+        \begin{tabular}{|c|c|}
+          \hline
+          1 & -1 \\
+          \hline
+          -1 & 1 \\
+          \hline
+        \end{tabular}
+      \end{column}
+    \end{columns}
+  \end{block}
+\end{frame}
+
+% \section{ANOVA Mechanics and Hypothesis Testing}
+% 
+% \begin{frame}[allowframebreaks]{Two-Way ANOVA Table (Balanced Design)}
+%   \begin{itemize}
+%     \item For a balanced design ($n$ observations per cell, $N = abn$ total):
+%   \end{itemize}
+% 
+%   \begin{table}
+%   \centering
+%   \small
+%   \begin{tabular}{l c l m{2cm} c}
+%     \hline
+%     \textbf{Source} & \textbf{DF} & \textbf{Sum of Squares (SS)} & \textbf{Mean Square} & \textbf{F-Statistic} \\
+%     \hline
+%     \textbf{Factor A} & $a - 1$ & $SS_A = bn \sum \hat{\alpha}_i^2$ & $MS_A = \frac{SS_A}{a-1}$ & $F_A = \frac{MS_A}{MS_E}$ \\
+%     \textbf{Factor B} & $b - 1$ & $SS_B = an \sum \hat{\beta}_j^2$ & $MS_B = \frac{SS_B}{b-1}$ & $F_B = \frac{MS_B}{MS_E}$ \\
+%     \textbf{Interaction AB} & $(a-1)(b-1)$ & $SS_{AB} = n \sum \sum \hat{\alpha\beta}_{ij}^2$ & $MS_{AB} = \frac{SS_{AB}}{(a-1)(b-1)}$ & $F_{AB} = \frac{MS_{AB}}{MS_E}$ \\
+%     \textbf{Error} & $ab(n - 1)$ & $SS_E = \sum \sum \sum (y_{ijk} - \bar{y}_{ij\bullet})^2$ & $MS_E = \frac{SS_E}{ab(n-1)}$ & \\
+%     \hline
+%     \textbf{Total} & $abn - 1$ & $SS_T = SS_A + SS_B + SS_{AB} + SS_E$ & & \\
+%     \hline
+%   \end{tabular}
+%   \end{table}
+% 
+%   \framebreak
+% 
+%   \begin{block}{Sequence of Testing: Top-Down Rule}
+%     \begin{enumerate}
+%       \item \alert{\textbf{Step 1: Test Interaction ($H\_0: (\alpha\beta)\_{ij} = 0$ for all $i,j$)}}
+%       \begin{itemize}
+%         \item If \textbf{Significant}: Stop! The model is non-additive. Do not interpret main effect $F$-tests in isolation. Examine simple main effects or interaction contrasts.
+%         \item If \textbf{Not Significant}: Drop interaction term to obtain the additive model.
+%       \end{itemize}
+%       \item \alert{\textbf{Step 2: Test Main Effects}}
+%       \begin{itemize}
+%         \item If interaction is non-significant, proceed to test $H_0: \alpha_i = 0$ and $H_0: \beta_j = 0$ independently using the main effect $F$-tests.
+%       \end{itemize}
+%     \end{enumerate}
+%   \end{block}
+% \end{frame}
+
+% \section{Applied Example in R}
+
+% \begin{frame}[fragile, allowframebreaks]{Dataset: Fertilizer Yields ($2 \times 2$ Factorial)}
+%   \begin{itemize}
+%     \item Let's simulate and analyze the Superphosphate (P) and Potash (K) experiment ($n=4$ replications per treatment).
+%   \end{itemize}
+
+<<fertilizer_data, size='small',eval=FALSE>>=
+# Create factorial dataset
+fert_data <- data.frame(
+  P = factor(rep(c("No_P", "P"), each = 8)),
+  K = factor(rep(rep(c("No_K", "K"), each = 4), 2)),
+  yield = c(183, 176, 291, 254,   # None
+            224, 258, 244, 214,   # K only
+            356, 300, 301, 271,   # P only
+            329, 283, 308, 326)    # P and K
+)
+
+# Display sample means across cell combinations
+with(fert_data, tapply(yield, list(P, K), mean))
+@
+
+% \framebreak
+
+<<fertilizer_plot, fig.height=4, fig.width=6, fig.align='center', eval=FALSE>>=
+# Generate interaction plot
+interaction.plot(x.factor = fert_data$P, trace.factor = fert_data$K,
+                 response = fert_data$yield, fun = mean,
+                 type = "b", pch = c(16, 17), col = c("darkred", "darkblue"),
+                 xlab = "Superphosphate (P)", ylab = "Mean Yield",
+                 trace.label = "Potash (K)")
+@
+
+% \framebreak
+
+<<fertilizer_anova, size='small', eval=FALSE>>=
+# Fit Two-Way ANOVA Model with Interaction
+fert_mod <- aov(yield ~ P * K, data = fert_data)
+summary(fert_mod)
+@
+
+% \mode<article>{
+%   Notice the output: The interaction term `P:K` has a high p-value ($p = 0.493$). This indicates there is no statistically significant interaction between Superphosphate and Potash. Consequently, we can safely reduce to an additive model or evaluate main effects directly.
+% }
+% 
+% \framebreak
+% 
+% <<fertilizer_emmeans, size='small', message=FALSE, warning=FALSE, eval=FALSE>>=
+% library(emmeans)
+% 
+% # Estimated Marginal Means for Main Effects
+% emm_P <- emmeans(fert_mod, ~ P)
+% emm_P
+% 
+% # Pairwise contrast for Main Effect of Superphosphate
+% contrast(emm_P, method = "pairwise")
+% @
+% 
+% \end{frame}
+
+% \section{Assumptions and Diagnostics}
+% 
+% \begin{frame}[fragile, allowframebreaks]{Checking Model Assumptions}
+%   \begin{itemize}
+%     \item Diagnostic procedures for two-way ANOVA are identical to one-way ANOVA:
+%     \begin{enumerate}
+%       \item Residuals vs Fitted values (Check for constant variance across cells).
+%       \item Normal Q-Q Plot (Check for residual normality).
+%     \end{enumerate}
+%   \end{itemize}
+% 
+% <<fert_diagnostics, fig.height=4, fig.width=8, echo=FALSE, eval=FALSE>>=
+% par(mfrow = c(1, 2))
+% plot(fert_mod, which = 1, main = "Residuals vs Fitted")
+% plot(fert_mod, which = 2, main = "Normal Q-Q Plot")
+% par(mfrow = c(1, 1))
+% @
+% 
+% \end{frame}
 
 \newcommand\acknowledgments{
 \begin{itemize}
