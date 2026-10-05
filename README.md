@@ -33,5 +33,16 @@ Can this framework be updated / modified?
 
 - Lecture 0: syllabus. I think this went fairly well. Introduction and syllabus took about an hour, left 15 minutes to introduce R.
 Next time, have a ready .csv file to demonstrate loading, etc. Slightly more organized R / R Studio introduction. About 20 students stayed.
-
-
+- Early on, give a homework assignment that emphasizes notation, like $y_{ij}$ and $y_{i \bullet}$. For instance, give some data from an experiment, ask students to compute specific values, checking their understanding of the notation.
+- Create a more detailed reading structure. Chapters that I like for 5000-level students include:
+  - Chapter 1 (about 10 pages, very light)
+  - Chapter 2 (about 15 pages, very light)
+  - Chapter 3.1 -- 3.8 (about 21 pages, math-heavy)
+  - Chapter 4.1 -- 4.2 (6 pages)
+  - 5.1--5.2, 5.6, 5.7, 5.8 (about 7 pages, light) (5.3 -- 5.5 is good and the material should be covered, but it's beyond wat 5000-level students need / want). 
+  - 6.1--6.2 (more sections in this chapter?)
+  - Cha
+- For 6000-level students, additional reading might be a good idea:
+  - 4.3--4.4 (orthogonal and polynomial contrasts)
+  - 5.3--5.5 (mathematics of multiple comparisons)
+- If we keep doing reading assignments, consider adding some HW questions directly from the reading.

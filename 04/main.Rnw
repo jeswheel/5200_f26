@@ -87,6 +87,35 @@
   }
 \end{frame}
 
+\begin{frame}[allowframebreaks]{Main Effects and Interactions}
+  \begin{itemize}
+    \item We are generally interested in both the \emph{main effects} of each treatment, but also the \emph{interactions} between treatments. Consider the example below (Example 2):
+  \end{itemize}
+  
+  \vspace{2mm}
+
+    \begin{table}
+      \centering
+      \renewcommand{\arraystretch}{1.5}
+      \begin{tabular}{l | c c c | c}
+        & \textbf{Beef ($j=1$)} & \textbf{Cereal ($j=2$)} & \textbf{Pork ($j=3$)} & \textbf{Marginal Row Mean} \\
+        \hline
+        \textbf{High Intake ($i=1$)} & $\mu_{11}$ & $\mu_{12}$ & $\mu_{13}$ & $\bar{\mu}_{1\bullet}$ \\
+        \textbf{Low Intake ($i=2$)}  & $\mu_{21}$ & $\mu_{22}$ & $\mu_{23}$ & $\bar{\mu}_{2\bullet}$ \\
+        \hline
+        \textbf{Marginal Col Mean}   & $\bar{\mu}_{\bullet 1}$ & $\bar{\mu}_{\bullet 2}$ & $\bar{\mu}_{\bullet 3}$ & $\mu$ (Grand Mean) \\
+      \end{tabular}
+    \end{table}
+
+  \begin{itemize}
+    \item \textbf{Main Effects:} Evaluated by comparing the marginal row means ($\bar{\mu}_{1\bullet}$ vs. $\bar{\mu}_{2\bullet}$) or the marginal column means ($\bar{\mu}_{\bullet 1}$, $\bar{\mu}_{\bullet 2}$, $\bar{\mu}_{\bullet 3}$). For example, what is the difference in response between high and low intake treatments?
+    \item \textbf{Interactions:} Evaluated by looking at differences between cells. For example, is the difference between High and Low intake the same for Beef as it is for Cereal?
+    $$(\mu_{11} - \mu_{21}) \stackrel{?}{=} (\mu_{12} - \mu_{22})$$
+    \item \textbf{The ANOVA Alternative:} While we \emph{could} formalize and test all these specific comparisons using individual \alert{contrasts} (which we discussed in previous modules), doing so for every combination is tedious and inflates our error rate.
+    \item Instead, we will introduce the \alert{Two-Way ANOVA} as an efficient way to test for overall main effects and interactions simultaneously.
+  \end{itemize}
+\end{frame}
+
 \begin{frame}[allowframebreaks]{Notation for Two-Way Factorials}
   \begin{itemize}
     \item To identify observations in a two-way design, we use three subscripts:
@@ -181,13 +210,15 @@ par(mfrow = c(1, 1))
     \framebreak
 
     \item \alert{Parameter Identification Restrictions (Sum-to-Zero Constraints):}
-    $$\sum_{i=1}^a \alpha_i = 0, \quad \sum_{j=1}^b \beta_j = 0, \quad \sum_{i=1}^a (\alpha\beta)_{ij} = 0 \text{ for all } j, \quad \sum_{j=1}^b (\alpha\beta)_{ij} = 0 \text{ for all } i$$
+    $$
+    \sum_{i=1}^a \alpha_i = \sum_{j=1}^b \beta_j = \sum_{i=1}^a (\alpha\beta)_{ik} = \sum_{j=1}^b (\alpha\beta)_{kj} = 0 \text{ for all } k
+    $$
 
     \item \alert{Hierarchy of Models}:
     \begin{enumerate}
       \item \textbf{Full (Non-additive) Model}: $y_{ijk} = \mu + \alpha_i + \beta_j + (\alpha\beta)_{ij} + \epsilon_{ijk}$
       \item \textbf{Additive Model}: $y_{ijk} = \mu + \alpha_i + \beta_j + \epsilon_{ijk}$
-      \item \textbf{Main Effect A Model}: $y_{ijk} = \mu + \alpha_i + \epsilon_{ijk}$
+      \item \textbf{Main Effect Models}: $y_{ijk} = \mu + \alpha_i + \epsilon_{ijk}$, \hspace{2mm} $y_{ijk} = \mu + \beta_j + \epsilon_{ijk}$ 
       \item \textbf{Constant Model}: $y_{ijk} = \mu + \epsilon_{ijk}$
     \end{enumerate}
   \end{itemize}
@@ -250,55 +281,79 @@ par(mfrow = c(1, 1))
   \end{block}
 \end{frame}
 
-% \section{ANOVA Mechanics and Hypothesis Testing}
-% 
-% \begin{frame}[allowframebreaks]{Two-Way ANOVA Table (Balanced Design)}
-%   \begin{itemize}
-%     \item For a balanced design ($n$ observations per cell, $N = abn$ total):
-%   \end{itemize}
-% 
-%   \begin{table}
-%   \centering
-%   \small
-%   \begin{tabular}{l c l m{2cm} c}
-%     \hline
-%     \textbf{Source} & \textbf{DF} & \textbf{Sum of Squares (SS)} & \textbf{Mean Square} & \textbf{F-Statistic} \\
-%     \hline
-%     \textbf{Factor A} & $a - 1$ & $SS_A = bn \sum \hat{\alpha}_i^2$ & $MS_A = \frac{SS_A}{a-1}$ & $F_A = \frac{MS_A}{MS_E}$ \\
-%     \textbf{Factor B} & $b - 1$ & $SS_B = an \sum \hat{\beta}_j^2$ & $MS_B = \frac{SS_B}{b-1}$ & $F_B = \frac{MS_B}{MS_E}$ \\
-%     \textbf{Interaction AB} & $(a-1)(b-1)$ & $SS_{AB} = n \sum \sum \hat{\alpha\beta}_{ij}^2$ & $MS_{AB} = \frac{SS_{AB}}{(a-1)(b-1)}$ & $F_{AB} = \frac{MS_{AB}}{MS_E}$ \\
-%     \textbf{Error} & $ab(n - 1)$ & $SS_E = \sum \sum \sum (y_{ijk} - \bar{y}_{ij\bullet})^2$ & $MS_E = \frac{SS_E}{ab(n-1)}$ & \\
-%     \hline
-%     \textbf{Total} & $abn - 1$ & $SS_T = SS_A + SS_B + SS_{AB} + SS_E$ & & \\
-%     \hline
-%   \end{tabular}
-%   \end{table}
-% 
-%   \framebreak
-% 
-%   \begin{block}{Sequence of Testing: Top-Down Rule}
-%     \begin{enumerate}
-%       \item \alert{\textbf{Step 1: Test Interaction ($H\_0: (\alpha\beta)\_{ij} = 0$ for all $i,j$)}}
-%       \begin{itemize}
-%         \item If \textbf{Significant}: Stop! The model is non-additive. Do not interpret main effect $F$-tests in isolation. Examine simple main effects or interaction contrasts.
-%         \item If \textbf{Not Significant}: Drop interaction term to obtain the additive model.
-%       \end{itemize}
-%       \item \alert{\textbf{Step 2: Test Main Effects}}
-%       \begin{itemize}
-%         \item If interaction is non-significant, proceed to test $H_0: \alpha_i = 0$ and $H_0: \beta_j = 0$ independently using the main effect $F$-tests.
-%       \end{itemize}
-%     \end{enumerate}
-%   \end{block}
-% \end{frame}
+\section{ANOVA Mechanics and Hypothesis Testing}
+
+\begin{frame}[allowframebreaks]{Two-Way ANOVA Table (Balanced Design)}
+  \begin{itemize}
+    \item For a balanced design ($n$ observations per cell, $N = abn$ total):
+  \end{itemize}
+
+\mode<presentation>{
+  \begin{table}
+  \centering
+  \small
+  \begin{tabular}{l c l c c}
+    \hline
+    \textbf{Source} & \textbf{DF} & \textbf{SS} & \textbf{MS} & \textbf{F-Statistic} \\
+    \hline
+    \textbf{Factor A} & $a - 1$ & $SS_A$ & $MS_A$ & $F_A = \frac{MS_A}{MS_E}$ \\
+    \textbf{Factor B} & $b - 1$ & $SS_B$ & $MS_B$ & $F_B = \frac{MS_B}{MS_E}$ \\
+    \textbf{Interaction} & $(a-1)(b-1)$ & $SS_{AB}$ & $MS_{AB}$ & $F_{AB} = \frac{MS_{AB}}{MS_E}$ \\
+    \textbf{Error} & $ab(n - 1)$ & $SS_E$ & $MS_E$ & \\
+    \hline
+    \textbf{Total} & $abn - 1$ & $SS_T$ & & \\
+    \hline
+  \end{tabular}
+  \end{table}
+  
+  See compiled notes for detailed formulas.
+}
+
+\mode<article>{
+  \begin{table}
+  \centering
+  \small
+  \begin{tabular}{l c l c c}
+    \hline
+    \textbf{Source} & \textbf{DF} & \textbf{Sum of Squares (SS)} & \textbf{Mean Square} & \textbf{F-Statistic} \\
+    \hline
+    \textbf{Factor A} & $a - 1$ & $SS_A = bn \sum \hat{\alpha}_i^2$ & $MS_A = \frac{SS_A}{a-1}$ & $F_A = \frac{MS_A}{MS_E}$ \\
+    \textbf{Factor B} & $b - 1$ & $SS_B = an \sum \hat{\beta}_j^2$ & $MS_B = \frac{SS_B}{b-1}$ & $F_B = \frac{MS_B}{MS_E}$ \\
+    \textbf{Interaction AB} & $(a-1)(b-1)$ & $SS_{AB} = n \sum \sum \hat{\alpha\beta}_{ij}^2$ & $MS_{AB} = \frac{SS_{AB}}{(a-1)(b-1)}$ & $F_{AB} = \frac{MS_{AB}}{MS_E}$ \\
+    \textbf{Error} & $ab(n - 1)$ & $SS_E = \sum \sum \sum (y_{ijk} - \bar{y}_{ij\bullet})^2$ & $MS_E = \frac{SS_E}{ab(n-1)}$ & \\
+    \hline
+    \textbf{Total} & $abn - 1$ & $SS_T = SS_A + SS_B + SS_{AB} + SS_E$ & & \\
+    \hline
+  \end{tabular}
+  \end{table}
+}
+
+
+  \framebreak
+
+  \begin{block}{Sequence of Testing: Top-Down Rule}
+    \begin{enumerate}
+      \item \alert{\textbf{Step 1: Test Interaction ($H\_0: (\alpha\beta)\_{ij} = 0$ for all $i,j$)}}
+      \begin{itemize}
+        \item If \textbf{Significant}: Stop! The model is non-additive. Do not interpret main effect $F$-tests in isolation. Examine simple main effects or interaction contrasts.
+        \item If \textbf{Not Significant}: Drop interaction term to obtain the additive model.
+      \end{itemize}
+      \item \alert{\textbf{Step 2: Test Main Effects}}
+      \begin{itemize}
+        \item If interaction is non-significant, proceed to test $H_0: \alpha_i = 0$ and $H_0: \beta_j = 0$ independently using the main effect $F$-tests.
+      \end{itemize}
+    \end{enumerate}
+  \end{block}
+\end{frame}
 
 % \section{Applied Example in R}
-
+% 
 % \begin{frame}[fragile, allowframebreaks]{Dataset: Fertilizer Yields ($2 \times 2$ Factorial)}
 %   \begin{itemize}
 %     \item Let's simulate and analyze the Superphosphate (P) and Potash (K) experiment ($n=4$ replications per treatment).
 %   \end{itemize}
 
-<<fertilizer_data, size='small',eval=FALSE>>=
+<<fertilizer_data, size='small',eval=TRUE,echo=FALSE>>=
 # Create factorial dataset
 fert_data <- data.frame(
   P = factor(rep(c("No_P", "P"), each = 8)),
@@ -310,12 +365,12 @@ fert_data <- data.frame(
 )
 
 # Display sample means across cell combinations
-with(fert_data, tapply(yield, list(P, K), mean))
+# with(fert_data, tapply(yield, list(P, K), mean))
 @
 
 % \framebreak
 
-<<fertilizer_plot, fig.height=4, fig.width=6, fig.align='center', eval=FALSE>>=
+<<fertilizer_plot, fig.height=4, fig.width=6, fig.align='center', eval=FALSE,echo=FALSE>>=
 # Generate interaction plot
 interaction.plot(x.factor = fert_data$P, trace.factor = fert_data$K,
                  response = fert_data$yield, fun = mean,
@@ -326,7 +381,7 @@ interaction.plot(x.factor = fert_data$P, trace.factor = fert_data$K,
 
 % \framebreak
 
-<<fertilizer_anova, size='small', eval=FALSE>>=
+<<fertilizer_anova, size='small', eval=FALSE,echo=FALSE>>=
 # Fit Two-Way ANOVA Model with Interaction
 fert_mod <- aov(yield ~ P * K, data = fert_data)
 summary(fert_mod)
@@ -370,6 +425,302 @@ summary(fert_mod)
 % @
 % 
 % \end{frame}
+
+\section{Applied Examples in R}
+
+\begin{frame}[fragile, allowframebreaks]{Example 1: Significant Interaction (ToothGrowth)}
+  \begin{itemize}
+    \item The built-in \texttt{ToothGrowth} dataset measures tooth length (\texttt{len}) in guinea pigs under two factors:
+    \begin{itemize}
+      \item \textbf{Supplement (\texttt{supp}):} Orange Juice (OJ) or Ascorbic Acid (VC).
+      \item \textbf{Dose (\texttt{dose}):} 0.5, 1.0, or 2.0 mg/day.
+    \end{itemize}
+    \item First, we must convert \texttt{dose} from a numeric variable into a factor so R treats it as categorical.
+  \end{itemize}
+
+<<tooth_setup, size='small', eval=TRUE, echo=TRUE>>=
+# Load data and convert dose to a factor
+data(ToothGrowth)
+ToothGrowth$dose <- as.factor(ToothGrowth$dose)
+@
+
+  \framebreak
+
+  \begin{block}{1. Visualizing the Interaction}
+    We start with an interaction plot. Crossing or converging lines suggest an interaction effect.
+  \end{block}
+
+<<tooth_plot, fig.height=4, fig.width=6, fig.align='center', eval=TRUE, echo=TRUE>>=
+interaction.plot(x.factor = ToothGrowth$dose, 
+                 trace.factor = ToothGrowth$supp, 
+                 response = ToothGrowth$len,
+                 type = "b", pch = c(16, 17), col = c("orange", "blue"),
+                 xlab = "Dose (mg/day)", ylab = "Mean Tooth Length",
+                 trace.label = "Supplement")
+@
+
+  \framebreak
+
+  \begin{block}{2. Fitting the Model and Testing (Top-Down Rule)}
+    We fit the full model with the \texttt{*} operator and check the ANOVA table.
+  \end{block}
+
+<<tooth_aov, size='small', eval=TRUE, echo=TRUE>>=
+mod_tooth <- aov(len ~ supp * dose, data = ToothGrowth)
+summary(mod_tooth)
+@
+
+  \begin{itemize}
+    \item \textbf{Interpretation:} The \texttt{supp:dose} interaction is significant ($p = 0.02$). Following our Top-Down Rule, we \textbf{stop} and do not interpret the main effects blindly. The effect of the supplement depends entirely on the dose.
+  \end{itemize}
+
+  \framebreak
+
+  \begin{block}{3. Analyzing Simple Effects with \texttt{emmeans}}
+    Because the interaction is significant, we should look at the "simple effects"—the effect of the supplement \emph{at each specific level} of the dose.
+  \end{block}
+
+<<tooth_posthoc, size='small', eval=TRUE, echo=TRUE>>=
+library(emmeans)
+# The "|" operator tells emmeans to compare 'supp' AT each level of 'dose'
+emm_tooth <- emmeans(mod_tooth, pairwise ~ supp | dose)
+
+# View the pairwise comparisons
+emm_tooth$contrasts
+@
+
+  \begin{itemize}
+    \item \textbf{Conclusion:} Orange juice (OJ) results in significantly longer teeth at doses of 0.5 and 1.0, but there is no significant difference between supplements at a dose of 2.0.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Demystifying the \texttt{emmeans} Syntax}
+  \begin{itemize}
+    \item In a one-way ANOVA, you likely used \texttt{emmeans(model, \textasciitilde{} Factor)} to get the estimated means for each group.
+    \item In a two-way ANOVA with a significant interaction, we must examine \alert{simple main effects}. We need to know the effect of one factor \emph{at specific levels} of the other factor.
+  \end{itemize}
+
+  \begin{block}{Breaking down: \texttt{pairwise \textasciitilde{} supp | dose}}
+    \begin{itemize}
+      \item \textbf{\texttt{pairwise \textasciitilde{} supp}}: This tells R to calculate the pairwise differences between the levels of the Supplement factor (OJ vs. VC).
+      \item \textbf{\texttt{|} (The Pipe/Bar)}: In R formulas, the vertical bar means "given" or "conditioned on." 
+      \item \textbf{\texttt{dose}}: This is the grouping variable. It tells R to split the analysis up by the levels of Dose.
+    \end{itemize}
+  \end{block}
+
+  \begin{itemize}
+    \item \textbf{Plain English Translation:} "Compare the mean tooth length of OJ vs. VC, and do this comparison three separate times: once for the 0.5 dose, once for the 1.0 dose, and once for the 2.0 dose."
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile, allowframebreaks]{Example 2: No Interaction (Additive Model)}
+  \begin{itemize}
+    \item The built-in \texttt{npk} dataset records pea yields based on applying Nitrogen (\texttt{N}) and Phosphate (\texttt{P}). 
+    \item Let's evaluate if Nitrogen and Phosphate interact to affect \texttt{yield}.
+  \end{itemize}
+
+<<npk_plot, fig.height=4, fig.width=6, fig.align='center', eval=TRUE, echo=TRUE>>=
+data(npk)
+
+# Visualize the data
+interaction.plot(x.factor = npk$N, trace.factor = npk$P, 
+                 response = npk$yield,
+                 type = "b", pch = c(16, 17), col = c("darkgreen", "brown"),
+                 xlab = "Nitrogen (N)", ylab = "Mean Yield",
+                 trace.label = "Phosphate (P)")
+@
+
+  \framebreak
+
+  \begin{block}{1. Fitting the Full Model}
+    Notice in the plot that the lines are nearly perfectly parallel. We test this statistically by fitting the full factorial model.
+  \end{block}
+
+<<npk_aov, size='small', eval=TRUE, echo=TRUE>>=
+mod_npk <- aov(yield ~ N * P, data = npk)
+summary(mod_npk)
+@
+
+  \begin{itemize}
+    \item \textbf{Interpretation:} The \texttt{N:P} interaction is not significant ($p = 0.485$). We can drop the interaction term and fit an \alert{additive model}.
+  \end{itemize}
+
+  \framebreak
+
+  \begin{block}{2. Fitting the Additive Model}
+    We use the \texttt{+} operator to fit a model assuming the effects of N and P are strictly independent.
+  \end{block}
+
+<<npk_additive, size='small', eval=TRUE, echo=TRUE>>=
+# Fit additive model (no interaction)
+mod_npk_add <- aov(yield ~ N + P, data = npk)
+summary(mod_npk_add)
+@
+
+  \begin{itemize}
+    \item \textbf{Conclusion:} Nitrogen (\texttt{N}) has a significant main effect on yield ($p = 0.015$), while Phosphate (\texttt{P}) does not ($p = 0.613$). Because the model is additive, we know Nitrogen increases yield regardless of whether Phosphate is applied or not.
+  \end{itemize}
+\end{frame}
+
+\section{Advanced Topics in Practice (R)}
+
+\begin{frame}[fragile, allowframebreaks]{Unbalanced Data: The Order Matters}
+  \begin{itemize}
+    \item Real-world data is rarely perfectly balanced (e.g., dropped samples, survey non-response).
+    \item When a design is \alert{unbalanced}, factor effects are no longer strictly independent (orthogonal).
+    \item \textbf{The Trap:} Base R's \texttt{aov()} uses \textbf{Type I (Sequential) Sums of Squares}. The order you list your variables completely changes the p-values!
+  \end{itemize}
+
+<<unbalanced_type1, size='small', eval=FALSE>>=
+# In an unbalanced dataset, these two models test 
+# different hypotheses for the main effects!
+mod1 <- aov(yield ~ P * K, data = unbalanced_data)
+summary(mod1) 
+
+mod2 <- aov(yield ~ K * P, data = unbalanced_data)
+summary(mod2)
+@
+
+  \framebreak
+
+\begin{block}{Best Practices for Unbalanced Data}
+    \begin{enumerate}
+      \item \textbf{Use \texttt{joint\_tests()}:} Base R's contrast coding makes standard Type III ANOVA tables difficult to calculate correctly. Instead, use \texttt{joint\_tests()} from the \texttt{emmeans} package to get an ANOVA-like table that is mathematically correct for unbalanced data.
+      \item \textbf{Rely on \texttt{emmeans}:} Use \texttt{emmeans} to calculate unbiased marginal means, and \texttt{pairs()} to test the differences between them.
+    \end{enumerate}
+  \end{block}
+
+<<unbalanced_solution, size='small', eval=TRUE>>=
+library(emmeans)
+
+# Create a mock unbalanced dataset by dropping 3 observations
+unbalanced_data <- fert_data[-c(1, 5, 9), ]
+mod1 <- aov(yield ~ P * K, data = unbalanced_data)
+
+# 1. Test main effects and interactions safely
+joint_tests(mod1) 
+
+# 2. Get unbiased marginal means for Factor P
+emm_P <- emmeans(mod1, ~ P)
+emm_P
+
+# 3. Test pairwise differences between those balanced means
+pairs(emm_P)
+@
+
+\end{frame}
+
+\section{Multiple Comparisons: Beyond the F-Test}
+
+\begin{frame}[fragile, allowframebreaks]{Multiple Comparisons in Practice}
+  \begin{itemize}
+    \item A significant ANOVA interaction tells you \emph{some} difference exists, but testing all pairs blindly increases your \alert{family-wise error rate} (false positive rate).
+    \item The \texttt{emmeans} package provides a streamlined pipeline for post-hoc testing with appropriate data-dredging penalties.
+  \end{itemize}
+
+<<mult_comp, size='small', eval=FALSE>>=
+# Assuming fert_mod is our fitted two-way model
+emm_int <- emmeans(fert_mod, ~ P * K)
+
+# Tukey adjustment for all pairwise comparisons
+pairs(emm_int, adjust = "tukey")
+@
+
+  \framebreak
+
+  \begin{block}{Visualizing Contrasts}
+    \begin{itemize}
+      \item Staring at massive tables of p-values makes it difficult to assess effect sizes.
+      \item You can pass your contrast object directly into a plot to visually see which adjusted confidence intervals exclude zero.
+    \end{itemize}
+  \end{block}
+
+<<mult_comp_plot, size='small', eval=FALSE, fig.height=4, fig.align='center'>>=
+# Generates a forest plot of the differences between groups
+plot(pairs(emm_int, adjust = "tukey")) + 
+  ggplot2::geom_vline(xintercept = 0, linetype = "dashed", color = "red") +
+  ggplot2::labs(title = "Tukey-Adjusted Pairwise Differences")
+@
+
+\end{frame}
+
+\section{Resource Constraints: Unreplicated \& Fractional Designs}
+
+\begin{frame}[fragile, allowframebreaks]{Unreplicated Factorials ($n=1$)}
+  \begin{itemize}
+    \item Experiments are expensive. Sometimes we can only afford a single replicate per treatment combination ($n=1$).
+    \item \alert{The Problem:} Fitting a full factorial model uses up all available degrees of freedom. The error degrees of freedom ($df_E$) becomes 0, so R returns \texttt{NA} for all standard errors and p-values.
+  \end{itemize}
+
+<<unrep_problem, size='small', eval=FALSE>>=
+# Fits main effects, 2-way, 3-way, and 4-way interactions
+mod_unrep <- aov(yield ~ A * B * C * D, data = unrep_data)
+
+# F-values and p-values will return as NA
+summary(mod_unrep) 
+@
+
+  \framebreak
+
+  \begin{block}{The Fix: Pooling into Error}
+    \begin{itemize}
+      \item Relying on the \alert{Sparsity of Effects Principle}, we assume high-order interactions (e.g., 3-way and 4-way) are effectively zero (just random noise).
+      \item We restrict the model, pushing those negligible higher-order terms into the residual error to mathematically generate degrees of freedom.
+    \end{itemize}
+  \end{block}
+
+<<unrep_fix, size='small', eval=FALSE>>=
+# Restrict the model to main effects and 2-way interactions only
+# The "^2" syntax drops 3-way and 4-way terms into the error
+mod_pooled <- aov(yield ~ (A + B + C + D)^2, data = unrep_data)
+
+# Now R can calculate p-values for main and 2-way effects!
+summary(mod_pooled) 
+@
+
+\end{frame}
+
+\begin{frame}[fragile, allowframebreaks]{Fractional Factorials \& Confounding}
+ \begin{itemize}
+    \item A \alert{fractional factorial} design runs only a structured fraction of the full combinations (e.g., 16 runs instead of 32 for a 5-factor design).
+    \item \textbf{How R handles it:} R automatically recognizes the missing runs and returns \texttt{NA} for the interaction terms it cannot mathematically estimate.
+    \item \textbf{Aliasing:} Because we skipped runs, certain effects are perfectly correlated (confounded). 
+    \begin{itemize}
+        \item \emph{Intuition:} If we design a half-fraction by defining Factor C's levels mathematically as $A \times B$, R cannot tell if an observed change in yield is caused by the main effect of C, or the interaction of A and B.
+    \end{itemize}
+  \end{itemize}
+
+<<fractional_alias, size='small', eval=TRUE>>=
+# Generate a mock half-fraction dataset (2^(3-1))
+library(FrF2)
+frac_data <- FrF2(nruns = 4, nfactors = 3, factor.names = c("A", "B", "C"))
+frac_data$yield <- c(14, 18, 22, 19)
+
+frac_mod <- aov(yield ~ A * B * C, data = frac_data)
+
+# This outputs the exact matrix showing which main effects 
+# are mathematically identical to which interaction terms:
+alias(frac_mod)
+@
+  \framebreak
+
+  \begin{block}{Visual Diagnostics: Daniel Plots}
+    \begin{itemize}
+      \item If you have zero degrees of freedom for error (saturated/fractional models), you can evaluate effects visually without an F-test using a \alert{Half-Normal Probability Plot}.
+      \item \textbf{Interpretation:} Noise falls along a straight line. Significant, active effects break away from the line.
+    \end{itemize}
+  \end{block}
+
+<<daniel_plot, size='small', eval=FALSE, fig.height=4, fig.align='center'>>=
+library(FrF2)
+
+# Visually identify active effects in an unreplicated or 
+# fractional design without needing an error term
+DanielPlot(frac_mod, half = TRUE, 
+           main = "Half-Normal Plot of Effects")
+@
+
+\end{frame}
 
 \newcommand\acknowledgments{
 \begin{itemize}
