@@ -78,6 +78,17 @@
     \item \textbf{(For 6000-level students):} Now perform the same pair-wise comparisons without making the Tukey adjustment. Does it change the outcomes?
   \end{enumerate}
   
+  \item \textbf{This problem uses the TODO dataset in Canvas}. Twelve orange pulp silage samples were divided at random into four groups of three. 
+  One of the groups was left as an untreated control, while the other three groups were treated with formic acid, beet pulp, and sodium chloride, respectively. 
+  The response variable recorded in the file TODO is the moisture content of the silage. 
+  
+  \begin{enumerate}
+    \item Compute an analysis of variance table for these data, and test the null hypothesis that all four treatments yield the same average moisture contents with a significance level of $\alpha = 0.05$.
+    \item Perform all pair-wise comparisons using Tukey's-HSD adjustment method, and report the outcome of each pairwise comparison.
+    \item \textbf{(For 6000-level students):} Using an appropriate contrast, compute a $99\%$ confidence interval for the difference in response between the average of the three treatment groups (acid, pulp, and salt) and the control group.
+  \end{enumerate}
+  
+  
   \item \label{prob:last}
 \end{enumerate}
 
