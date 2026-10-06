@@ -39,10 +39,9 @@
     \item Module outcomes include:
     \begin{itemize}
       \item You will understand complete and incomplete factorial treatment structures.
-      \item You will develop an intuitive and formal understanding of \alert{interaction effects}.
+      \item You will develop an intuitive and formal understanding of interaction effects.
       \item You will be able to specify and fit additive and non-additive two-way ANOVA models.
       \item You will learn how to construct and interpret main effect contrasts and interaction contrasts.
-      \item You will master the model testing sequence (testing interaction first).
       \item You will know how to fit and analyze factorial designs in R using \texttt{aov()} and \texttt{emmeans()}.
     \end{itemize}
   \end{itemize}
@@ -52,11 +51,13 @@
 
 \begin{frame}[allowframebreaks]{Introduction to Factorial Structures}
   \begin{itemize}
-    \item In many experiments, we want to evaluate the effect of \alert{two or more explanatory factors} simultaneously.
+    \item In many experiments, we want to evaluate the effect of two or more explanatory factors simultaneously.
     \item A \alert{factorial treatment structure} defines treatments as combinations of levels of each factor.
     \item Suppose Factor A has $a$ levels and Factor B has $b$ levels.
     \item A \alert{complete factorial design} includes all $g = a \times b$ possible treatment combinations.
   \end{itemize}
+  
+  \framebreak
 
   \begin{block}{Example 1: $2 \times 3$ Diet Experiment}
     \begin{itemize}
@@ -94,6 +95,22 @@
   
   \vspace{2mm}
 
+  \mode<presentation>{
+    \begin{table}
+      \centering
+      \renewcommand{\arraystretch}{1.5}
+      \begin{tabular}{l | c c c | c}
+        & \textbf{Beef} & \textbf{Cereal} & \textbf{Pork} & \textbf{Marginal Row Mean} \\
+        \hline
+        \textbf{High Intake} & $\mu_{11}$ & $\mu_{12}$ & $\mu_{13}$ & $\bar{\mu}_{1\bullet}$ \\
+        \textbf{Low Intake}  & $\mu_{21}$ & $\mu_{22}$ & $\mu_{23}$ & $\bar{\mu}_{2\bullet}$ \\
+        \hline
+        \textbf{Marginal Col Mean}   & $\bar{\mu}_{\bullet 1}$ & $\bar{\mu}_{\bullet 2}$ & $\bar{\mu}_{\bullet 3}$ & $\mu$ (Grand Mean) \\
+      \end{tabular}
+    \end{table}
+  }
+
+  \mode<article>{
     \begin{table}
       \centering
       \renewcommand{\arraystretch}{1.5}
@@ -106,14 +123,24 @@
         \textbf{Marginal Col Mean}   & $\bar{\mu}_{\bullet 1}$ & $\bar{\mu}_{\bullet 2}$ & $\bar{\mu}_{\bullet 3}$ & $\mu$ (Grand Mean) \\
       \end{tabular}
     \end{table}
+  }
 
   \begin{itemize}
     \item \textbf{Main Effects:} Evaluated by comparing the marginal row means ($\bar{\mu}_{1\bullet}$ vs. $\bar{\mu}_{2\bullet}$) or the marginal column means ($\bar{\mu}_{\bullet 1}$, $\bar{\mu}_{\bullet 2}$, $\bar{\mu}_{\bullet 3}$). For example, what is the difference in response between high and low intake treatments?
     \item \textbf{Interactions:} Evaluated by looking at differences between cells. For example, is the difference between High and Low intake the same for Beef as it is for Cereal?
     $$(\mu_{11} - \mu_{21}) \stackrel{?}{=} (\mu_{12} - \mu_{22})$$
-    \item \textbf{The ANOVA Alternative:} While we \emph{could} formalize and test all these specific comparisons using individual \alert{contrasts} (which we discussed in previous modules), doing so for every combination is tedious and inflates our error rate.
+    \item \textbf{The ANOVA Alternative:} While we \emph{could} formalize and test all these specific comparisons using individual contrasts (which we discussed in previous modules), doing so for every combination is tedious and inflates our error rate.
     \item Instead, we will introduce the \alert{Two-Way ANOVA} as an efficient way to test for overall main effects and interactions simultaneously.
+    \item Like one-way ANOVA, we will express the total sum of squares in terms of treatments and errors.
   \end{itemize}
+  
+  \mode<article>{
+  If we denote $A$ as the first treatment type, $B$ as the second,  and $AB$ as the interaction, then we will have a similar break down: 
+    $$
+    SS_T = SS_A + SS_B + SS_{AB} + SS_E
+    $$
+  }
+  
 \end{frame}
 
 \begin{frame}[allowframebreaks]{Notation for Two-Way Factorials}
@@ -133,6 +160,61 @@
       \item Marginal mean for level $j$ of Factor B: $\bar{y}_{\bullet j\bullet} = \frac{1}{an} \sum_{i=1}^a \sum_{k=1}^n y_{ijk}$
       \item Overall grand mean: $\bar{y}_{\bullet\bullet\bullet} = \frac{1}{abn} \sum_{i=1}^a \sum_{j=1}^b \sum_{k=1}^n y_{ijk}$
     \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\section{The Two-Way ANOVA Model}
+
+\begin{frame}[allowframebreaks]{Model Specification}
+  \begin{itemize}
+    \item For completely randomized designs, we will start with \alert{balanced factorial} treatments. All $n_{ij} = n$ for all $i, j$.
+    \item We model the response $y_{ijk}$ as:
+    $$y_{ijk} = \mu + \alpha_i + \beta_j + (\alpha\beta)_{ij} + \epsilon_{ijk}$$
+    where:
+    \begin{itemize}
+      \item $\mu$: Overall grand mean.
+      \item $\alpha_i$: Main effect of level $i$ of Factor A.
+      \item $\beta_j$: Main effect of level $j$ of Factor B.
+      \item $(\alpha\beta)_{ij}$: Interaction effect between level $i$ of A and level $j$ of B.
+      \item $\epsilon_{ijk} \stackrel{iid}{\sim} N(0, \sigma^2)$: Random errors.
+    \end{itemize}
+
+    \framebreak
+
+    \item \alert{Parameter Identification Restrictions (Sum-to-Zero Constraints):}
+    $$
+    \sum_{i=1}^a \alpha_i = \sum_{j=1}^b \beta_j = \sum_{i=1}^a (\alpha\beta)_{ik} = \sum_{j=1}^b (\alpha\beta)_{kj} = 0 \text{ for all } k
+    $$
+
+    \item \alert{Hierarchy of Models}:
+    \begin{enumerate}
+      \item \textbf{Full (Non-additive) Model}: $y_{ijk} = \mu + \alpha_i + \beta_j + (\alpha\beta)_{ij} + \epsilon_{ijk}$
+      \item \textbf{Additive Model}: $y_{ijk} = \mu + \alpha_i + \beta_j + \epsilon_{ijk}$
+      \item \textbf{Main Effect Models}: $y_{ijk} = \mu + \alpha_i + \epsilon_{ijk}$, \hspace{2mm} $y_{ijk} = \mu + \beta_j + \epsilon_{ijk}$ 
+      \item \textbf{Constant Model}: $y_{ijk} = \mu + \epsilon_{ijk}$
+    \end{enumerate}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Degrees of Freedom}
+  \begin{itemize}
+    \item \mode<article>{When computing the degrees of freedom for each parameter, note that the complete factorial structure performs and ANOVA for treatment A and B simultaneously.}
+    The degrees of freedom for each main effect is computed as we would in a one-way ANOVA:
+      \begin{itemize}
+        \item Main effect $A$: $(a - 1)$ \mode<article>{where $a$ is the number of treatment levels for factor $A$.}
+        \item Main effect $B$: $(b - 1)$ \mode<article>{where $b$ is the number of treatment levels for factor $A$.}
+        \item Interaction effect ($AB$): $(a - 1)(b - 1)$.
+        
+        \mode<article>{
+          One way to think about this last degree of freedom calculation is to see how many degrees of freedom are unused if we just treated it as a one-way ANOVA for the individual treatment groups $\mu_{ij}$: There are $ab$ total treatment means and we lose one degree of freedom for the grand mean, so we have $ab - 1$ total degrees of freedom that must be accounted for.
+          If there are $(a - 1)$ for the main effects of factor $A$, and $(b - 1)$ for the main effects of factor $B$, then there must be:
+          $$
+          (ab - 1) - (a - 1) - (b - 1) = ab -a - b + 1 = (a - 1)(b - 1)
+          $$
+          degrees of freedom left for the interaction effects. 
+        }
+        
+      \end{itemize}
   \end{itemize}
 \end{frame}
 
@@ -169,116 +251,29 @@
     \item \textbf{Non-parallel or crossing lines} $\implies$ Interaction present.
   \end{itemize}
 
-<<interaction_plot_demo, fig.height=4, fig.width=8, echo=FALSE, eval=FALSE>>=
+<<interaction_plot_demo, fig.height=4, fig.width=8, echo=FALSE, eval=TRUE>>=
 par(mfrow = c(1, 2))
 # Additive Scenario
 means_add <- matrix(c(10, 15, 20, 25), nrow = 2, byrow = TRUE)
-interaction.plot(x.factor = gl(2, 1, labels = c("A1", "A2")),
-                 trace.factor = gl(2, 1, labels = c("B1", "B2")),
+interaction.plot(x.factor = gl(2, 2, labels = c("A1", "A2")),
+                 trace.factor = gl(2, 1, 4, labels = c("B1", "B2")),
                  response = c(10, 20, 15, 25),
                  type = "b", pch = c(1, 19), col = c("blue", "red"),
                  legend = TRUE, main = "Additive (No Interaction)",
-                 xlab = "Factor A", ylab = "Mean Response")
+                 xlab = "Factor A", ylab = "Mean Response",
+                 trace.label = 'Factor B')
 
 # Interaction Scenario
-interaction.plot(x.factor = gl(2, 1, labels = c("A1", "A2")),
-                 trace.factor = gl(2, 1, labels = c("B1", "B2")),
+interaction.plot(x.factor = gl(2, 2, labels = c("A1", "A2")),
+                 trace.factor = gl(2, 1, 4, labels = c("B1", "B2")),
                  response = c(10, 25, 20, 15),
                  type = "b", pch = c(1, 19), col = c("blue", "red"),
                  legend = TRUE, main = "Interaction Present",
-                 xlab = "Factor A", ylab = "Mean Response")
+                 xlab = "Factor A", ylab = "Mean Response", 
+                 trace.label = "Factor B")
 par(mfrow = c(1, 1))
 @
 
-\end{frame}
-
-\section{The Two-Way ANOVA Model}
-
-\begin{frame}[allowframebreaks]{Model Specification}
-  \begin{itemize}
-    \item We model the response $y_{ijk}$ as:
-    $$y_{ijk} = \mu + \alpha_i + \beta_j + (\alpha\beta)_{ij} + \epsilon_{ijk}$$
-    where:
-    \begin{itemize}
-      \item $\mu$: Overall grand mean.
-      \item $\alpha_i$: Main effect of level $i$ of Factor A.
-      \item $\beta_j$: Main effect of level $j$ of Factor B.
-      \item $(\alpha\beta)_{ij}$: Interaction effect between level $i$ of A and level $j$ of B.
-      \item $\epsilon_{ijk} \stackrel{iid}{\sim} N(0, \sigma^2)$: Random errors.
-    \end{itemize}
-
-    \framebreak
-
-    \item \alert{Parameter Identification Restrictions (Sum-to-Zero Constraints):}
-    $$
-    \sum_{i=1}^a \alpha_i = \sum_{j=1}^b \beta_j = \sum_{i=1}^a (\alpha\beta)_{ik} = \sum_{j=1}^b (\alpha\beta)_{kj} = 0 \text{ for all } k
-    $$
-
-    \item \alert{Hierarchy of Models}:
-    \begin{enumerate}
-      \item \textbf{Full (Non-additive) Model}: $y_{ijk} = \mu + \alpha_i + \beta_j + (\alpha\beta)_{ij} + \epsilon_{ijk}$
-      \item \textbf{Additive Model}: $y_{ijk} = \mu + \alpha_i + \beta_j + \epsilon_{ijk}$
-      \item \textbf{Main Effect Models}: $y_{ijk} = \mu + \alpha_i + \epsilon_{ijk}$, \hspace{2mm} $y_{ijk} = \mu + \beta_j + \epsilon_{ijk}$ 
-      \item \textbf{Constant Model}: $y_{ijk} = \mu + \epsilon_{ijk}$
-    \end{enumerate}
-  \end{itemize}
-\end{frame}
-
-\section{Factorial Contrasts}
-
-\begin{frame}[allowframebreaks]{Main Effects vs. Interaction Contrasts}
-  \begin{itemize}
-    \item A contrast in a factorial design is a linear combination of treatment means $\sum_i \sum_j w_{ij} \mu_{ij}$ subject to $\sum_i \sum_j w_{ij} = 0$.
-    \item \alert{Main Effect Contrasts for A}:
-    Weights for a given level of A are identical across all levels of B.
-    $$\sum_{i=1}^a w_i = 0, \quad w_{ij} = w_i \quad \text{for all } j$$
-    \item \alert{Interaction Contrasts ("Contrast of Contrasts")}:
-    Weights are constructed as products of main effect contrast weights: $w_{ij} = w_{A,i} \times w_{B,j}$.
-    Row sums and column sums of weights must \textbf{all equal zero}:
-    $$\sum_{i=1}^a w_{ij} = 0 \text{ for all } j, \quad \text{and} \quad \sum_{j=1}^b w_{ij} = 0 \text{ for all } i$$
-  \end{itemize}
-
-  \framebreak
-
-  \begin{block}{Example: $2 \times 2$ Factorial Weight Matrices}
-    \begin{columns}
-      \begin{column}{0.33\textwidth}
-        \centering
-        \textbf{Main Effect A ($W\_A$)}
-        \begin{tabular}{|c|c|}
-          \hline
-          1 & 1 \\
-          \hline
-          -1 & -1 \\
-          \hline
-        \end{tabular}
-      \end{column}
-
-      \begin{column}{0.33\textwidth}
-        \centering
-        \textbf{Main Effect B ($W\_B$)}
-        \begin{tabular}{|c|c|}
-          \hline
-          1 & -1 \\
-          \hline
-          1 & -1 \\
-          \hline
-        \end{tabular}
-      \end{column}
-
-      \begin{column}{0.33\textwidth}
-        \centering
-        \textbf{Interaction ($W\_{AB}$)}
-        \begin{tabular}{|c|c|}
-          \hline
-          1 & -1 \\
-          \hline
-          -1 & 1 \\
-          \hline
-        \end{tabular}
-      \end{column}
-    \end{columns}
-  \end{block}
 \end{frame}
 
 \section{ANOVA Mechanics and Hypothesis Testing}
@@ -451,12 +446,16 @@ ToothGrowth$dose <- as.factor(ToothGrowth$dose)
   \end{block}
 
 <<tooth_plot, fig.height=4, fig.width=6, fig.align='center', eval=TRUE, echo=TRUE>>=
-interaction.plot(x.factor = ToothGrowth$dose, 
-                 trace.factor = ToothGrowth$supp, 
-                 response = ToothGrowth$len,
-                 type = "b", pch = c(16, 17), col = c("orange", "blue"),
-                 xlab = "Dose (mg/day)", ylab = "Mean Tooth Length",
-                 trace.label = "Supplement")
+interaction.plot(
+  x.factor = ToothGrowth$dose, 
+  trace.factor = ToothGrowth$supp, 
+  response = ToothGrowth$len,
+  type = "b", pch = c(16, 17), 
+  col = c("orange", "blue"),
+  xlab = "Dose (mg/day)", 
+  ylab = "Mean Tooth Length",
+  trace.label = "Supplement"
+)
 @
 
   \framebreak
@@ -561,6 +560,64 @@ summary(mod_npk_add)
     \item \textbf{Conclusion:} Nitrogen (\texttt{N}) has a significant main effect on yield ($p = 0.015$), while Phosphate (\texttt{P}) does not ($p = 0.613$). Because the model is additive, we know Nitrogen increases yield regardless of whether Phosphate is applied or not.
   \end{itemize}
 \end{frame}
+
+\section{Factorial Contrasts}
+
+\begin{frame}[allowframebreaks]{Main Effects vs. Interaction Contrasts}
+  \begin{itemize}
+    \item A contrast in a factorial design is a linear combination of treatment means $\sum_i \sum_j w_{ij} \mu_{ij}$ subject to $\sum_i \sum_j w_{ij} = 0$.
+    \item \alert{Main Effect Contrasts for A}:
+    Weights for a given level of A are identical across all levels of B.
+    $$\sum_{i=1}^a w_i = 0, \quad w_{ij} = w_i \quad \text{for all } j$$
+    \item \alert{Interaction Contrasts ("Contrast of Contrasts")}:
+    Weights are constructed as products of main effect contrast weights: $w_{ij} = w_{A,i} \times w_{B,j}$.
+    Row sums and column sums of weights must \textbf{all equal zero}:
+    $$\sum_{i=1}^a w_{ij} = 0 \text{ for all } j, \quad \text{and} \quad \sum_{j=1}^b w_{ij} = 0 \text{ for all } i$$
+  \end{itemize}
+
+  \framebreak
+
+  \begin{block}{Example: $2 \times 2$ Factorial Weight Matrices}
+    \begin{columns}
+      \begin{column}{0.33\textwidth}
+        \centering
+        \textbf{Main Effect A ($W\_A$)}
+        \begin{tabular}{|c|c|}
+          \hline
+          1 & 1 \\
+          \hline
+          -1 & -1 \\
+          \hline
+        \end{tabular}
+      \end{column}
+
+      \begin{column}{0.33\textwidth}
+        \centering
+        \textbf{Main Effect B ($W\_B$)}
+        \begin{tabular}{|c|c|}
+          \hline
+          1 & -1 \\
+          \hline
+          1 & -1 \\
+          \hline
+        \end{tabular}
+      \end{column}
+
+      \begin{column}{0.33\textwidth}
+        \centering
+        \textbf{Interaction ($W\_{AB}$)}
+        \begin{tabular}{|c|c|}
+          \hline
+          1 & -1 \\
+          \hline
+          -1 & 1 \\
+          \hline
+        \end{tabular}
+      \end{column}
+    \end{columns}
+  \end{block}
+\end{frame}
+
 
 \section{Advanced Topics in Practice (R)}
 
