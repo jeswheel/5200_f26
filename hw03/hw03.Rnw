@@ -1,0 +1,85 @@
+\documentclass[10pt,twoside]{article}
+\usepackage[marginparsep=1em]{geometry}
+\geometry{lmargin=1.0in,rmargin=1.0in, bmargin=1.2in,  tmargin=1.2in}
+\usepackage[dvipsnames,svgnames,table]{xcolor}
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{epstopdf}
+\usepackage{verbatim}
+\usepackage{enumerate}
+\usepackage{bm}
+\usepackage{amsthm}
+\usepackage{float}
+\usepackage{amsmath}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+\usepackage{mathtools}
+\usepackage{booktabs}
+            
+%%%%  SHORTCUT COMMANDS  %%%%
+\newcommand{\ds}{\displaystyle}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\T}{\mathcal{T}}
+\newcommand{\arc}{\rightarrow}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\RP}{\mathbb{R}(+)}
+\newcommand{\Rs}{\mathbb{R}^{**}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\B}{\mathcal{B}}
+\newcommand{\PX}{\mathcal{P}(X)}
+\newcommand*\rot{\rotatebox{90}}
+\newcommand*\OK{\ding{51}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\Answer}{\vspace{2mm}\textbf{\underline{Answer}}\\}
+\newcolumntype{L}{>{$}l<{$}}
+\newcolumntype{C}{>{$}c<{$}}
+\newcommand{\GL}{\text{GL}}
+\newcommand{\SL}{\text{SL}}
+
+\newcommand{\stirling}[2]{\genfrac{\{}{\}}{0pt}{}{#1}{#2}}
+
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\sectionmark}[1]{\markright{\thesection.\ #1}}
+\lhead{\fancyplain{}{}} 
+\fancyhead[RE,RO]{Stat 5200/6200, Fall 2026}
+\fancyfoot[RE,RO]{\thepage}
+
+
+\begin{document}
+\begin{flushright}
+\begin{minipage}{.33\textwidth}
+\rightline{YOUR NAME}
+\rightline{\href{mailto:YOUR EMAIL}{YOUR EMAIL}}
+\rightline{\today}
+\end{minipage}
+\end{flushright}
+
+\begin{center}
+{\large{\textbf{Homework 3}}}
+\end{center}
+
+\textbf{Don't forget an academic integrity statement} (see syllabus for more details)!
+
+\begin{enumerate}
+  \item Finish problems~\ref{prob:first}--\ref{prob:last}, then complete the academic integrity statement.
+  \item \label{prob:first} \textbf{Building off of the previous homework} In Homework 2, you should have performed an ANOVA on the dataset in the \texttt{rats.csv} file.
+  If done correctly, you would have found a statistically significant treatment effect (at the $\alpha = 0.05$ level), with a P-value of $0.0102$.
+  That is, there is \emph{some} evidence of differences between the treatment means.
+  
+  \textbf{We now would like to expand on these results.}
+  
+  \begin{enumerate}
+    \item What is the estimated treatment mean $\mu_{i}$ for each of the treatments?
+    \item If you wanted to compare all treatment means against each-other (all pairwise comparisons), how many comparisons would you be making?
+    \item Using an $\alpha = 0.05$ significance level, perform all pair-wise comparisons using Tukey's-HSD adjustment, and list the adjusted P-value for each comparison. What are the significant differences you found?
+    \item \textbf{(For 6000-level students):} Now perform the same pair-wise comparisons without making the Tukey adjustment. Does it change the outcomes?
+  \end{enumerate}
+  
+  \item \label{prob:last}
+\end{enumerate}
+
+
+\end{document}
