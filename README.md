@@ -41,7 +41,7 @@ Next time, have a ready .csv file to demonstrate loading, etc. Slightly more org
   - Chapter 4.1 -- 4.2 (6 pages)
   - 5.1--5.2, 5.6, 5.7, 5.8 (about 7 pages, light) (5.3 -- 5.5 is good and the material should be covered, but it's beyond wat 5000-level students need / want). 
   - 6.1--6.2 (more sections in this chapter?)
-  - Cha
+  - Chapter 8.1--8.6 (14 pages).
 - For 6000-level students, additional reading might be a good idea:
   - 4.3--4.4 (orthogonal and polynomial contrasts)
   - 5.3--5.5 (mathematics of multiple comparisons)
