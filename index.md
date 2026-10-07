@@ -50,11 +50,13 @@ Please read the [grading rubric](rubric_homework.html) before submitting homewor
 [TeX file](hw01/hw01.tex)
 * [Homework 2](hw02/hw02.pdf), due Fir Oct 02, 11:59pm.
 [TeX file](hw02/hw02.tex),  [data file (rats.csv)](hw02/rats.csv)
+* [Homework 3](hw03/hw03.pdf), due Wed Oct 16, 11:59pm.
+[TeX file](hw03/hw03.tex)
+[flies.csv](hw03/flies.csv)
+[silage.csv](hw03/silage.csv)
+[concrete.csv](hw03/concrete.csv)
 
 <!--
-* [Homework 3](hw03/hw03.pdf), due Wed Feb 18, 11:59pm.
-[TeX file](hw03/hw03.tex)
-[mtcars csv](hw03/mtcars.csv)
 * [Homework 4](hw04/hw04.pdf), due Wed Feb 25, 11:59pm.
 [TeX file](hw04/hw04.tex)
 * [Homework 5](hw05/hw05.pdf), due Wed March 11, 11:59pm.
