@@ -61,35 +61,53 @@
 {\large{\textbf{Homework 3}}}
 \end{center}
 
-\textbf{Don't forget an academic integrity statement} (see syllabus for more details)!
-
 \begin{enumerate}
   \item Finish problems~\ref{prob:first}--\ref{prob:last}, then complete the academic integrity statement.
-  \item \label{prob:first} \textbf{Building off of the previous homework} In Homework 2, you should have performed an ANOVA on the dataset in the \texttt{rats.csv} file.
+  \item \label{prob:first} \textbf{Building off of the previous homework.} In Homework 2, you should have performed an ANOVA on the dataset in the \texttt{rats.csv} file.
   If done correctly, you would have found a statistically significant treatment effect (at the $\alpha = 0.05$ level), with a P-value of $0.0102$.
   That is, there is \emph{some} evidence of differences between the treatment means.
   
   \textbf{We now would like to expand on these results.}
   
   \begin{enumerate}
-    \item What is the estimated treatment mean $\mu_{i}$ for each of the treatments?
+    \item What is the estimated treatment mean $\hat{\mu}_{i}$ for each of the treatments?
     \item If you wanted to compare all treatment means against each-other (all pairwise comparisons), how many comparisons would you be making?
     \item Using an $\alpha = 0.05$ significance level, perform all pair-wise comparisons using Tukey's-HSD adjustment, and list the adjusted P-value for each comparison. What are the significant differences you found?
-    \item \textbf{(For 6000-level students):} Now perform the same pair-wise comparisons without making the Tukey adjustment. Does it change the outcomes?
+    % \item \textbf{(For 6000-level students):} Now perform the same pair-wise comparisons without making the Tukey adjustment. Does it change the outcomes?
   \end{enumerate}
   
-  \item \textbf{This problem uses the TODO dataset in Canvas}. Twelve orange pulp silage samples were divided at random into four groups of three. 
+  \item \textbf{This problem uses the \texttt{silage.csv} dataset in Canvas}. Twelve orange pulp silage samples were divided at random into four groups of three. 
   One of the groups was left as an untreated control, while the other three groups were treated with formic acid, beet pulp, and sodium chloride, respectively. 
-  The response variable recorded in the file TODO is the moisture content of the silage. 
+  The response variable recorded in the file \texttt{silage.csv} is the moisture content of the silage under the various treatments.
   
   \begin{enumerate}
     \item Compute an analysis of variance table for these data, and test the null hypothesis that all four treatments yield the same average moisture contents with a significance level of $\alpha = 0.05$.
     \item Perform all pair-wise comparisons using Tukey's-HSD adjustment method, and report the outcome of each pairwise comparison.
-    \item \textbf{(For 6000-level students):} Using an appropriate contrast, compute a $99\%$ confidence interval for the difference in response between the average of the three treatment groups (acid, pulp, and salt) and the control group.
+    \item \textbf{(For 6000-level students):} Using an appropriate contrast, compute a $99\%$ confidence interval for the difference in response between the average of the three treatment groups (acid, pulp, and salt) and the control group. (HINT: Be very careful with the order of the \texttt{levels} of the factor variable in \texttt{R}).
   \end{enumerate}
   
+  \item \textbf{This problem is related to the \texttt{flies.csv} file in Canvas.} Scientists are interested in whether the energy costs involved in reproduction affects longevity in fuit flies. In an experiment, 125 male fruit flies were divided at random into five sets of 25. In one group, the males were kept by themselves.
+  In two groups, the males were supplied with one or eight receptive virgin female fruit flies.
+  In the final two groups, the males were supplied with one or eight unreceptive (pregnant) female fruit flies per day. Other than the number and type of companions, the males were treated identically.
   
-  \item \label{prob:last}
+  \begin{enumerate}
+    \item Design a set of contrasts (at least 3 distinct contrasts) that seem meaningful. For each contrast, outline its purpose.
+    \item Based on the set of contrasts you picked, choose some method for controlling the strong FWER for this family of contrasts.
+    \item Using your contrasts and multiple-testing control you designed, test the null hypothesis that the contrasts have expected value of zero. Report your findings in the context of this study.
+  \end{enumerate}
+  
+  \item \label{prob:last} \textbf{(6000-level students only)} This problem uses the \texttt{concrete.csv} data file in Canvas. 
+  Read Section 4.4 in the textbook (about 0.5 pages on Polynomial contrasts).
+  
+  Engineers wish to know the effect of polypropylene fibers on the compressive strength of concrete. Fifteen concrete cubes are produced and randomly assigned to five levels of fiber content (0, 0.25, 0.50, 0.75, and 1\%).
+  
+  \begin{enumerate}
+    \item Analyze these data to determine if fiber content has an effect on concrete strength, and if so, describe that effect.
+    \item Use a linear contrast with weights from Table~D.6 in the appendix of our textbook to determine if there is a linear effect of fiber dosage on concrete strength.
+  \end{enumerate}
+
+  
+  
 \end{enumerate}
 
 
