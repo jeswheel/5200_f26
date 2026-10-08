@@ -35,7 +35,7 @@
 
 \begin{frame}[allowframebreaks]{Objectives and overview}
   \begin{itemize}
-    \item This material is based on Chapter 8 of the textbook ``A First Course in Design and Analysis of Experiments" \citep{oehlert2000}.
+    \item This material is based on Chapters 8--10 of the textbook ``A First Course in Design and Analysis of Experiments" \citep{oehlert2000}.
     \item Module outcomes include:
     \begin{itemize}
       \item You will understand complete and incomplete factorial treatment structures.
@@ -102,10 +102,10 @@
       \begin{tabular}{l | c c c | c}
         & \textbf{Beef} & \textbf{Cereal} & \textbf{Pork} & \textbf{Marginal Row Mean} \\
         \hline
-        \textbf{High Intake} & $\mu_{11}$ & $\mu_{12}$ & $\mu_{13}$ & $\bar{\mu}_{1\bullet}$ \\
-        \textbf{Low Intake}  & $\mu_{21}$ & $\mu_{22}$ & $\mu_{23}$ & $\bar{\mu}_{2\bullet}$ \\
+        \textbf{High Intake} & $\mu_{B,H}$ & $\mu_{C,H}$ & $\mu_{P,H}$ & $\mu_{H}$ \\
+        \textbf{Low Intake}  & $\mu_{B,L}$ & $\mu_{C,L}$ & $\mu_{P,L}$ & $\mu_{L}$ \\
         \hline
-        \textbf{Marginal Col Mean}   & $\bar{\mu}_{\bullet 1}$ & $\bar{\mu}_{\bullet 2}$ & $\bar{\mu}_{\bullet 3}$ & $\mu$ (Grand Mean) \\
+        \textbf{Marginal Col Mean}   & $\mu_{B}$ & $\bar{\mu}_{C}$ & $\mu_{L}$ & $\mu$ (Grand Mean) \\
       \end{tabular}
     \end{table}
   }
@@ -128,9 +128,12 @@
   \begin{itemize}
     \item \textbf{Main Effects:} Evaluated by comparing the marginal row means ($\bar{\mu}_{1\bullet}$ vs. $\bar{\mu}_{2\bullet}$) or the marginal column means ($\bar{\mu}_{\bullet 1}$, $\bar{\mu}_{\bullet 2}$, $\bar{\mu}_{\bullet 3}$). For example, what is the difference in response between high and low intake treatments?
     \item \textbf{Interactions:} Evaluated by looking at differences between cells. For example, is the difference between High and Low intake the same for Beef as it is for Cereal?
-    $$(\mu_{11} - \mu_{21}) \stackrel{?}{=} (\mu_{12} - \mu_{22})$$
-    \item \textbf{The ANOVA Alternative:} While we \emph{could} formalize and test all these specific comparisons using individual contrasts (which we discussed in previous modules), doing so for every combination is tedious and inflates our error rate.
-    \item Instead, we will introduce the \alert{Two-Way ANOVA} as an efficient way to test for overall main effects and interactions simultaneously.
+    $$(\mu_{B,H} - \mu_{B,L}) \stackrel{?}{=} (\mu_{C,H} - \mu_{C,L})$$
+    
+    \framebreak
+    
+    \item While we \emph{could} formalize and test all these specific comparisons using individual contrasts, this can be tedious and less interpretable in some cases.
+    \item Instead, we will introduce the \alert{Two-Way ANOVA} as an efficient way to test for overall main effects and interactions simultaneously, with highly interpretable results.
     \item Like one-way ANOVA, we will express the total sum of squares in terms of treatments and errors.
   \end{itemize}
   
@@ -331,7 +334,7 @@ par(mfrow = c(1, 1))
       \item \alert{\textbf{Step 1: Test Interaction ($H_0: (\alpha\beta)_{ij} = 0$ for all $i,j$)}}
       \begin{itemize}
         \item If \textbf{Significant}: Stop! The model is non-additive. Do not interpret main effect $F$-tests in isolation. Examine simple main effects or interaction contrasts.
-        \item If \textbf{Not Significant}: Drop interaction term to obtain the additive model.
+        % \item If \textbf{Not Significant}: Drop interaction term to obtain the additive model.
       \end{itemize}
       \item \alert{\textbf{Step 2: Test Main Effects}}
       \begin{itemize}
@@ -441,7 +444,7 @@ ToothGrowth$dose <- as.factor(ToothGrowth$dose)
 
   \framebreak
 
-  \begin{block}{1. Visualizing the Interaction}
+  \begin{block}{Visualizing the Interaction}
     We start with an interaction plot. Crossing or converging lines suggest an interaction effect.
   \end{block}
 
@@ -460,7 +463,7 @@ interaction.plot(
 
   \framebreak
 
-  \begin{block}{2. Fitting the Model and Testing (Top-Down Rule)}
+  \begin{block}{Fitting the Model and Testing (Top-Down Rule)}
     We fit the full model with the \texttt{*} operator and check the ANOVA table.
   \end{block}
 
@@ -475,7 +478,7 @@ summary(mod_tooth)
 
   \framebreak
 
-  \begin{block}{3. Analyzing Simple Effects with \texttt{emmeans}}
+  \begin{block}{Analyzing Simple Effects with \texttt{emmeans}}
     Because the interaction is significant, we should look at the "simple effects"—the effect of the supplement \emph{at each specific level} of the dose.
   \end{block}
 
@@ -495,7 +498,7 @@ emm_tooth$contrasts
 
 \begin{frame}[fragile]{Demystifying the \texttt{emmeans} Syntax}
   \begin{itemize}
-    \item In a one-way ANOVA, you likely used \texttt{emmeans(model, \textasciitilde{} Factor)} to get the estimated means for each group.
+    \item In a one-way ANOVA, we could use \texttt{emmeans(model, \textasciitilde{} Factor)} to get the estimated means for each group.
     \item In a two-way ANOVA with a significant interaction, we must examine \alert{simple main effects}. We need to know the effect of one factor \emph{at specific levels} of the other factor.
   \end{itemize}
 
@@ -518,46 +521,98 @@ emm_tooth$contrasts
     \item Let's evaluate if Nitrogen and Phosphate interact to affect \texttt{yield}.
   \end{itemize}
 
-<<npk_plot, fig.height=4, fig.width=6, fig.align='center', eval=TRUE, echo=TRUE>>=
-data(npk)
-
-# Visualize the data
-interaction.plot(x.factor = npk$N, trace.factor = npk$P, 
-                 response = npk$yield,
-                 type = "b", pch = c(16, 17), col = c("darkgreen", "brown"),
-                 xlab = "Nitrogen (N)", ylab = "Mean Yield",
-                 trace.label = "Phosphate (P)")
+<<npk_data>>=
+NP <- read.csv('NP.csv')
+str(NP)
 @
 
   \framebreak
 
-  \begin{block}{1. Fitting the Full Model}
-    Notice in the plot that the lines are nearly perfectly parallel. We test this statistically by fitting the full factorial model.
-  \end{block}
-
 <<npk_aov, size='small', eval=TRUE, echo=TRUE>>=
-mod_npk <- aov(yield ~ N * P, data = npk)
-summary(mod_npk)
+mod_NP <- aov(yield ~ N * P, data = NP)
+summary(mod_NP)
 @
 
   \begin{itemize}
-    \item \textbf{Interpretation:} The \texttt{N:P} interaction is not significant ($p = 0.485$). We can drop the interaction term and fit an \alert{additive model}.
+    \item \textbf{Interpretation:} The \texttt{N:P} interaction is not significant ($P = 0.4305$). That is, there is not strong evidence in the data that the effect of Nitrogen inclusions on Mean Yield depends on the inclusion of Phosphate.
+    \item We can examine this further with the interaction plot
   \end{itemize}
 
-  \framebreak
+<<echo=TRUE>>=
+# Visualize the data
+interaction.plot(
+  x.factor = NP$N, 
+  trace.factor = NP$P, 
+  response = NP$yield,
+  type = "b", pch = c(16, 17),
+  col = c("darkgreen", "brown"),
+  xlab = "Nitrogen (N)", ylab = "Mean Yield",
+  trace.label = "Phosphate (P)"
+)
+@
 
-  \begin{block}{2. Fitting the Additive Model}
+
+  \framebreak
+  
+  \begin{itemize}
+    \item Not significant interaction. Now what?
+    \begin{itemize}
+      \item Historically, we might want to re-fit an \alert{additive model} to conserve degrees of freedom. \mode<article>{Doing so allows us to pool degrees of freedom from the interaction term, leading to higher statistical power to detect main effects.} \textbf{Problem:} This is called \emph{post-selection inference}, and can mean we have inflated type-I error rates.
+      
+      \mode<presentation>{\vspace{2cm}}
+      \mode<article>{The reason why is because we are doing some type of ``double dipping". We should not use the data to decide \emph{which} hypothesis to test, and then use that exact same data to test the hypothesis. Doing so leads to additional Type-I errors.}
+      
+      \item Current practice: we are more concerned about the increased Type-I error rate than we are of improving statistical power. We will interpret P-values in the context of accounting for interactions, even if they are non-significant. 
+    \end{itemize}
+  \end{itemize}
+
+\framebreak
+
+  \begin{block}{(Historic approach): Fitting the Additive Model}
     We use the \texttt{+} operator to fit a model assuming the effects of N and P are strictly independent.
   \end{block}
 
 <<npk_additive, size='small', eval=TRUE, echo=TRUE>>=
 # Fit additive model (no interaction)
-mod_npk_add <- aov(yield ~ N + P, data = npk)
-summary(mod_npk_add)
+mod_NP_add <- aov(yield ~ N + P, data = NP)
+summary(mod_NP_add)
 @
 
   \begin{itemize}
-    \item \textbf{Conclusion:} Nitrogen (\texttt{N}) has a significant main effect on yield ($p = 0.015$), while Phosphate (\texttt{P}) does not ($p = 0.613$). Because the model is additive, we know Nitrogen increases yield regardless of whether Phosphate is applied or not.
+    \item \textbf{Conclusion:} Nitrogen (\texttt{N}) has a significant main effect on yield ($p = 0.0247$), while Phosphate (\texttt{P}) does not ($p = 0.6155$).
+    Because the model is additive, we conclude Nitrogen increases yield regardless of whether Phosphate is applied or not.
+    \item We could continue to extract treatment group means and treatment effects using the \texttt{emmeans} package as needed (see below).
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile, allowframebreaks]{Extracting Treatment Means and Effects}
+  \begin{itemize}
+    \item Following modern practice, we retain the full model (\texttt{mod\_NP}) even though the interaction was not significant.
+    \item We can use \texttt{emmeans} to extract the estimated marginal means (treatment means) for Nitrogen, averaging over the levels of Phosphate.
+  \end{itemize}
+
+<<NP_means, size='small', eval=TRUE, echo=TRUE>>=
+library(emmeans)
+
+# Extract Estimated Marginal Means for Nitrogen (N)
+# mod_NP is FULL model, not additive
+emm_N <- emmeans(mod_NP, ~ N)
+emm_N
+@
+
+  \framebreak
+
+  \begin{block}{Calculating the Treatment Effect}
+    To find the actual size of the treatment effect (the difference between adding Nitrogen vs. not adding Nitrogen), we pass our means into the \texttt{pairs()} function.
+  \end{block}
+
+<<NP_effects, size='small', eval=TRUE, echo=TRUE>>=
+# Test the pairwise difference (Treatment Effect)
+pairs(emm_N)
+@
+
+  \begin{itemize}
+    \item \textbf{Interpretation:} The estimated mean yield without Nitrogen is 52.1, and with Nitrogen is 57.7. The \texttt{pairs()} output shows that applying Nitrogen increases the mean yield by an estimated 5.62 units, and this main effect is statistically significant.
   \end{itemize}
 \end{frame}
 
@@ -621,52 +676,92 @@ summary(mod_npk_add)
 
 \section{Advanced Topics in Practice (R)}
 
-\begin{frame}[fragile, allowframebreaks]{Unbalanced Data: The Order Matters}
+\section{Unbalanced Factorials \& Simple Main Effects}
+
+\begin{frame}[allowframebreaks]{Types of Sums of Squares (3-Way Factorial)}
   \begin{itemize}
-    \item Real-world data is rarely perfectly balanced (e.g., dropped samples, survey non-response).
-    \item When a design is \alert{unbalanced}, factor effects are no longer strictly independent (orthogonal).
-    \item \textbf{The Trap:} Base R's \texttt{aov()} uses \textbf{Type I (Sequential) Sums of Squares}. The order you list your variables completely changes the p-values!
+    \item When cell sizes are unequal ($n_{ijk} \neq n$), factors lose orthogonality.
+    \item The choice of \alert{Sums of Squares (SS)} dictates which model terms are held constant in the reduced vs. full model comparison ($SS_{\text{Effect}} = SS_{\text{Error, reduced}} - SS_{\text{Error, full}}$).
   \end{itemize}
 
-<<unbalanced_type1, size='small', eval=FALSE>>=
-# In an unbalanced dataset, these two models test 
-# different hypotheses for the main effects!
-mod1 <- aov(yield ~ P * K, data = unbalanced_data)
-summary(mod1) 
+  \begin{table}
+  \centering
+  \scriptsize
+  \begin{tabular}{l l l l}
+    \hline
+    \textbf{Effect} & \textbf{Type I (Sequential)} & \textbf{Type II (Hierarchical)} & \textbf{Type III (Marginal)} \\
+    \hline
+    $A$ & $SS(A)$ & $SS(A \mid B, C)$ & $SS(A \mid B, C, AB, AC, BC, ABC)$ \\
+    $B$ & $SS(B \mid A)$ & $SS(B \mid A, C)$ & $SS(B \mid A, C, AB, AC, BC, ABC)$ \\
+    $C$ & $SS(C \mid A, B)$ & $SS(C \mid A, B)$ & $SS(C \mid A, B, AB, AC, BC, ABC)$ \\
+    $AB$ & $SS(AB \mid A, B, C)$ & $SS(AB \mid A, B, C, AC, BC)$ & $SS(AB \mid A, B, C, AC, BC, ABC)$ \\
+    $AC$ & $SS(AC \mid A, B, C, AB)$ & $SS(AC \mid A, B, C, AB, BC)$ & $SS(AC \mid A, B, C, AB, BC, ABC)$ \\
+    $BC$ & $SS(BC \mid A, B, C, AB, AC)$ & $SS(BC \mid A, B, C, AB, AC)$ & $SS(BC \mid A, B, C, AB, AC, ABC)$ \\
+    $ABC$ & $SS(ABC \mid A, B, C, AB, AC, BC)$ & $SS(ABC \mid A, B, C, AB, AC, BC)$ & $SS(ABC \mid A, B, C, AB, AC, BC)$ \\
+    \hline
+  \end{tabular}
+  \caption{Comparison of Sums of Squares conditional notation for factors A, B, and C.}
+  \end{table}
 
-mod2 <- aov(yield ~ K * P, data = unbalanced_data)
-summary(mod2)
+  \framebreak
+
+  \begin{block}{Which Type Should You Use in Practice?}
+    \begin{itemize}
+      \item \textbf{Type I:} Avoid unless testing a strict hierarchical sequence (e.g., covariate first). Order of terms in \texttt{aov()} changes the output!
+      \item \textbf{Type II:} Best default when you are confident higher-order interactions are zero ($AB = 0$). Maximizes statistical power.
+      \item \textbf{Type III:} Standard for factorial experiments. Tests equal weighting across all treatment cells regardless of sample size differences.
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile, allowframebreaks]{Unbalanced Data: Practical Workflow in R}
+  \begin{itemize}
+    \item Base R's \texttt{summary(aov())} defaults to Type I SS, making it dangerous for unbalanced data.
+    \item \textbf{Solution:} Use \texttt{joint\_tests()} from \texttt{emmeans}. It provides Type III hypothesis tests safely without requiring you to change R's global options.
+  \end{itemize}
+
+<<unbalanced_workflow, size='small', eval=FALSE>>=
+library(emmeans)
+
+# Fit standard model on unbalanced data
+mod_unbal <- aov(yield ~ P * K, data = unbalanced_data)
+
+# 1. Run Type III ANOVA tests safely
+joint_tests(mod_unbal)
 @
 
   \framebreak
 
-\begin{block}{Best Practices for Unbalanced Data}
+  \begin{block}{Practical Decision Rules}
     \begin{enumerate}
-      \item \textbf{Use \texttt{joint\_tests()}:} Base R's contrast coding makes standard Type III ANOVA tables difficult to calculate correctly. Instead, use \texttt{joint\_tests()} from the \texttt{emmeans} package to get an ANOVA-like table that is mathematically correct for unbalanced data.
-      \item \textbf{Rely on \texttt{emmeans}:} Use \texttt{emmeans} to calculate unbiased marginal means, and \texttt{pairs()} to test the differences between them.
+      \item \textbf{Look at the Interaction p-value first:}
+      \begin{itemize}
+        \item If $p \ge 0.05$ (No interaction): Interpret overall main effects and run overall pairwise comparisons: \texttt{emmeans(mod, ~ P)}.
+        \item If $p < 0.05$ (Interaction present): \alert{Stop!} Do not interpret global main effects. You must analyze \textbf{Simple Main Effects}.
+      \end{itemize}
     \end{enumerate}
   \end{block}
+\end{frame}
 
-<<unbalanced_solution, size='small', eval=TRUE>>=
-library(emmeans)
+\begin{frame}[fragile, allowframebreaks]{Analyzing Simple Main Effects}
+  \begin{itemize}
+    \item \alert{Definition:} A \textbf{simple main effect} tests the effect of Factor A at *one specific fixed level* of Factor B.
+    \item When an interaction exists, stating "Superphosphate increases yield" is incomplete. You must state "Superphosphate increases yield *when Potash is absent*, but has no effect *when Potash is present*."
+    \item Use the \texttt{by} argument in \texttt{emmeans} to slice the analysis.
+  \end{itemize}
 
-# Create a mock unbalanced dataset by dropping 3 observations
-unbalanced_data <- fert_data[-c(1, 5, 9), ]
-mod1 <- aov(yield ~ P * K, data = unbalanced_data)
+<<simple_effects_code, size='small', eval=FALSE>>=
+# Obtain EMMs for the interaction
+emm_int <- emmeans(mod_unbal, ~ P * K)
 
-# 1. Test main effects and interactions safely
-joint_tests(mod1) 
+# Test the simple main effect of Potash (K) WITHIN each level of Superphosphate (P)
+contrast(emm_int, method = "pairwise", by = "P")
 
-# 2. Get unbiased marginal means for Factor P
-emm_P <- emmeans(mod1, ~ P)
-emm_P
-
-# 3. Test pairwise differences between those balanced means
-pairs(emm_P)
+# Plot simple effects visually
+emmip(mod_unbal, K ~ P)
 @
 
 \end{frame}
-
 \section{Multiple Comparisons: Beyond the F-Test}
 
 \begin{frame}[fragile, allowframebreaks]{Multiple Comparisons in Practice}
