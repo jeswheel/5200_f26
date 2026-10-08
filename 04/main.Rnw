@@ -328,7 +328,7 @@ par(mfrow = c(1, 1))
 
   \begin{block}{Sequence of Testing: Top-Down Rule}
     \begin{enumerate}
-      \item \alert{\textbf{Step 1: Test Interaction ($H\_0: (\alpha\beta)\_{ij} = 0$ for all $i,j$)}}
+      \item \alert{\textbf{Step 1: Test Interaction ($H_0: (\alpha\beta)_{ij} = 0$ for all $i,j$)}}
       \begin{itemize}
         \item If \textbf{Significant}: Stop! The model is non-additive. Do not interpret main effect $F$-tests in isolation. Examine simple main effects or interaction contrasts.
         \item If \textbf{Not Significant}: Drop interaction term to obtain the additive model.
