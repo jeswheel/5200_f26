@@ -333,7 +333,8 @@ par(mfrow = c(1, 1))
     \begin{enumerate}
       \item \alert{\textbf{Step 1: Test Interaction ($H_0: (\alpha\beta)_{ij} = 0$ for all $i,j$)}}
       \begin{itemize}
-        \item If \textbf{Significant}: Stop! The model is non-additive. Do not interpret main effect $F$-tests in isolation. Examine simple main effects or interaction contrasts.
+        \item If \textbf{Significant}: Stop! The model is non-additive.
+        Do not interpret main effect $F$-tests in isolation. Examine simple main effects or interaction contrasts.
         % \item If \textbf{Not Significant}: Drop interaction term to obtain the additive model.
       \end{itemize}
       \item \alert{\textbf{Step 2: Test Main Effects}}
@@ -479,16 +480,15 @@ summary(mod_tooth)
   \framebreak
 
   \begin{block}{Analyzing Simple Effects with \texttt{emmeans}}
-    Because the interaction is significant, we should look at the "simple effects"—the effect of the supplement \emph{at each specific level} of the dose.
+    Because the interaction is significant, we should look at the \alert{simple effects} -- pairwise differences that vary just a single factor.
+    In this case, the effect of the supplement \emph{at each specific level} of the dose.
   \end{block}
 
 <<tooth_posthoc, size='small', eval=TRUE, echo=TRUE>>=
 library(emmeans)
 # The "|" operator tells emmeans to compare 'supp' AT each level of 'dose'
-emm_tooth <- emmeans(mod_tooth, pairwise ~ supp | dose)
-
-# View the pairwise comparisons
-emm_tooth$contrasts
+emm_tooth <- emmeans(mod_tooth, ~ supp | dose)
+pairs(emm_tooth)
 @
 
   \begin{itemize}
@@ -502,9 +502,9 @@ emm_tooth$contrasts
     \item In a two-way ANOVA with a significant interaction, we must examine \alert{simple main effects}. We need to know the effect of one factor \emph{at specific levels} of the other factor.
   \end{itemize}
 
-  \begin{block}{Breaking down: \texttt{pairwise \textasciitilde{} supp | dose}}
+  \begin{block}{Breaking down: \texttt{\textasciitilde{} supp | dose}}
     \begin{itemize}
-      \item \textbf{\texttt{pairwise \textasciitilde{} supp}}: This tells R to calculate the pairwise differences between the levels of the Supplement factor (OJ vs. VC).
+      \item \textbf{\texttt{\textasciitilde{} supp}}: This tells R to calculate the differences between the levels of the Supplement factor (OJ vs. VC).
       \item \textbf{\texttt{|} (The Pipe/Bar)}: In R formulas, the vertical bar means "given" or "conditioned on." 
       \item \textbf{\texttt{dose}}: This is the grouping variable. It tells R to split the analysis up by the levels of Dose.
     \end{itemize}
@@ -618,65 +618,64 @@ pairs(emm_N)
 
 \section{Factorial Contrasts}
 
-\begin{frame}[allowframebreaks]{Main Effects vs. Interaction Contrasts}
+\begin{frame}[fragile,allowframebreaks]{Contrasts in Factorial Designs}
   \begin{itemize}
-    \item A contrast in a factorial design is a linear combination of treatment means $\sum_i \sum_j w_{ij} \mu_{ij}$ subject to $\sum_i \sum_j w_{ij} = 0$.
-    \item \alert{Main Effect Contrasts for A}:
-    Weights for a given level of A are identical across all levels of B.
-    $$\sum_{i=1}^a w_i = 0, \quad w_{ij} = w_i \quad \text{for all } j$$
-    \item \alert{Interaction Contrasts ("Contrast of Contrasts")}:
-    Weights are constructed as products of main effect contrast weights: $w_{ij} = w_{A,i} \times w_{B,j}$.
-    Row sums and column sums of weights must \textbf{all equal zero}:
-    $$\sum_{i=1}^a w_{ij} = 0 \text{ for all } j, \quad \text{and} \quad \sum_{j=1}^b w_{ij} = 0 \text{ for all } i$$
+    \item Contrasts in a factorial design operate exactly the same way as in a one-way ANOVA. We are simply picking weights to compare means.
+    \item Depending on our research question, we apply these contrasts to two different types of means:
+    \begin{enumerate}
+      \item \alert{Main Effect Contrasts:} We compare the \textbf{marginal means} of one factor (averaging over the levels of the other factor).
+      \item \alert{Cell / Simple Effect Contrasts:} We compare the specific \textbf{treatment combination means} ($\mu_{ij}$).
+    \end{enumerate}
+    \item While possible, we do not need to build complex weight matrices by hand. We use software to apply standard adjustments (like Tukey HSD) directly to the means we care about.
   \end{itemize}
 
   \framebreak
 
-  \begin{block}{Example: $2 \times 2$ Factorial Weight Matrices}
-    \begin{columns}
-      \begin{column}{0.33\textwidth}
-        \centering
-        \textbf{Main Effect A ($W\_A$)}
-        \begin{tabular}{|c|c|}
-          \hline
-          1 & 1 \\
-          \hline
-          -1 & -1 \\
-          \hline
-        \end{tabular}
-      \end{column}
-
-      \begin{column}{0.33\textwidth}
-        \centering
-        \textbf{Main Effect B ($W\_B$)}
-        \begin{tabular}{|c|c|}
-          \hline
-          1 & -1 \\
-          \hline
-          1 & -1 \\
-          \hline
-        \end{tabular}
-      \end{column}
-
-      \begin{column}{0.33\textwidth}
-        \centering
-        \textbf{Interaction ($W\_{AB}$)}
-        \begin{tabular}{|c|c|}
-          \hline
-          1 & -1 \\
-          \hline
-          -1 & 1 \\
-          \hline
-        \end{tabular}
-      \end{column}
-    \end{columns}
+  \begin{block}{Main Effect Contrasts (No Interaction)}
+    If there is no significant interaction, we want to know which levels of Factor A differ from each other overall.
+    We extract the marginal means and apply a Tukey adjustment.
   \end{block}
+
+  
+\framebreak
+
+<<contrast_main, size='small', eval=FALSE, echo=TRUE>>=
+library(emmeans)
+
+# Fit a Three-Way ANOVA
+mod <- aov(response ~ Factor_A*Factor_B*Factor_C, data = DATA)
+
+# Extract marginal means for Factor A
+emm_A <- emmeans(mod, ~ Factor_A)
+
+# Perform all pairwise comparisons with Tukey adjustment
+pairs(emm_A, adjust = "tukey")
+@
+
+  \framebreak
+
+  \begin{block}{Cell Means \& Simple Effect Contrasts (Interaction Present)}
+    If an interaction is present, marginal means are misleading. We must compare the specific combinations (cells), or compare the levels of Factor A strictly within a single level of Factor B.
+  \end{block}
+
+<<contrast_interaction, size='small', eval=FALSE, echo=TRUE>>=
+# Extract the means for every specific treatment combination
+emm_cells <- emmeans(mod, ~ Factor_A * Factor_B)
+
+# Compare Factor A ONLY within specific levels of Factor B
+# (This tests the simple main effects)
+contrast(emm_cells, method = "pairwise", by = "Factor_B")
+
+# Alternative: Compare all cells against a specific Control cell 
+# using Dunnett's adjustment
+contrast(emm_cells, method = "trt.vs.ctrl", ref = 1)
+@
+
 \end{frame}
 
+\section{Advanced Topics in Factorials}
 
-\section{Advanced Topics in Practice (R)}
-
-\section{Unbalanced Factorials \& Simple Main Effects}
+\subsection{Unbalanced Factorials}
 
 \begin{frame}[allowframebreaks]{Types of Sums of Squares (3-Way Factorial)}
   \begin{itemize}
