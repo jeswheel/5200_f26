@@ -235,7 +235,7 @@
 
   \framebreak
 
-  \begin{block}{Intuition: "Difference of Differences"}
+  \begin{block}{Intuition: ``Difference of Differences"}
     Consider a $2 \times 2$ design with population means $\mu_{ij}$:
     \begin{itemize}
       \item Simple main effect of A when Factor B is at level 1: $\mu_{11} - \mu_{21}$
@@ -496,7 +496,7 @@ pairs(emm_tooth)
   \end{itemize}
 \end{frame}
 
-\begin{frame}[fragile]{Demystifying the \texttt{emmeans} Syntax}
+\begin{frame}[fragile,allowframebreaks]{Demystifying the \texttt{emmeans} Syntax}
   \begin{itemize}
     \item In a one-way ANOVA, we could use \texttt{emmeans(model, \textasciitilde{} Factor)} to get the estimated means for each group.
     \item In a two-way ANOVA with a significant interaction, we must examine \alert{simple main effects}. We need to know the effect of one factor \emph{at specific levels} of the other factor.
@@ -510,14 +510,22 @@ pairs(emm_tooth)
     \end{itemize}
   \end{block}
 
+\framebreak
+
   \begin{itemize}
-    \item \textbf{Plain English Translation:} "Compare the mean tooth length of OJ vs. VC, and do this comparison three separate times: once for the 0.5 dose, once for the 1.0 dose, and once for the 2.0 dose."
+    \item \textbf{Plain English Translation:} ``Compare the mean tooth length of OJ vs. VC, and do this comparison three separate times: once for the 0.5 dose, once for the 1.0 dose, and once for the 2.0 dose."
+  
+  \framebreak
+    \item From our figure of the data (interaction plot), the Tooth Growth data is an example we may want to consider \alert{polynomial contrasts} for factorial data. \textbf{There will be a 6000-level HW question} assignment related to this.
   \end{itemize}
+  
 \end{frame}
+
+
 
 \begin{frame}[fragile, allowframebreaks]{Example 2: No Interaction (Additive Model)}
   \begin{itemize}
-    \item The built-in \texttt{npk} dataset records pea yields based on applying Nitrogen (\texttt{N}) and Phosphate (\texttt{P}). 
+    \item The \texttt{npk} dataset in Canvas records pea yields based on applying Nitrogen (\texttt{N}) and Phosphate (\texttt{P}). 
     \item Let's evaluate if Nitrogen and Phosphate interact to affect \texttt{yield}.
   \end{itemize}
 
@@ -613,6 +621,7 @@ pairs(emm_N)
 
   \begin{itemize}
     \item \textbf{Interpretation:} The estimated mean yield without Nitrogen is 52.1, and with Nitrogen is 57.7. The \texttt{pairs()} output shows that applying Nitrogen increases the mean yield by an estimated 5.62 units, and this main effect is statistically significant.
+    \item Notice the P-value is unchanged from our original ANOVA test. 
   \end{itemize}
 \end{frame}
 
@@ -620,7 +629,8 @@ pairs(emm_N)
 
 \begin{frame}[fragile,allowframebreaks]{Contrasts in Factorial Designs}
   \begin{itemize}
-    \item Contrasts in a factorial design operate exactly the same way as in a one-way ANOVA. We are simply picking weights to compare means.
+    \item Contrasts in a factorial design operate exactly the same way as in a one-way ANOVA.
+    We are simply picking weights to compare means.
     \item Depending on our research question, we apply these contrasts to two different types of means:
     \begin{enumerate}
       \item \alert{Main Effect Contrasts:} We compare the \textbf{marginal means} of one factor (averaging over the levels of the other factor).
@@ -665,6 +675,10 @@ emm_cells <- emmeans(mod, ~ Factor_A * Factor_B)
 # Compare Factor A ONLY within specific levels of Factor B
 # (This tests the simple main effects)
 contrast(emm_cells, method = "pairwise", by = "Factor_B")
+
+# OR: 
+# emm_cells <- emmeans(mod, ~ Factor_A | Factor_B)
+# contrast(emm_cells, method = "pairwise")
 
 # Alternative: Compare all cells against a specific Control cell 
 # using Dunnett's adjustment
