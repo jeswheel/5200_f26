@@ -505,7 +505,7 @@ pairs(emm_tooth)
   \begin{block}{Breaking down: \texttt{\textasciitilde{} supp | dose}}
     \begin{itemize}
       \item \textbf{\texttt{\textasciitilde{} supp}}: This tells R to calculate the differences between the levels of the Supplement factor (OJ vs. VC).
-      \item \textbf{\texttt{|} (The Pipe/Bar)}: In R formulas, the vertical bar means "given" or "conditioned on." 
+      \item \textbf{\texttt{|} (The Pipe/Bar)}: In R formulas, the vertical bar means ``given" or ``conditioned on." 
       \item \textbf{\texttt{dose}}: This is the grouping variable. It tells R to split the analysis up by the levels of Dose.
     \end{itemize}
   \end{block}
@@ -570,7 +570,7 @@ interaction.plot(
       \mode<presentation>{\vspace{2cm}}
       \mode<article>{The reason why is because we are doing some type of ``double dipping". We should not use the data to decide \emph{which} hypothesis to test, and then use that exact same data to test the hypothesis. Doing so leads to additional Type-I errors.}
       
-      \item Current practice: we are more concerned about the increased Type-I error rate than we are of improving statistical power. We will interpret P-values in the context of accounting for interactions, even if they are non-significant. 
+      \item Current recommended practice: we are more concerned about the increased Type-I error rate than we are of improving statistical power. We will interpret P-values in the context of accounting for interactions, even if they are non-significant. 
     \end{itemize}
   \end{itemize}
 
@@ -694,10 +694,14 @@ contrast(emm_cells, method = "trt.vs.ctrl", ref = 1)
 \begin{frame}[allowframebreaks]{Types of Sums of Squares (3-Way Factorial)}
   \begin{itemize}
     \item When cell sizes are unequal ($n_{ijk} \neq n$), factors lose orthogonality.
+    \item \alert{Why this matters:} The sum-of-squares (SS) for a particular term depends on what other terms are included in the model! See \citet[Example~10.1 from][]{oehlert2000} for an example.
+    \item This gives rise to three different ``types" of SS to consider. In a \alert{balanced design}, all three give the same answer, so we don't have to worry about the differences.
+    
     \item The choice of \alert{Sums of Squares (SS)} dictates which model terms are held constant in the reduced vs. full model comparison ($SS_{\text{Effect}} = SS_{\text{Error, reduced}} - SS_{\text{Error, full}}$).
+    \item Historically, this was very problematic, and caused people to avoid analyzing data from unbalanced factorial designs. Today, software can readily solve this issue for us.
   \end{itemize}
-
-  \begin{table}
+   
+    \begin{table}
   \centering
   \scriptsize
   \begin{tabular}{l l l l}
@@ -713,10 +717,60 @@ contrast(emm_cells, method = "trt.vs.ctrl", ref = 1)
     $ABC$ & $SS(ABC \mid A, B, C, AB, AC, BC)$ & $SS(ABC \mid A, B, C, AB, AC, BC)$ & $SS(ABC \mid A, B, C, AB, AC, BC)$ \\
     \hline
   \end{tabular}
-  \caption{Comparison of Sums of Squares conditional notation for factors A, B, and C.}
+  \caption{\label{tab:SS}Comparison of Sums of Squares conditional notation for factors A, B, and C.}
   \end{table}
+   
+   \end{frame} 
+    
+\begin{frame}[allowframebreaks]{Type I Sum of Squares}
+    \begin{block}{Type I (Sequential)}
+      \textbf{Summary:} The SS for any term is adjusted \emph{only} for the terms that precede it in the model.
+      
+      \begin{itemize}
+        \item For historic reasons, this is the output of the `aov()` function.
+        \item The hypothesis being tested is whether adding a specific term improves the model, \alert{given} the terms already present.
+        \item \textbf{Disadvantage:} The SS depends on the order in which you specify model terms! 
+      \end{itemize}
+    \end{block}
+    
+\mode<article>{See the Type I column of Table~\ref{tab:SS} for an example with a 3-way ANOVA.}
 
-  \framebreak
+TODO: R example. Written out example.
+
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Type II Sum of Squares}
+    \begin{block}{Type II (Hierarchical)}
+      \textbf{Summary:} The SS for any term is adjusted for the largest \alert{hierarchical} model that does not contain that term. 
+      
+      \begin{itemize}
+        \item Useful for ``building" hierarchical models. That is, helps find a hierarchical model that includes all necessary terms without retaining unnecessary ones.
+        \item Directly tests if higher-order interactions are needed.
+        \item Doesn't depend on order that terms are specified.
+      \end{itemize}
+    \end{block}
+    
+\mode<article>{See the Type II column of Table~\ref{tab:SS} for an example with a 3-way ANOVA.}
+
+TODO: R example. Written out example.
+
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Type III Sum of Squares}
+    \begin{block}{Type III (fully adjusted)}
+      \textbf{Summary:} The SS for any term is adjusted for all other terms.
+      
+      \begin{itemize}
+        \item Less ``powerful" than Type II Sum of Squares
+        \item Doesn't depend on model order.
+      \end{itemize}
+    \end{block}
+    
+\mode<article>{See the Type II column of Table~\ref{tab:SS} for an example with a 3-way ANOVA.}
+
+TODO: R example. Written out example.
+
+\end{frame}
 
   \begin{block}{Which Type Should You Use in Practice?}
     \begin{itemize}
