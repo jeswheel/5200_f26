@@ -758,15 +758,16 @@ TODO: R example. Written out example.
 
 \begin{frame}[allowframebreaks]{Type III Sum of Squares}
     \begin{block}{Type III (fully adjusted)}
-      \textbf{Summary:} The SS for any term is adjusted for all other terms.
+      \textbf{Summary:} The SS for any term is adjusted for \emph{all other terms}.
       
       \begin{itemize}
-        \item Less ``powerful" than Type II Sum of Squares
-        \item Doesn't depend on model order.
+        \item Less ``powerful" than Type II Sum of Squares, but also more conservative.
+        \item Standard for factorial experiments. 
+        \item Like Type II, doesn't depend on model order.
       \end{itemize}
     \end{block}
     
-\mode<article>{See the Type II column of Table~\ref{tab:SS} for an example with a 3-way ANOVA.}
+\mode<article>{See the Type III column of Table~\ref{tab:SS} for an example with a 3-way ANOVA.}
 
 TODO: R example. Written out example.
 
