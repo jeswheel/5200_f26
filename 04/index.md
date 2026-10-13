@@ -20,8 +20,9 @@ Learning Objectives
 |:-----------------------|:------------------------:|
 | Lecture slides   | [pdf](slides.pdf) |
 | Lecture notes    | [pdf](notes.pdf) |
+| NP Dataset       | [csv](NP.csv) | 
+| Unreplicated Data | [csv](unrepData.csv) | 
 <!-- | Annotated Slides | [pdf](annotatedSlides.pdf) | -->
-<!-- | Discussion Problems | [pdf](discussionProbs.pdf) | -->
 
 ----------------------
 

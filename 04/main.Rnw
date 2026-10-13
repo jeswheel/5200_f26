@@ -687,11 +687,20 @@ contrast(emm_cells, method = "trt.vs.ctrl", ref = 1)
 
 \end{frame}
 
+\begin{frame}{Custom Contrasts}
+
+\begin{itemize}
+  \item You can still compute any custom contrasts, just as we did with the one-way ANOVA.
+  \item To do so, print the output of a \texttt{emmeans(...)} function call, to see the order of the means; then you can use a custom list of contrasts, using the same order for your vector of contrast weights.
+\end{itemize}
+
+\end{frame}
+
 \section{Advanced Topics in Factorials}
 
 \subsection{Unbalanced Factorials}
 
-\begin{frame}[allowframebreaks]{Types of Sums of Squares (3-Way Factorial)}
+\begin{frame}[allowframebreaks]{Types of Sums of Squares}
   \begin{itemize}
     \item When cell sizes are unequal ($n_{ijk} \neq n$), factors lose orthogonality.
     \item \alert{Why this matters:} The sum-of-squares (SS) for a particular term depends on what other terms are included in the model! See \citet[Example~10.1 from][]{oehlert2000} for an example.
@@ -722,7 +731,7 @@ contrast(emm_cells, method = "trt.vs.ctrl", ref = 1)
    
    \end{frame} 
     
-\begin{frame}[allowframebreaks]{Type I Sum of Squares}
+\begin{frame}[allowframebreaks,fragile]{Type I Sum of Squares}
     \begin{block}{Type I (Sequential)}
       \textbf{Summary:} The SS for any term is adjusted \emph{only} for the terms that precede it in the model.
       
@@ -735,11 +744,32 @@ contrast(emm_cells, method = "trt.vs.ctrl", ref = 1)
     
 \mode<article>{See the Type I column of Table~\ref{tab:SS} for an example with a 3-way ANOVA.}
 
-TODO: R example. Written out example.
+\framebreak
+
+<<type1_exampleA>>=
+# Create unbalanced data by dropping the first 8 observations
+unbal_tooth <- ToothGrowth[-(1:8), ]
+
+# Model 1: supp first
+mod_I_A <- aov(len ~ supp * dose, data = unbal_tooth)
+summary(mod_I_A)
+@ 
 
 \end{frame}
 
-\begin{frame}[allowframebreaks]{Type II Sum of Squares}
+\begin{frame}[fragile]{Type I Sum of Squares III}
+
+Doing the other order, we get completely different results!
+
+<<type1_exampleB>>=
+# Model 2: dose first (Notice the SS for the main effects change!)
+mod_I_B <- aov(len ~ dose * supp, data = unbal_tooth)
+summary(mod_I_B)
+@
+
+\end{frame}
+
+\begin{frame}[allowframebreaks,fragile]{Type II Sum of Squares}
     \begin{block}{Type II (Hierarchical)}
       \textbf{Summary:} The SS for any term is adjusted for the largest \alert{hierarchical} model that does not contain that term. 
       
@@ -752,16 +782,33 @@ TODO: R example. Written out example.
     
 \mode<article>{See the Type II column of Table~\ref{tab:SS} for an example with a 3-way ANOVA.}
 
-TODO: R example. Written out example.
+<<hiddenCompute, include=FALSE,message=FALSE,echo=FALSE>>=
+library(car)
+@
+
+<<type2_example, eval=FALSE>>=
+library(car)  # standard package for Type-II
+
+# Type II SS adjusts for all terms at the same or lower level
+mod_II <- aov(len ~ supp * dose, data = unbal_tooth)
+Anova(mod_II, type = 2)
+
+# Reversing the order of terms will yield the exact same result here
+@
+
+<<type2_example_real, eval=TRUE,echo=FALSE>>=
+mod_II <- aov(len ~ supp * dose, data = unbal_tooth)
+Anova(mod_II, type = 2)
+@
 
 \end{frame}
 
-\begin{frame}[allowframebreaks]{Type III Sum of Squares}
+\begin{frame}[allowframebreaks,fragile]{Type III Sum of Squares}
     \begin{block}{Type III (fully adjusted)}
       \textbf{Summary:} The SS for any term is adjusted for \emph{all other terms}.
       
       \begin{itemize}
-        \item Less ``powerful" than Type II Sum of Squares, but also more conservative.
+        \item Tests equally wighted hypotheses about treatment effects, placing no restriction on the cell means. This directly answer the question: ``Does Factor A have an effect on average response across all levels of factor B"? 
         \item Standard for factorial experiments. 
         \item Like Type II, doesn't depend on model order.
       \end{itemize}
@@ -769,99 +816,49 @@ TODO: R example. Written out example.
     
 \mode<article>{See the Type III column of Table~\ref{tab:SS} for an example with a 3-way ANOVA.}
 
-TODO: R example. Written out example.
+<<type3_example>>=
+library(emmeans)
+
+# Type III evaluates equally weighted cell means
+mod_III <- aov(len ~ supp * dose, data = unbal_tooth)
+
+# joint_tests() from emmeans computes Type III SS.
+joint_tests(mod_III)
+@
 
 \end{frame}
 
+\begin{frame}[allowframebreaks]
+
   \begin{block}{Which Type Should You Use in Practice?}
     \begin{itemize}
-      \item \textbf{Type I:} Avoid unless testing a strict hierarchical sequence (e.g., covariate first). Order of terms in \texttt{aov()} changes the output!
-      \item \textbf{Type II:} Best default when you are confident higher-order interactions are zero ($AB = 0$). Maximizes statistical power.
+      \item \textbf{Type I:} Avoid unless testing a strict hierarchical sequence.
+      Order of terms in \texttt{aov()} changes the output!
+      \item \textbf{Type II:} Best default when you are confident higher-order interactions are zero, or you're only interested in hierarchical models.
       \item \textbf{Type III:} Standard for factorial experiments. Tests equal weighting across all treatment cells regardless of sample size differences.
     \end{itemize}
   \end{block}
 \end{frame}
 
-\begin{frame}[fragile, allowframebreaks]{Unbalanced Data: Practical Workflow in R}
-  \begin{itemize}
-    \item Base R's \texttt{summary(aov())} defaults to Type I SS, making it dangerous for unbalanced data.
-    \item \textbf{Solution:} Use \texttt{joint\_tests()} from \texttt{emmeans}. It provides Type III hypothesis tests safely without requiring you to change R's global options.
-  \end{itemize}
-
-<<unbalanced_workflow, size='small', eval=FALSE>>=
-library(emmeans)
-
-# Fit standard model on unbalanced data
-mod_unbal <- aov(yield ~ P * K, data = unbalanced_data)
-
-# 1. Run Type III ANOVA tests safely
-joint_tests(mod_unbal)
-@
-
-  \framebreak
-
-  \begin{block}{Practical Decision Rules}
-    \begin{enumerate}
-      \item \textbf{Look at the Interaction p-value first:}
-      \begin{itemize}
-        \item If $p \ge 0.05$ (No interaction): Interpret overall main effects and run overall pairwise comparisons: \texttt{emmeans(mod, ~ P)}.
-        \item If $p < 0.05$ (Interaction present): \alert{Stop!} Do not interpret global main effects. You must analyze \textbf{Simple Main Effects}.
-      \end{itemize}
-    \end{enumerate}
-  \end{block}
+\begin{frame}{Contrasts for Unbalanced Data}
+   A final note: contrasts for unbalanced data will generally follow the Type-III SS.
 \end{frame}
 
-\begin{frame}[fragile, allowframebreaks]{Analyzing Simple Main Effects}
+\section{Multiple Comparisons?}
+
+\begin{frame}[fragile, allowframebreaks]{Multiple Comparisons in Factorial Designs}
   \begin{itemize}
-    \item \alert{Definition:} A \textbf{simple main effect} tests the effect of Factor A at *one specific fixed level* of Factor B.
-    \item When an interaction exists, stating "Superphosphate increases yield" is incomplete. You must state "Superphosphate increases yield *when Potash is absent*, but has no effect *when Potash is present*."
-    \item Use the \texttt{by} argument in \texttt{emmeans} to slice the analysis.
+    \item When doing a full factorial analysis, with all higher order interactions, we end up doing \emph{many} F-tests for individual effects.
+    \item For instance, in a three-way factorial anaylsis, there are $\binom{3}{1} + \binom{3}{2} + \binom{3}{3} = 7$ total tests.
+    \item Despite this, we have largely not discussed adjusting p-values for multiple tests! 
+    \item Common statistical practice does \emph{not} adjust for these multiple F-tests. \textbf{Why}?
+    
+    \framebreak
+    
+    \item There's not a satisfying answer other than: ``that's what we do".
+    \item \citet{oehlert2000} does argue, however, that we do multiple-testing adjustments for a ``family" of tests.
+    \item Common practice treats each main effect and interaction as a separate ``family" of hypotheses and make multiple comparisons adjustments within a family, but not between them.
   \end{itemize}
-
-<<simple_effects_code, size='small', eval=FALSE>>=
-# Obtain EMMs for the interaction
-emm_int <- emmeans(mod_unbal, ~ P * K)
-
-# Test the simple main effect of Potash (K) WITHIN each level of Superphosphate (P)
-contrast(emm_int, method = "pairwise", by = "P")
-
-# Plot simple effects visually
-emmip(mod_unbal, K ~ P)
-@
-
-\end{frame}
-\section{Multiple Comparisons: Beyond the F-Test}
-
-\begin{frame}[fragile, allowframebreaks]{Multiple Comparisons in Practice}
-  \begin{itemize}
-    \item A significant ANOVA interaction tells you \emph{some} difference exists, but testing all pairs blindly increases your \alert{family-wise error rate} (false positive rate).
-    \item The \texttt{emmeans} package provides a streamlined pipeline for post-hoc testing with appropriate data-dredging penalties.
-  \end{itemize}
-
-<<mult_comp, size='small', eval=FALSE>>=
-# Assuming fert_mod is our fitted two-way model
-emm_int <- emmeans(fert_mod, ~ P * K)
-
-# Tukey adjustment for all pairwise comparisons
-pairs(emm_int, adjust = "tukey")
-@
-
-  \framebreak
-
-  \begin{block}{Visualizing Contrasts}
-    \begin{itemize}
-      \item Staring at massive tables of p-values makes it difficult to assess effect sizes.
-      \item You can pass your contrast object directly into a plot to visually see which adjusted confidence intervals exclude zero.
-    \end{itemize}
-  \end{block}
-
-<<mult_comp_plot, size='small', eval=FALSE, fig.height=4, fig.align='center'>>=
-# Generates a forest plot of the differences between groups
-plot(pairs(emm_int, adjust = "tukey")) + 
-  ggplot2::geom_vline(xintercept = 0, linetype = "dashed", color = "red") +
-  ggplot2::labs(title = "Tukey-Adjusted Pairwise Differences")
-@
-
 \end{frame}
 
 \section{Resource Constraints: Unreplicated \& Fractional Designs}
@@ -872,11 +869,13 @@ plot(pairs(emm_int, adjust = "tukey")) +
     \item \alert{The Problem:} Fitting a full factorial model uses up all available degrees of freedom. The error degrees of freedom ($df_E$) becomes 0, so R returns \texttt{NA} for all standard errors and p-values.
   \end{itemize}
 
-<<unrep_problem, size='small', eval=FALSE>>=
+<<unrep_problem>>=
+unrep_data <- read.csv('unrepData.csv')
+
 # Fits main effects, 2-way, 3-way, and 4-way interactions
 mod_unrep <- aov(yield ~ A * B * C * D, data = unrep_data)
 
-# F-values and p-values will return as NA
+# F-values and p-values will not be returned
 summary(mod_unrep) 
 @
 
@@ -895,49 +894,45 @@ summary(mod_unrep)
 mod_pooled <- aov(yield ~ (A + B + C + D)^2, data = unrep_data)
 
 # Now R can calculate p-values for main and 2-way effects!
-summary(mod_pooled) 
+summary(mod_pooled)
 @
 
 \end{frame}
 
-\begin{frame}[fragile, allowframebreaks]{Fractional Factorials \& Confounding}
- \begin{itemize}
-    \item A \alert{fractional factorial} design runs only a structured fraction of the full combinations (e.g., 16 runs instead of 32 for a 5-factor design).
-    \item \textbf{How R handles it:} R automatically recognizes the missing runs and returns \texttt{NA} for the interaction terms it cannot mathematically estimate.
-    \item \textbf{Aliasing:} Because we skipped runs, certain effects are perfectly correlated (confounded). 
-    \begin{itemize}
-        \item \emph{Intuition:} If we design a half-fraction by defining Factor C's levels mathematically as $A \times B$, R cannot tell if an observed change in yield is caused by the main effect of C, or the interaction of A and B.
-    \end{itemize}
+\begin{frame}[fragile, allowframebreaks]{Fractional Factorials: A High-Level Overview}
+  \begin{itemize}
+    \item \textbf{The Problem:} Full factorial designs grow exponentially ($2^5 = 32$ treatment combinations). 
+    We often lack the budget or material to run every combination.
+    \item \textbf{The Solution:} A \alert{fractional factorial design} runs a carefully structured subset (e.g., a "half-fraction" of 16 combinations) to estimate main effects and low-level interactions efficiently.
+    \item We are only going to briefly mention the concept here. 
+    For more details, see \citet[Chapter~18 of][]{oehlert2000}.
+    
+    \framebreak
+    
+    \item \textbf{The Cost (Aliasing):} By skipping some combinations, certain effects become perfectly tangled together.
+    For instance, we may not tell if observed change in yield is caused by Factor C, or by the $A \times B$ interaction.
+    \item \textbf{The Strategy:} We rely on the \emph{sparsity of effects principle}---the assumption that higher-order interactions (3-way, 4-way) are usually zero.
+    If C is aliased with $A \times B \times D$, we assume all the observed variation belongs to $C$.
   \end{itemize}
 
-<<fractional_alias, size='small', eval=TRUE>>=
-# Generate a mock half-fraction dataset (2^(3-1))
-library(FrF2)
-frac_data <- FrF2(nruns = 4, nfactors = 3, factor.names = c("A", "B", "C"))
-frac_data$yield <- c(14, 18, 22, 19)
-
-frac_mod <- aov(yield ~ A * B * C, data = frac_data)
-
-# This outputs the exact matrix showing which main effects 
-# are mathematically identical to which interaction terms:
-alias(frac_mod)
-@
   \framebreak
 
-  \begin{block}{Visual Diagnostics: Daniel Plots}
-    \begin{itemize}
-      \item If you have zero degrees of freedom for error (saturated/fractional models), you can evaluate effects visually without an F-test using a \alert{Half-Normal Probability Plot}.
-      \item \textbf{Interpretation:} Noise falls along a straight line. Significant, active effects break away from the line.
-    \end{itemize}
+  \begin{block}{Practical Advice for Software}
+    Never arbitrarily drop runs from an experiment! Use specialized software to generate optimal fractions, and use the \texttt{alias()} function to see exactly what is entangled.
   \end{block}
 
-<<daniel_plot, size='small', eval=FALSE, fig.height=4, fig.align='center'>>=
+<<fractional_alias, size='small', eval=FALSE>>=
 library(FrF2)
 
-# Visually identify active effects in an unreplicated or 
-# fractional design without needing an error term
-DanielPlot(frac_mod, half = TRUE, 
-           main = "Half-Normal Plot of Effects")
+# Generate a half-fraction for 3 factors (4 runs instead of 8)
+frac_data <- FrF2(nruns = 4, nfactors = 3, factor.names = c("A", "B", "C"))
+
+# Fit the full model (adding mock response data for the formula)
+frac_mod <- aov(rnorm(4) ~ A * B * C, data = frac_data)
+
+# R will return NA in summary(frac_mod) for terms it cannot estimate.
+# Use alias() to reveal exactly which effects are confounded:
+alias(frac_mod)
 @
 
 \end{frame}
@@ -978,13 +973,4 @@ DanielPlot(frac_mod, half = TRUE,
 
 }
 
-
-
 \end{document}
-
-
-
-
-
-
-
