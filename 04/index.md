@@ -25,8 +25,8 @@ Desired outcomes:
 | Lecture slides   | [pdf](slides.pdf) |
 | Lecture notes    | [pdf](notes.pdf) |
 | Annotated slides | [pdf](annotatedSlides.pdf) |
-| NP Dataset       | [csv](NP.csv) | 
-| Unreplicated Data | [csv](unrepData.csv) | 
+| NP Dataset (NP.csv)       | [csv](NP.csv) | 
+| Unreplicated Data (unrepData.csv) | [csv](unrepData.csv) | 
 ----------------------
 
 ----------------------
