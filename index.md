@@ -58,6 +58,9 @@ Please read the [grading rubric](rubric_homework.html) before submitting homewor
 [flies.csv](hw03/flies.csv)
 [silage.csv](hw03/silage.csv)
 [concrete.csv](hw03/concrete.csv)
+* [Homework 4](hw04/hw04.pdf), due Fri Oct 23, 11:59pm.
+[TeX file](hw04/hw04.tex)
+[milk.csv](hw04/milk.csv)
 
 <!--
 * [Homework 4](hw04/hw04.pdf), due Wed Feb 25, 11:59pm.
