@@ -1,0 +1,94 @@
+\documentclass[10pt,twoside]{article}
+\usepackage[marginparsep=1em]{geometry}
+\geometry{lmargin=1.0in,rmargin=1.0in, bmargin=1.2in,  tmargin=1.2in}
+\usepackage[dvipsnames,svgnames,table]{xcolor}
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{epstopdf}
+\usepackage{verbatim}
+\usepackage{enumerate}
+\usepackage{bm}
+\usepackage{amsthm}
+\usepackage{float}
+\usepackage{amsmath}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+\usepackage{mathtools}
+\usepackage{booktabs}
+            
+%%%%  SHORTCUT COMMANDS  %%%%
+\newcommand{\ds}{\displaystyle}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\T}{\mathcal{T}}
+\newcommand{\arc}{\rightarrow}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\RP}{\mathbb{R}(+)}
+\newcommand{\Rs}{\mathbb{R}^{**}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\B}{\mathcal{B}}
+\newcommand{\PX}{\mathcal{P}(X)}
+\newcommand*\rot{\rotatebox{90}}
+\newcommand*\OK{\ding{51}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\Answer}{\vspace{2mm}\textbf{\underline{Answer}}\\}
+\newcolumntype{L}{>{$}l<{$}}
+\newcolumntype{C}{>{$}c<{$}}
+\newcommand{\GL}{\text{GL}}
+\newcommand{\SL}{\text{SL}}
+
+\newcommand{\stirling}[2]{\genfrac{\{}{\}}{0pt}{}{#1}{#2}}
+
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\sectionmark}[1]{\markright{\thesection.\ #1}}
+\lhead{\fancyplain{}{}} 
+\fancyhead[RE,RO]{Stat 5200/6200, Fall 2026}
+\fancyfoot[RE,RO]{\thepage}
+
+
+\begin{document}
+\begin{flushright}
+\begin{minipage}{.33\textwidth}
+\rightline{YOUR NAME}
+\rightline{\href{mailto:YOUR EMAIL}{YOUR EMAIL}}
+\rightline{\today}
+\end{minipage}
+\end{flushright}
+
+\begin{center}
+{\large{\textbf{Homework 4}}}
+\end{center}
+
+\begin{enumerate}
+  \item Finish problems~\ref{prob:first}--\ref{prob:last}, then complete the academic integrity statement.
+  \item \label{prob:first} \textbf{This problem uses the \texttt{milk.csv} dataset in Canvas}. 
+  
+  Suppose that we are trying to compare three different pasteurization treatments for milk.
+  Fifteen samples of milk are randomly assigned to the three treatments, and we determine the bacterial load in each sample after treatment via serial dilution plating.
+  
+  \textbf{Test the null hypothesis that the three treamtments have the same effect on bacterial concentration}. (HINT: You may need to transform the data. Check your model assumptions!)
+  
+  \item Do Exercise 6.5 from the Oehlert Textbook (First Edition, the problem should be on page 145, and is about interpreting 4 plots).
+  
+  \item \label{prob:last} \textbf{(6000-level students only)} This problem uses the built-in \texttt{ToothGrowth} dataset in R (\texttt{data(ToothGrowth)}). 
+While \texttt{dose} is treated as a factor in ANOVA, it is quantitative in nature---higher doses may correspond to systematic linear or non-linear trends in tooth growth. 
+Because of this, we can apply polynomial contrasts to evaluate linear and quadratic dose-response curves.
+
+\begin{enumerate}
+  \item \label{prob:toothFig} \textbf{(Plotting Practice)} In lecture, we created an interaction plot with \texttt{dose} on the x-axis. Create a new interaction plot, this time placing \texttt{supp} (supplement type) on the x-axis and \texttt{dose} as the trace factor. Choose clear axis labels, a title, and distinct colors/symbols so the plot is easy to interpret.
+
+  \item \textbf{(Spacing and Transformation)} Standard polynomial factor contrasts assume that treatment levels are equally spaced (see textbook Chapter 4.4). 
+  Are the raw dosage levels ($0.5, 1.0, 2.0$) equally spaced? If not, identify a natural mathematical transformation of \texttt{dose} that yields equally spaced values. State the transformed values.
+
+  \item \textbf{(Conditioned Polynomial Contrasts)} Compute polynomial contrasts for \texttt{dose} to estimate trends in tooth growth. \textbf{Because the interaction is significant, you need to condition by each supplement type}. You may find the \texttt{contrast} function with \texttt{method = "poly"} (using an object conditioned on \texttt{supp}) useful.
+    \begin{itemize}
+    \item Report the linear and quadratic test results for both Orange Juice (\texttt{OJ}) and Ascorbic Acid (\texttt{VC}). 
+    \item Interpret these findings in substantive biological terms, explicitly referencing the scale of the dosage (e.g., changes per doubling of dose). You can use either of the interaction plots (from lecture slides or Problem~\ref{prob:toothFig}) to inform your response.
+    \end{itemize}
+  \end{enumerate}
+\end{enumerate}
+
+
+\end{document}
