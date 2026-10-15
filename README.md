@@ -45,4 +45,5 @@ Next time, have a ready .csv file to demonstrate loading, etc. Slightly more org
 - For 6000-level students, additional reading might be a good idea:
   - 4.3--4.4 (orthogonal and polynomial contrasts)
   - 5.3--5.5 (mathematics of multiple comparisons)
-- If we keep doing reading assignments, consider adding some HW questions directly from the reading.
+  - If we keep doing reading assignments, consider adding some HW questions directly from the reading.
+  - Should we introduce nlme, gls(), or lme4, lmer() to the students, lmer()
