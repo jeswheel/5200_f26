@@ -42,17 +42,380 @@
 %   \end{frame}
 % }
 
-\section{Overview}
+\section{Introduction}
 
 \begin{frame}[allowframebreaks]{Objectives and overview}
   \begin{itemize}
-    \item This material is based Chapter~TODO on the textbook ``A First Course in Design and Analysis of Experiments" \citep{oehlert2000}.
+    \item This material is based Chapters~13--14 from the textbook ``A First Course in Design and Analysis of Experiments" (First Edition) \citep{oehlert2000}.
     \item Chapter outcomes include: 
     \begin{itemize}
-      \item TODO
+      \item You will be able to identify and design a block design.
+      \item You will be able to describe strengths and weaknesses of block-designs.
+      \item You will be able to create and analyze the most common types of block designs, including completely randomized blocks and Latin Squares.
     \end{itemize}
   \end{itemize}
 \end{frame}
+
+\begin{frame}[allowframebreaks]{Introduction: beyond the CRD}
+  \begin{itemize}
+    \item Most recently, we have focused on the analysis of data using ANOVA models.
+    \item We will now discuss specific experimental designs.
+    \item Fortunately, the skills built for analyzing data will remain relevant.
+    \item Most design principles build on the completely randomized design, but add additional structure to the randomization procedure.
+    \item The additional structure is often practical and natural, but can also provide an analytic advantage by reducing variance among observations.
+    
+    \framebreak
+    
+    \item Recall how a completely randomized design (CRD) is specified:
+    
+        \mode<article>{
+    In a CRD, there are $g$ treatment groups, and $N = n_1 + n_2 + \ldots + n_g$ total experimental units.
+    In a CRD, all treatment assignments are completely random; this implies that all combinations of assignments are equally likely.
+    
+    We can take this a step further even by having a factorial structure, with treatment factors $A$ ($a$ levels) and $B$ ($b$ levels), resulting in $g = (a)(b)$ total treatment groups. Despite the factorial structure, this is still a type of CRD \emph{if} the assignment of treatment to experimental units is completely random.
+    }
+    \mode<presentation>{\vfill}
+    
+  \end{itemize}
+\end{frame}
+
+\section{Randomized Complete Block Designs}
+
+\begin{frame}[allowframebreaks]{Blocking}
+  \begin{itemize}
+
+    \item While considered the ``gold standard", CRDs are not always possible or practical.
+    \item In this module, we introduce the idea of \alert{blocking}.
+    
+  \end{itemize}
+  
+  \begin{block}{Blocking: basic idea}
+    \begin{itemize}
+      \item Choose a set of experimental units that are similar in some way to form a ``block".
+      \item Because things within a block are similar, the variance within-blocks is reduced.
+      \item Blocks are often natural distinctions: units from a specific supplier, units spatially close in a field, or units taken during similar times.
+    \end{itemize}
+  \end{block}
+    
+\end{frame}
+
+\begin{frame}[allowframebreaks]{The Randomized Complete Block Design}
+  \begin{itemize}
+    \item There are many types of block designs. We will focus first on \alert{complete block designs}.
+  \end{itemize}
+  
+  \begin{block}{Randomized Complete Block Designs (RCB)}
+    \begin{itemize}
+      \item There are $g$ treatments.
+      \item There are $r$ blocks.
+      \item Each block receives exactly 1 of the $g$ treatments, for a total of $N = rg$ experimental units (EUs).
+      \item Within each block, the treatment assignment for each EU is randomized.
+    \end{itemize}
+  \end{block}
+  
+\end{frame}
+
+\begin{frame}[allowframebreaks]{CRD vs RCB}
+  \begin{itemize}
+    \item How does a randomized complete block design differ from a completely randomized design?
+    \begin{itemize}
+    \item \alert{CRD}: All $N$ EUs can be randomly assigned to any treatment. 
+    \item \alert{RCB}: We first pick / identify $r$ blocks, which consist of $g$ EUs each. Then, within each block, we randomly assign the $g$ treatments.
+    \end{itemize}
+  \end{itemize}
+  
+  \framebreak
+  
+  \begin{exampleblock}{Example: batch-based blocks}
+    Suppose you work at a bakery, and you have $r$ different farms that supply you with eggs. You are interested in testing new baking times for your recipe: $T1$, $T2$, $T3$, $T4$.
+  \end{exampleblock}
+  
+  \mode<article>{
+    \begin{itemize}
+      \item \alert{RCB}: For each supplier, you individually randomize which eggs will be used for each of the 4 baking temperatures. That is, each treatment group (temperature) is applied exactly once to eggs from each supplier. The random assignment is \alert{not} done for all eggs, but instead done once for each supplier.
+      \item \alert{CRD}: For a completely randomized design, we have a total of $N$ eggs, and we will randomly assign treatments (temperatures) to each of the eggs individually, regardless of supplier.
+    \end{itemize}
+  }
+  
+  \framebreak
+  
+\begin{exampleblock}{Example: temporal blocks}
+  Suppose you work in a laboratory, and you would like to test three different chemical catalysts: $C1$, $C2$, $C3$.
+  Your analysis instrument must be recalibrated each morning, and measurements are timely and expensive, so you take three measurements per day over $r$ days.
+\end{exampleblock}
+
+\mode<article>{
+\begin{itemize}
+  \item \alert{RCB}: For each day, you randomly assign the run order of the 4 catalysts.
+  That is, each treatment group (catalyst) is tested exactly once per day.
+  The random assignment is \alert{not} done for all samples at once, but instead done freshly for each day's batch.
+  \item \alert{CRD}: For a completely randomized design, we have a total of $N$ samples, and we will randomly assign treatments (catalysts) to the entire sequence of time slots across all $r$ days, completely ignoring the daily calibration restarts.
+\end{itemize}
+}
+  
+  \framebreak
+  
+  \begin{exampleblock}{Example: spatial blocks}
+Suppose you work at an artisanal creamery and age cheese wheels in a climate-controlled cave with $r$ different vertical shelves.
+Because temperature and humidity vary from the floor to the ceiling, you treat each shelf as a block.
+You are testing four different brine washes: $W1$, $W2$, $W3$, $W4$.
+\end{exampleblock}
+
+\mode<article>{
+\begin{itemize}
+  \item \alert{RCB}: For each shelf, you randomly assign the 4 brine washes to the cheese wheels placed there.
+  That is, each treatment group (wash) is applied exactly once per shelf.
+  The random assignment is \alert{not} done for all cheeses at once, but instead done independently for each shelf.
+  \item \alert{CRD}: For a completely randomized design, we have a total of $N$ cheese wheels, and we randomly assign treatments (washes) to each wheel individually, placing them in available spots across the cave completely ignoring which shelf they end up on.
+\end{itemize}
+}
+  
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Complex example: Mealybugs (Ex 13.1)}
+
+  \begin{itemize}
+    \item This next example shows a blocked design, and helps us remember the definition and importance of identifying experimental units. From Module 1: 
+    \item \emph{Experimental Units} (EU) are the entities which a treatment will be applied.
+    \item \emph{Measurement Units} are the individual or piece of experiment material you actually measure.
+  \end{itemize}
+
+  \begin{block}{Mealybugs on cycads}
+    Zookeepers wish to test three different treatments to combat the spread of mealybugs: water (a control), horticultural oil (a standard non-toxic pesticide), and fungal spores.
+    
+    \begin{itemize}
+      \item Five infested cycads (plants) are moved to a testing area. Three branches are randomly selected from each.
+      \item Each branch is randomly assigned to one of the treatment groups.
+      \item On each branch, two 3cm $\times$ 3cm patches are identified.
+      \item Mealybugs are counted on both patches, treated, and then recounted after 3 days.
+    \end{itemize}
+  \end{block}
+  
+  \framebreak
+  
+  \begin{figure}[ht]
+    \includegraphics[width=\textwidth]{figures/mealybugs.png}
+  \caption{\label{fig:mealybugs}Table 13.1 from \citet{oehlert2000}.}
+  \end{figure}
+  
+  \framebreak
+  
+  \begin{itemize}
+    \item Question: What type of design is this? What are the experimental units, and measurement units?
+  \end{itemize}
+  
+  \mode<article>{
+    This problem is a bit tricky.
+    The key is to follow the randomization and treatment assignment!
+    
+    The treatments are applied to branches (or the pair of patches). 
+    Thus, the EUs are the branches (or pair of patches).
+    These are the things that are randomizly assigned to treatments, and they were randomized for each plant separately.
+    For each plant, this is only done once; that is, there is no possibility that two branches from the same plant received the same treatment.
+    Thus, the \emph{plants} are the blocks, since the randomization happens ``inside" a plant block. 
+    
+    We take a measurement on both patches, so these are the measurement units. Note that the measurement units are \emph{not} independent; there is likely high correlation between the two measurement patches.
+    This is a violation of our assumption of independence!
+    We have to carefully account for this.
+    The easiest thing to do is to average or sum over the measurement units, until we get to the experimental unit (which are independent by design).
+  }
+  
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Common counter example}
+  \begin{itemize}
+    \item A common mistake that is made is believing a study is a block design, when it is not.
+    \item Below is a such an example. It is \alert{NOT} a block design, even though there are natural ``blocks".
+  \end{itemize}
+  
+  \begin{block}{NOT a block design: pig pens}
+    A farmer would like to test the effect of 3 different feeds on pig weight. The farmer has $r$ pens of pigs, each with $2$ pigs.
+    The farmer randomly assigns each of the pens with one of the three different feeds. They record the change in weight of the individual pigs.
+  \end{block}
+  
+  \framebreak
+  
+  \begin{itemize}
+    \item Question: What type of design is this? What are the experimental units, and measurement units?
+  \end{itemize}
+  
+  \mode<article>{
+  Though the data may look very similar, this is an example of a completely randomized design, NOT a randomized complete block design. Why?
+  
+  \begin{itemize}
+    \item The EUs are the ``thing" that we apply treatments to. In this case, this is the individual pens. There are $r$ EUs.
+    \item The measurement units are the pigs. Because they were not directly part of a random assignment, there will be correlation among each pen; we will need to aggregate the measurements, or account for the correlation in some other way.
+  \end{itemize}
+  }
+  
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Block design: summary}
+  \begin{itemize}
+    \item Blocks of EUs are often natural (time, space, batch, etc). However, natural grouping does \emph{not} imply a block design was used (e.g., assigning feed to pig-pens).
+    \item Block designs are carefully planned, not haphazard. That is, for each block, we randomly assign a EU in the block exactly one of the $g$ treatments. The number of blocks is unconstrained.
+    \item Block designs refer to how randomness is performed. We can still have complete treatment structures, like factorial treatments, within each block.
+    
+    \framebreak
+    
+    \item When and why do we block, versus CRD?
+    
+    \begin{itemize}
+      \item We block to increase power and precision. This is done by decreasing the error variance, which is achieved by finding groups of units that are homogeneous.
+      \item The RCB is an effective design where there is a single source of extraneous variation in the response that we can identify ahead of time and use to partition the units into blocks.
+      \item Blocking is done at the time of randomization; \alert{you can't construct blocks after the experiment has been run.}
+    \end{itemize}
+    
+\end{itemize}
+    
+\end{frame}
+
+\subsection{Analysis of Randomized Complete Block Designs}
+
+\begin{frame}[allowframebreaks]{How to analyze RCB designs}
+  \begin{itemize}
+    \item The ANOVA models we have used are also useful for RCB; we don't have to ``re-invent the wheel".
+    \item The exact same models, assumptions, software, and code will be used to analyze data from an RCB; we just have to interpret things a little differently.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Model for RCB designs}
+    The standard model for the $i$th treatment in the $j$th block will be:
+    $$
+    y_{ij} = \mu + \alpha_i + \beta_j + \epsilon_{ij}, \quad \epsilon_{ij} \overset{iid}{\sim} N(0, \sigma^2)
+    $$
+    In this model,
+  \begin{itemize}
+    \item $i$: the index for treatment level. Ranges from $1, \ldots, g$.
+    \item $j$: the index for the block. Ranges from $1, \ldots, r$.
+    \item In this model, there is no interaction effect. This is both because there is not enough data to estimate the effect, but also because we believe the blocks themselves to have little impact on the treatment effect.
+    \item This is very similar to a analyzing a two-way factorial analysis without replication.
+    \item Our Sum-of-Squares breakdown is:
+    $$
+    SS_{Total} = SS_{Treatment} + SS_{Block} + SS_{Error},
+    $$
+    That is, to see the treatment effect, we first account for the block-effect, which is how we reduce the variance among measurements.
+    \item The primary difference between unreplicated 2-way ANOVA: We do not care about the block effect, and we cannot perform inference because the blocks are not random. 
+    
+    \mode<article>{Remember, our tests are built on the idea of randomness; however, the EUs are not randomly assigned to blocks, they always stay in the same block. Thus, the block effects and sums of squares are not random, and there is no meaningful test for blocks. Another way of thinking of this is recognizing that we blocked because we believed that the units within blocks were ``similar" in some way; thus, finding a block effect is not a major revelation, because they were selected because we assumed the effect was there.}
+    
+  \end{itemize}
+\end{frame}
+
+<<readMealy,echo=FALSE,include=FALSE>>=
+library(tidyr)
+library(dplyr)
+
+plants <- read.csv('mealybugs.csv')
+
+wide_plants <- plants %>% 
+  pivot_wider(
+    id_cols = c(trt),
+    values_from = avgchange,
+    names_from = plant
+  ) |> 
+  as.data.frame()
+
+rownames(wide_plants) <- wide_plants$trt
+@
+
+
+\begin{frame}[allowframebreaks,fragile]{Mealybugs example}
+
+\begin{itemize}
+  \item Consider the Mealy-bugs example. Below are the data, where the response for each patch has been averaged.
+\end{itemize}
+
+<<table-mealy, results='asis', echo=FALSE>>=
+wide_plants |> 
+  select(-trt) |> 
+  knitr::kable(format = 'latex', label = 'mealy', caption = "Average change in mealybug after each treatment for each EU (columns are plant).")
+@
+
+\framebreak
+
+<<>>=
+plants <- read.csv('mealybugs.csv')
+str(plants)
+@
+
+\end{frame}
+
+\begin{frame}[allowframebreaks,fragile]{Mealybug example (continued)}
+
+<<>>=
+mod <- aov(avgchange ~ factor(plant) + trt, data = plants)
+summary(mod)
+@
+
+\end{frame}
+
+\begin{frame}[allowframebreaks,fragile]{Mealybug example (interpretation)}
+  \begin{itemize}
+    \item In the results above, R outputs a F-value and P-value for the block factor (\texttt{plant}). Again, measurements are not randomly assigned to blocks, so we will ignore this output.
+    \item More importantly, we see a significant effect for treatment. That is, there is fairly strong evidence for differences in mealybug counts between the treatments.
+    \item We should continue to check model assumptions; doing so does not indicate there are violations of our key assumptions.
+    \item We may be interested in what the estimated treatment means are, after accounting for variance among the blocks. This is easily accomplished with the \texttt{emmeans} package and function.
+  \end{itemize}
+  
+  \framebreak
+
+<<hiddenPackageLoad, echo=FALSE,include=FALSE,message=FALSE,warning=FALSE>>=
+library(emmeans)
+@
+
+<<visualEmmeansCode, eval=FALSE, echo=TRUE>>=
+library(emmeans)
+# Get treatment average, after adjusting for block effect.
+em_mod <- emmeans(mod, ~ trt)
+@
+
+<<actualComputePlant, echo=FALSE>>=
+em_mod <- emmeans(mod, ~ trt)
+summary(em_mod)
+@
+
+\end{frame}
+
+\begin{frame}[allowframebreaks,fragile]{Mealybugs: further analysis}
+  \begin{itemize}
+    \item Just like any of our previous examples, we may want to perform tests for sets of contrasts.
+    \item A natural set of contrasts in this case may be: all pairwise comparisons, in which case, Tukey's adjustment is a good choice to control for multiple comparisons. 
+  \end{itemize}
+  
+<<>>=
+pairs(em_mod)
+@
+
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Unbalanced blocks (missingness)}
+  \begin{itemize}
+    \item We have assumed a complete block design, meaning each block sees each treatment exactly once.
+    \item In practice, it can be common to have missing data.
+    \item In this case, missingness causes issues for a block-analysis in the same way as an unbalanced factorial analysis: our SS terms are no longer independent.
+    \item Just as before, we need to consider the difference between Type I (sequential SS), Type II (Hierarchical), and Type III (Fully Adjusted). Any type works, but think carefully about what you are doing.
+  \end{itemize}
+\end{frame}
+
+\subsection{Is blocking worth it?}
+
+\begin{frame}[allowframebreaks]{Is blocking worth it?}
+  \begin{itemize}
+    \item Aside from sometimes being a natural thing to do, there are two primary consequences for blocking in the analysis:
+    \begin{itemize}
+      \item \alert{Good:} Blocking can result in increased precision, by grouping observations into similar blocks. This reduces $\sigma^2$, and increases statistical power if done correctly.
+      \item \alert{Bad:} If we blocked, we have to account / estimate the block effect. This reduces the degrees of freedom available for estimating the treatment effect! This has a negative effect on statistical power.
+    \end{itemize}
+    \item Thus, there is a competing impact in blocking. If the blocks don't actually differ from each other, blocking \emph{will} cost us degrees of freedom without reducing the sum of squares, so it can actually be worse!
+    \item Whether or not the blocking was useful can be estimated. See Chapter~13.2.3 of \citet{oehlert2000} for details on how to compute this. Maybe not useful, since you need the results of an experiment to estimate how useful blocking in the experiment would be.
+    \item \textbf{Summary:} only block if there is reason to believe that there are homogenous groups of EUs. \textbf{We cannot block after obtaining the data!}
+  \end{itemize}
+\end{frame}
+
+\section{Latin Squares and Crossover Design}
+
+\section{Additional Topics}
 
 \newcommand\acknowledgments{
 \begin{itemize}
