@@ -413,7 +413,265 @@ pairs(em_mod)
   \end{itemize}
 \end{frame}
 
-\section{Latin Squares and Crossover Design}
+\section{Latin Squares}
+
+\begin{frame}[allowframebreaks]{Multiple Blocking Variables}
+  \begin{itemize}
+    \item Just as we started with ANOVA with a single factor then moved to a factorial model with multiple factors, we can consider the case with multiple blocking factors.
+    \item Designs with more than one blocking factor can be complex to set up, and generally require restrictions on the number of EUs.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Latin Square designs}
+  \begin{itemize}
+    \item Latin Square is a design that blocks for two sources of variation.
+  \end{itemize}
+  
+  \begin{block}{Latin Squares}
+    \begin{itemize}
+      \item We have $g$ treatments that we would like to test.
+      \item There are two variables we wish to block (e.g., time and space).
+      \item We simultaneously perform a randomized complete block for each blocking variable, careful to avoid repeats.
+      \item Each treatment occurs exactly once in each row and each column.
+      \item This design requires \alert{exactly} $g^2$ EUs. 
+    \end{itemize}
+  \end{block}
+  
+  \framebreak
+  
+  \begin{columns}[c]
+  \begin{column}{0.3\textwidth}
+    \centering
+    $g = 2$ \\[0.5em]
+    \begin{tabular}{|c|c|}
+      \hline
+      A & B \\ \hline
+      B & A \\ \hline
+    \end{tabular}
+  \end{column}
+
+  \begin{column}{0.3\textwidth}
+    \centering
+    $g = 3$ \\[0.5em]
+    \begin{tabular}{|c|c|c|}
+      \hline
+      A & B & C \\ \hline
+      B & C & A \\ \hline
+      C & A & B \\ \hline
+    \end{tabular}
+  \end{column}
+
+  \begin{column}{0.3\textwidth}
+    \centering
+    $g = 4$ \\[0.5em]
+    \begin{tabular}{|c|c|c|c|}
+      \hline
+      A & B & C & D \\ \hline
+      B & C & D & A \\ \hline
+      C & D & A & B \\ \hline
+      D & A & B & C \\ \hline
+    \end{tabular}
+  \end{column}
+\end{columns}
+  
+  \framebreak
+  
+  \begin{itemize}
+    \item If you ignore the row blocking factor, the LS design is a RCB for the column blocking factor.
+    \item If you ignore the column blocking factor, the LS design is a RCB for the row blocking factor. 
+    \item Both row and column blocking factors are \emph{balanced} simultaneously, and a Latin Square design is like simultaneously doing two RCB. 
+  \end{itemize}
+  
+  \framebreak
+  
+\begin{block}{Strengths and Weaknesses: LS designs}
+  Latin Squares allow blocking on two sources of variation, potentially reducing variance and improving precision. However, they do have drawbacks.
+  
+  \begin{itemize}
+    \item Restricted to \emph{exactly} $g^2$ EUs. This may be too few, or even too many.
+    \item Generally, LS designs have few degrees of freedom for estimating error.
+    \item It may be difficult to obtain units that block nicely on both sources of variation.
+  \end{itemize}
+\end{block}
+  
+\end{frame}
+
+\begin{frame}[allowframebreaks,fragile]{Randomizing the LS design}
+  \begin{itemize}
+    \item Though the idea is simple, it's surprisingly challenging to designing a Latin Square (LS).
+    \item \textbf{Goal:} we want to be able to pick one random LS design, out of all possibilities. It's not as simple as randomly assigning treatments.
+    \item What we need is to randomly select a particular LS square, then randomly label the treatments.
+  \end{itemize}
+  
+  \framebreak
+  
+  \begin{block}{Randomizing an LS design: Fisher-Yates procedure}
+    \begin{itemize}
+      \item For $g = 2$, randomly assign treatment labels.
+      \item For $g = 3, 4, 5$, randomly select a ``standard square"---the first row and column are in-order (See Appendix C)---then randomly permute all rows except the first, randomly permute all columns, and randomly assign treatments to the letters.
+      \item For $g = 6$, select a standard square at random, randomly permute all rows and columns, and randomly assign the treatments to the letters.
+      \item For $g \geq 7$, choose any LS square, randomly permute the rows and columns, and randomly assign treatments to the letters.
+    \end{itemize}
+  \end{block}
+  
+  \framebreak
+  
+  \begin{itemize}
+    \item Rather than doing it manually, we can use existing packages to do this for us. 
+  \end{itemize}
+  
+<<createLS>>=
+# install.packages("agricolae")
+treatments <- c("ctrl", "trt1", "trt2")
+agricolae::design.lsd(treatments, seed = 122333)$sketch
+@
+
+
+\end{frame}
+
+\begin{frame}[allowframebreaks,fragile]{Analyzing Latin Square Designs in R}
+
+\begin{itemize}
+  \item Just like the RCB design, we fit an additive model without interaction terms:
+  $$
+  y_{ijk} = \mu + \alpha_i + \beta_j + \gamma_k + \epsilon_{ijk}
+  $$
+  $i$ is treatment level, $j$ is row-block number, $k$ is column-block number
+  \item Interestingly, we don't have all $g^3$ combinations of $(i, j, k)$, only $g^2$ of them. The design is specifically constructed to make this possible.
+  
+\end{itemize}
+
+\framebreak
+
+<<ex_mod, eval=FALSE>>=
+# Ensure that blocking and treatment variables are factors!
+mod <- aov(response ~ row + col + trt, data = latin_data)
+summary(mod)
+@
+
+\mode<presentation>{
+\begin{table}[ht]
+\centering
+\small
+\begin{tabular}{lllll}\hline
+Source & SS & DF & MS & F \\\hline\hline
+Rows & $SS_{\text{Rows}}$ & $g - 1$ & $SS_{\text{Rows}}/DF$ & \\\hline
+Columns & $SS_{\text{Cols}}$ & $g - 1$ & $SS_{\text{Cols}}/DF$ & \\\hline
+Treatments & $SS_{\text{Trt}}$ & $g - 1$ & $SS_{\text{Trt}}/DF$ & $MS_{Trt}/MS_E$ \\\hline
+Error & $SS_E$ & $(g - 2)(g - 1)$ & $SS_E/DF$ & \\\hline\hline
+\end{tabular}
+\end{table}
+}
+
+\mode<article>{
+\begin{table}[ht]
+\centering
+\small
+\begin{tabular}{lllll}
+Source & SS & DF & MS & F \\\hline\hline
+Rows & $SS_{\text{Rows}}$ & $g - 1$ & $SS_{\text{Rows}}/(g - 1)$ & \\
+Columns & $SS_{\text{Cols}}$ & $g - 1$ & $SS_{\text{Cols}}/(g - 1)$ & \\
+Treatments & $SS_{\text{Trt}}$ & $g - 1$ & $SS_{\text{Trt}}/(g - 1)$ & $MS_{Trt}/MS_E$ \\
+Error & $SS_E$ & $(g - 2)(g - 1)$ & $SS_E/[(g - 2)(g - 1)]$ & \\
+\end{tabular}
+\end{table}
+}
+
+\framebreak
+
+\begin{itemize}
+  \item The output provides $F$-tests for rows, columns, and treatments.
+  \item We ignore the test results for \texttt{row} and \texttt{col}, focusing solely on \texttt{trt}.
+  \item To obtain treatment means adjusted for both blocking dimensions, we use \texttt{emmeans}.
+\end{itemize}
+
+\framebreak
+
+<<extractMeansEx, eval=FALSE>>=
+library(emmeans)
+
+# Estimated marginal treatment means adjusted for row and col
+em_mod <- emmeans(mod, ~ trt)
+summary(em_mod)
+
+# Tukey-adjusted pairwise comparisons
+pairs(em_mod)
+contrast(em_mod, method = ...)
+@
+
+\end{frame}
+
+\subsection{Crossover Designs}
+
+\begin{frame}[allowframebreaks]{Crossover Designs}
+  \begin{itemize}
+    \item Crossover designs are highly specific designs, but they are common enough to warrant discussion.
+    \item They are a specific type of Latin Square design, and arises often in biomedical settings. 
+    \item Idea: We need to block on subjects (because each subject responds differently), and we also need to block on time-period (because there may be differences over time due to growth, aging, disease progression, etc).
+  \end{itemize}
+  
+  \framebreak
+  
+  \begin{block}{The crossover design}
+    \begin{itemize}
+      \item The crossover is a specific type of Latin Square design, with the ``row block" corresponding to patient / subject, and the ``column block" corresponding to time.
+      \item There are $g$ treatments, $g$ subjects, given over $g$ time periods. 
+    \end{itemize}
+  \end{block}
+  
+\end{frame}
+
+\begin{frame}[allowframebreaks,fragile]{LS (crossover) example: drug delivery}
+  \begin{exampleblock}{Blood Concentration of Drugs}
+    Blood concentration of drugs changes over time. It will start at zero, increase to some maximum level, then decrease to zero as the drug is fully metabolized.
+      \begin{itemize}
+        \item We wish to compare three methods for delivering a drug: a solution, a tablet, and a capsule. We anticipate large subject to subject differences, so we block on subject.
+    
+        \item There are three subjects, and each subject will be given the drug three times, once with each of the three methods.
+    
+        \item Each treatment method will be used once in the first period, once in the second period, and once in the third period.
+      \end{itemize}
+  \end{exampleblock}
+  
+  \framebreak
+  
+  \mode<presentation>{\vspace{4mm}}
+  
+  \begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/drugAdmin.png}
+    \caption{\label{fig:drugAdmin}Area under the concentration curve for the three subjects and treatments. Screenshot of Table~13.2 from \citet{oehlert2000}.}
+  \end{figure}
+  
+\framebreak
+
+<<drugTimeExample>>=
+drugTime <- read.csv('drugTime.csv')
+mod <- aov(
+  area ~ factor(subect) + factor(period) + factor(trt), 
+  data = drugTime
+)
+summary(mod)
+@
+
+\end{frame}
+
+\begin{frame}[allowframebreaks,fragile]{drug delivery (continued)}
+
+<<pairwiseDrug>>=
+library(emmeans)
+em_mod <- emmeans(mod, ~trt)
+contrast(em_mod, method = 'pairwise') # Could plot if wanted.
+@
+
+
+\end{frame}
+
+\subsection{Replicating Latin Squares}
+
+\begin{frame}[allowframebreaks]{Replicated LS designs}
+ Oehlert Sec 13.3.4
+\end{frame}
 
 \section{Additional Topics}
 
