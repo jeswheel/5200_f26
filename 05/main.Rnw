@@ -670,6 +670,16 @@ contrast(em_mod, method = 'pairwise') # Could plot if wanted.
 \subsection{Replicating Latin Squares}
 
 \begin{frame}[allowframebreaks]{Replicated LS designs}
+  \begin{itemize}
+    \item With the RCB design, you can have more EUs (replicates) by selecting more blocks. With LS designs, the number of EUs is fixed at $g^2$.
+    \item The ready extension of this is a \alert{replicated LS design}. The idea: perform multiple LS designs.
+    \item There are multiple ways this could be done: 
+    \begin{itemize}
+      \item Reuse row blocks
+      \item Reuse column blocks
+      \item Reuse neither, or both.
+    \end{itemize}
+  \end{itemize}
  Oehlert Sec 13.3.4
 \end{frame}
 
