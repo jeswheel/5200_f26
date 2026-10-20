@@ -176,8 +176,10 @@ You are testing four different brine washes: $W1$, $W2$, $W3$, $W4$.
 
   \begin{itemize}
     \item This next example shows a blocked design, and helps us remember the definition and importance of identifying experimental units. From Module 1: 
-    \item \emph{Experimental Units} (EU) are the entities which a treatment will be applied.
-    \item \emph{Measurement Units} are the individual or piece of experiment material you actually measure.
+    \begin{itemize}
+    \item \alert{Experimental Units} (EU) are the entities which a treatment will be applied.
+    \item \alert{Measurement Units} are the individual or piece of experiment material you actually measure.
+    \end{itemize}
   \end{itemize}
 
   \begin{block}{Mealybugs on cycads}
@@ -667,6 +669,8 @@ contrast(em_mod, method = 'pairwise') # Could plot if wanted.
 
 \end{frame}
 
+\section{Additional Topics}
+
 \subsection{Replicating Latin Squares}
 
 \begin{frame}[allowframebreaks]{Replicated LS designs}
@@ -704,7 +708,7 @@ formulation of the gasoline that is used. We wish to test $g = 4$ different form
   \item The impact of formulation likely depends on cars (Block 1), and routes (Block 2). 
   \item Standard LS: pick four cars, four routes.
   \item Replicated LS: reuse the 4 cars on 12 routes (3 Latin-Squares, replicated rows); or have 12 cars use them 4 at a time in the 12 routes (replicated columns); or have 12 cars, 12 routes (no replicates).
-  \item Replicates can repeat the same designs, or each come from uniquely designed squres; the analysis changes in each case!
+  \item Replicates can repeat the same designs, or each come from uniquely designed squares; the analysis changes in each case!
 \end{itemize}
   \end{exampleblock}
  
@@ -718,7 +722,13 @@ formulation of the gasoline that is used. We wish to test $g = 4$ different form
   
 \end{frame}
 
-\section{Additional Topics}
+\begin{frame}{Further Reading and Topics}
+  \begin{itemize}
+    \item To extend the idea of blocking to 3 extraneous sources of variance, we extend to a \alert{Graeco-Latin Square} design (Chapter~13.4)
+    \item When there are more than $g$ units in each block---specifically, multiples of $g$---we can have a Generalized RCB design; these we can analyze just like a two-way ANOVA with interactions.
+    \item Finally, incomplete block designs are cases are specifically chosen when we can't get $g$ units per block, but have $k < g$ units. Chatper 14 deals with specific types of designs that cleverly accomodate this situation.
+  \end{itemize}
+\end{frame}
 
 \newcommand\acknowledgments{
 \begin{itemize}
