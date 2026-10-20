@@ -680,7 +680,42 @@ contrast(em_mod, method = 'pairwise') # Could plot if wanted.
       \item Reuse neither, or both.
     \end{itemize}
   \end{itemize}
- Oehlert Sec 13.3.4
+  
+  \framebreak
+  
+  \begin{itemize}
+    \item \emph{Reusability} depends on experiment and logistics.
+    \begin{itemize}
+      \item Row or column blocks may correspond to different equipment used to obtain measurements, which could be reused more than once.
+      \item Conversely, a block may correspond to a specific batch, field, or time period, in which case the blocks may not be reused.
+    \end{itemize}
+    
+    \item From an analysis point of view, the \alert{advantage} of reusing a block factor is that we will have more degrees of freedom for error. 
+    \item The \alert{risk} when reusing a block factor is that the block effects may change change, amd the assumption of constant block effects is invalid.
+  \end{itemize}
+  
+  \framebreak
+  
+  \begin{exampleblock}{CO emmisions (Example 13.8)}
+    Carbon monoxide (CO) emissions from automobiles can be influenced by the
+formulation of the gasoline that is used. We wish to test $g = 4$ different formulations on CO2 emmissions.
+
+\begin{itemize}
+  \item The impact of formulation likely depends on cars (Block 1), and routes (Block 2). 
+  \item Standard LS: pick four cars, four routes.
+  \item Replicated LS: reuse the 4 cars on 12 routes (3 Latin-Squares, replicated rows); or have 12 cars use them 4 at a time in the 12 routes (replicated columns); or have 12 cars, 12 routes (no replicates).
+  \item Replicates can repeat the same designs, or each come from uniquely designed squres; the analysis changes in each case!
+\end{itemize}
+  \end{exampleblock}
+ 
+  \framebreak
+  
+  \begin{itemize}
+    \item Replicated LS designs have the potential to add a ``square" effect. That is, the three replicated squares may have slightly different behaviors.
+    \item They can also introduce ``nested" effects: the specific effect of a block depends on the specific square (e.g., if car 5 was only used in the 2nd square, then we can't estimate the effect of that block using data from the 1st and 3rd squares).
+    \item We will discuss the analysis of nested effects later in the course (if time permits).
+  \end{itemize}
+  
 \end{frame}
 
 \section{Additional Topics}
