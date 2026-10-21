@@ -337,6 +337,8 @@ icc(mod_carton)
   \end{itemize}
   
   \framebreak
+
+TODO: Let's move this part into the actual example above. 
   
 <<eval=FALSE>>=
 # 1. Fit the null model (fixed grand mean only, no random effect)
