@@ -21,7 +21,7 @@
 % \newcommand\answer[2]{\textcolor{red}{#2}} % to show answers
  \newcommand\answer[2]{#1} % to show blank space
 
-\title{\vspace{2mm} \link{https://jeswheel.github.io/5200_f26/}{Stat 5200: Analysis of Designed Experiments}}
+\title{\vspace{2mm} \link{https://jeswheel.github.io/5200_f26/}{Random Effects Models}}
 \author{Jesse Wheeler}
 \date{}
 
@@ -46,12 +46,94 @@
 
 \begin{frame}[allowframebreaks]{Objectives and overview}
   \begin{itemize}
-    \item This material is based Chapter~12 on the textbook ``A First Course in Design and Analysis of Experiments" \citep{oehlert2000}.
+    \item This material is based Chapter~11--12 on the textbook ``A First Course in Design and Analysis of Experiments" \citep{oehlert2000}.
     \item Chapter outcomes include: 
     \begin{itemize}
-      \item TODO
+      \item Students will be able to distinguish between a random effect and a fixed effect.
+      \item Students will be able to identify when random effects are appropriate.
+      \item Students will know how to implement random effects and mixed effects models.
     \end{itemize}
   \end{itemize}
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Introduction}
+  \begin{itemize}
+    \item So far, the treatment effects that we have been working with can be classified as \alert{fixed-effects}: we wish to estimate the effect of specific treatments.
+    \item What if the treatments themselves are a random selection from a larger population?
+    \item \textbf{Example:} A farmer has 100 pieces of equipment, and would like to know how the equipment used may impact crop-yield. Rather than testing all $100$ pieces of equipment, they \emph{randomly select} $g$ pieces of equipment, and performs a CRD with these equipment.
+  \end{itemize}
+  
+  \framebreak
+  
+  \begin{block}{Random Effects}
+    A random effect is appropriate to model treatments that are a \emph{random sample} from a population of potential treatments. 
+    
+    Random effects are useful if the focus of inference is on the \alert{population}, not the individual treatment effects. 
+  \end{block}
+  
+\end{frame}
+
+\section{Models for Random Effects}
+
+\begin{frame}[allowframebreaks]{Example: Carton factory}
+  \begin{itemize}
+    \item We will build intuition of Random Effects models and designs using an example.
+  \end{itemize}
+  
+  \begin{exampleblock}{Carboard company}
+    Suppose a company makes cardboard cartons for storing goods. They have 50 machines to make cartons, and want to understand the variation in quality for finished products.
+    
+    They choose 10 machines at random from the 50, and make 40 cartons on each machine. The resulting cartons are tested for strength.
+  \end{exampleblock}
+  
+  \framebreak
+  
+  \begin{itemize}
+    \item This is a completely randomized design (CRD), with $g = 10$ treatments (the different machines), and $n_i = 40$, for a total of $N = 400$ EUs.
+    \item The model we have been using for this type of data is:
+    $$
+    y_{ij} = \mu + \alpha_i + \epsilon_{ij}, \quad \epsilon_{ij} \overset{iid}{\sim} N(0, \sigma^2).
+    $$
+    \item We are still going to use a very similar model. However, we are not as interested in the exact $\alpha_i$ for the 10 randomly chosen machines. Instead, we want to make inference on the larger population.
+    
+    \framebreak
+    
+    \item We could proceed as usual, but that only tells us about the 10 specific machines that were randomly chosen, and we would get an entirely different set of machines if we repeated the experiment.
+    \item Thus, we want to introduce a \alert{random effect}: let the effect $\alpha_i$ represent a random draw from a population of possible effects:
+    $$
+    y_{ij} = \mu + \alpha_i + \epsilon_{ij}, \qquad \alpha_i \overset{iid}{\sim} N(0, \sigma^2_\alpha), \quad \epsilon_{ij} \overset{iid}{\sim} N(0, \sigma^2).
+    $$
+    \item We have introduced a new parameter, $\sigma^2_\alpha$, which describes the spread of the effects.
+    \item \alert{We assume that the two random components are independent}. That is, $\alpha_i$ and $\epsilon_{ij}$ are independent. 
+    
+    
+    \framebreak
+   
+    \item If they are independent, the variance of the observed data is increased:
+    $$
+    \Var(y_{ij}) = \Var(\mu + \alpha_i + \epsilon_{ij}) = \sigma^2_\alpha + \sigma^2.
+    $$
+    
+    \item The parameters $\sigma^2_\alpha$ and $\sigma^2$  are called \emph{variance components}.
+    
+    \item If observations belong to the same treatment group, then they now have non-zero correlation:
+    $$
+    \Cor(y_{ij}, y_{ik}) = \begin{cases} 1 & j = k \\ \sigma^2_{\alpha} / (\sigma^2_\alpha + \sigma^2) & j \neq k\end{cases}
+    $$
+    \item We call this within treatment group correlation the \alert{intraclass} correlation.
+    
+  \end{itemize}
+  
+  \framebreak
+  
+  \begin{block}{Key summary}
+    \begin{itemize}
+      \item In a random effects model, the parameters are $\mu$, $\sigma^2$, and $\sigma^2_\alpha$.
+      \item We are not interested in making inferences about the specific $\alpha_i$ and $\epsilon_{ij}$, which are treated as random variables, not parameters.
+      \item Inference wise, we are now interested in confidence intervals and hypothesis tests regarding $\mu$ and $\sigma^2$.
+    \end{itemize}
+  \end{block}
+  
 \end{frame}
 
 \newcommand\acknowledgments{
