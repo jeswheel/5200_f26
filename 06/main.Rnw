@@ -103,6 +103,7 @@
     $$
     y_{ij} = \mu + \alpha_i + \epsilon_{ij}, \qquad \alpha_i \overset{iid}{\sim} N(0, \sigma^2_\alpha), \quad \epsilon_{ij} \overset{iid}{\sim} N(0, \sigma^2).
     $$
+    \item We no longer assume $\sum_i \alpha_i = 0$, rather $E[\alpha_i] = 0$.
     \item We have introduced a new parameter, $\sigma^2_\alpha$, which describes the spread of the effects.
     \item \alert{We assume that the two random components are independent}. That is, $\alpha_i$ and $\epsilon_{ij}$ are independent. 
     
