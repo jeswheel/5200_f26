@@ -14,7 +14,7 @@ Learning Objectives
 - Students will be able to describe strengths and weaknesses of block-designs.
 - Students will be able to create and analyze the most common types of block designs, including completely randomized blocks and Latin Squares.
 
-**Expected reading:** Chapter 11 of Oehlert, G. W. (2020). *A First Course in Design and Analysis of Experiments*, [http://users.stat.umn.edu/~gary/book/fcdae.pdf](http://users.stat.umn.edu/~gary/book/fcdae.pdf).
+**Expected reading:** Chapter 13 of Oehlert, G. W. (2020). *A First Course in Design and Analysis of Experiments*, [http://users.stat.umn.edu/~gary/book/fcdae.pdf](http://users.stat.umn.edu/~gary/book/fcdae.pdf).
 
 
 | &nbsp;           | &nbsp;                          |
