@@ -212,7 +212,7 @@ You are testing four different brine washes: $W1$, $W2$, $W3$, $W4$.
     
     The treatments are applied to branches (or the pair of patches). 
     Thus, the EUs are the branches (or pair of patches).
-    These are the things that are randomizly assigned to treatments, and they were randomized for each plant separately.
+    These are the things that are randomly assigned to treatments, and they were randomized for each plant separately.
     For each plant, this is only done once; that is, there is no possibility that two branches from the same plant received the same treatment.
     Thus, the \emph{plants} are the blocks, since the randomization happens ``inside" a plant block. 
     
@@ -411,7 +411,7 @@ pairs(em_mod)
     \end{itemize}
     \item Thus, there is a competing impact in blocking. If the blocks don't actually differ from each other, blocking \emph{will} cost us degrees of freedom without reducing the sum of squares, so it can actually be worse!
     \item Whether or not the blocking was useful can be estimated. See Chapter~13.2.3 of \citet{oehlert2000} for details on how to compute this. Maybe not useful, since you need the results of an experiment to estimate how useful blocking in the experiment would be.
-    \item \textbf{Summary:} only block if there is reason to believe that there are homogenous groups of EUs. \textbf{We cannot block after obtaining the data!}
+    \item \textbf{Summary:} only block if there is reason to believe that there are homogeneous groups of EUs. \textbf{We cannot block after obtaining the data!}
   \end{itemize}
 \end{frame}
 
@@ -608,7 +608,7 @@ contrast(em_mod, method = ...)
 \begin{frame}[allowframebreaks]{Crossover Designs}
   \begin{itemize}
     \item Crossover designs are highly specific designs, but they are common enough to warrant discussion.
-    \item They are a specific type of Latin Square design, and arises often in biomedical settings. 
+    \item They are a specific type of Latin Square design, and arises often in bio medical settings. 
     \item Idea: We need to block on subjects (because each subject responds differently), and we also need to block on time-period (because there may be differences over time due to growth, aging, disease progression, etc).
   \end{itemize}
   
@@ -695,14 +695,14 @@ contrast(em_mod, method = 'pairwise') # Could plot if wanted.
     \end{itemize}
     
     \item From an analysis point of view, the \alert{advantage} of reusing a block factor is that we will have more degrees of freedom for error. 
-    \item The \alert{risk} when reusing a block factor is that the block effects may change change, amd the assumption of constant block effects is invalid.
+    \item The \alert{risk} when reusing a block factor is that the block effects may change change, and the assumption of constant block effects is invalid.
   \end{itemize}
   
   \framebreak
   
   \begin{exampleblock}{CO emmisions (Example 13.8)}
     Carbon monoxide (CO) emissions from automobiles can be influenced by the
-formulation of the gasoline that is used. We wish to test $g = 4$ different formulations on CO2 emmissions.
+formulation of the gasoline that is used. We wish to test $g = 4$ different formulations on CO2 emissions.
 
 \begin{itemize}
   \item The impact of formulation likely depends on cars (Block 1), and routes (Block 2). 
@@ -726,7 +726,7 @@ formulation of the gasoline that is used. We wish to test $g = 4$ different form
   \begin{itemize}
     \item To extend the idea of blocking to 3 extraneous sources of variance, we extend to a \alert{Graeco-Latin Square} design (Chapter~13.4)
     \item When there are more than $g$ units in each block---specifically, multiples of $g$---we can have a Generalized RCB design; these we can analyze just like a two-way ANOVA with interactions.
-    \item Finally, incomplete block designs are cases are specifically chosen when we can't get $g$ units per block, but have $k < g$ units. Chatper 14 deals with specific types of designs that cleverly accomodate this situation.
+    \item Finally, incomplete block designs are cases are specifically chosen when we can't get $g$ units per block, but have $k < g$ units. Chapter 14 deals with specific types of designs that cleverly accommodate this situation.
   \end{itemize}
 \end{frame}
 
