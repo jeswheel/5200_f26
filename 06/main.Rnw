@@ -52,13 +52,14 @@
       \item Students will be able to distinguish between a random effect and a fixed effect.
       \item Students will be able to identify when random effects are appropriate.
       \item Students will know how to implement random effects and mixed effects models.
+      \item Students will gain some familiarity with the \texttt{lme4} package in R.
     \end{itemize}
   \end{itemize}
 \end{frame}
 
 \begin{frame}[allowframebreaks]{Introduction}
   \begin{itemize}
-    \item So far, the treatment effects that we have been working with can be classified as \alert{fixed-effects}: we wish to estimate the effect of specific treatments.
+    \item So far, the treatment effects that we have been working with can be classified as \alert{fixed-effects}: we wish to estimate the effect of specific (fixed) treatments.
     \item What if the treatments themselves are a random selection from a larger population?
     \item \textbf{Example:} A farmer has 100 pieces of equipment, and would like to know how the equipment used may impact crop-yield. Rather than testing all $100$ pieces of equipment, they \emph{randomly select} $g$ pieces of equipment, and performs a CRD with these equipment.
   \end{itemize}
@@ -134,6 +135,226 @@
       \item Inference wise, we are now interested in confidence intervals and hypothesis tests regarding $\mu$ and $\sigma^2$.
     \end{itemize}
   \end{block}
+  
+\end{frame}
+
+\section{Estimation: REML and LRT}
+
+\begin{frame}[allowframebreaks]{Beyond ANOVA: Maximum Likelihood}
+  \begin{itemize}
+    \item Classical random effects estimation relies on Expected Mean Squares (EMS) from ANOVA tables (See \citet[][Sections~11.3--11.6]{oehlert2000}).
+    \item These approaches can be computed by hand, and would naturally extend our workflow with the \texttt{aov()} function and the \texttt{emmeans} package.
+    \item Unfortunately, these approaches have their weaknesses for random (and mixed) effects models.
+    \item Our models will remain the same, but how we analyze them will shift, keeping in-line with modern practices.
+    \item For the type of models considered so far (fixed-effects), the two approaches are the same.
+    
+    \framebreak
+    
+    \item Modern software relies on \alert{Likelihood} methods.
+    
+    \item \textbf{Maximum Likelihood (ML)} finds the parameter estimates (mean and variances) that make the observed data most probable; confidence intervals are obtained using likelihood ratio tests. 
+    
+    \framebreak
+    
+    \item However, standard ML has a flaw when estimating variance components: it does not account for the degrees of freedom used to estimate the fixed effects (like the grand mean). 
+    \item This makes standard ML variance estimates \emph{biased} (they underestimate the true variance).
+    
+    \mode<article>{
+    \textbf{Example:} For a normal distribution model, $y_{ij} \sim N(\mu_i, \sigma^2)$, the MLE of $(\mu, \sigma^2)$ is:
+    $$
+    \big(\hat{\mu}_{MLE}, \hat{\sigma}^2_{MLE}\big) = \Big(\bar{Y}_i, \frac{1}{n}\sum_{i = 1}^n (x_i - \bar{x})^2\Big).
+    $$
+    However, you may recall from you intro stats class that we usually don't estimate variance that way, instead we divide by $n_1$:
+    $$
+    s^2 = \frac{1}{n-1}\sum_{i = 1}^n (x_i - \bar{x})^2
+    $$
+    That's because the MLE for the variance component is biased low: on average, our estimate will be slightly smaller than the truth.
+    }
+    
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Restricted Maximum Likelihood (REML)}
+  \begin{itemize}
+    \item To fix the bias in standard ML, modern software uses \alert{Restricted Maximum Likelihood (REML)}.
+    \item REML mathematically removes the fixed effects from the likelihood equation before estimating the variance components.
+    \item By accounting for the degrees of freedom lost in estimating fixed effects, REML provides \emph{unbiased} estimates of $\sigma^2$ and $\sigma^2_\alpha$.
+    
+    \mode<article>{
+      \textbf{Example:} building on the normally distributed model from before, 
+      the MLE for $\sigma^2$ was biased low:
+      $$
+      \hat{\sigma}^2_{MLE} = \frac{1}{n}\sum_{i = 1}^n (x_i - \bar{x})^2.
+      $$
+      The REML estimate for this model is unbiased: 
+      $$
+      \hat{\sigma}^2_{REML} = s^2 = \frac{1}{n - 1}\sum_{i = 1}^n (x_i - \bar{x})^2
+      $$
+    }
+    
+    \item Additionally, REML handles unbalanced data effortlessly and prevents the impossible ``negative variance" estimates that can sometimes occur when calculating variance using classical EMS methods.
+    % \item \textbf{Default Behavior:} Functions like \texttt{lmer()} use REML by default to estimate these variance components.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[allowframebreaks,fragile]{Estimating variance components in R}
+  \begin{itemize}
+    \item If we are primarily interested in the variance components $\sigma^2_\alpha$, we will want to get the REML estimate for this component, as it is unbiased.
+    \item We will shift from our \texttt{aov()} workflow and use the \texttt{lmer} function from the \texttt{lme4} package to do this in R:
+  \end{itemize}
+
+<<load-lme4, include=FALSE, echo=FALSE>>=
+library(lme4)
+@
+
+
+<<lme4-template, eval=FALSE>>=
+# install.packages("lme4")
+library(lme4)
+lmer(response ~ 1 + (1 | randomEffect), data = data)
+@
+
+\end{frame}
+
+\begin{frame}[allowframebreaks,fragile]{Example: Penicillin}
+  \begin{itemize}
+    \item We will first consider the built-in \texttt{Penicillin} data in R, which contains the reduced diameter of bacterial growth, after penicillin application. Each measurement is taken on a specific \texttt{plate}, which is our random effect. 
+  \end{itemize}
+
+<<penicillinEx>>=
+data("Penicillin")
+
+output <- lmer(diameter ~ 1 + (1 | plate), data = Penicillin)
+@
+
+\framebreak
+
+\begin{itemize}
+  \item What is the notation here doing? \texttt{1 + (1 | plate)}.
+  \begin{itemize}
+    \item The model we are fitting is $y_{ij} = \mu + \alpha_i + \epsilon_{ij}$.
+    \item The \texttt{1} in the beginning is not strictly needed, but represents the grand mean $\mu$.
+    \item The \texttt{(1 | plate)} represents the random effect. In \texttt{lme4}, the syntax \texttt{(A | B)} implies that $B$ is the random effect grouping variable, and $A$ is the effect that is random. For a simple random effects model, the mean (\texttt{1}) is always the thing that is random. 
+  \end{itemize}
+  \item Now let's look at the output.
+\end{itemize}
+
+
+<<lme4Output>>=
+summary(output)
+@
+
+
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Likelihood Ratio Tests (LRT)}
+  \begin{itemize}
+    \item Instead of using exact F-tests derived from ratios of Mean Squares, modern mixed modeling often uses the \alert{Likelihood Ratio Test (LRT)} for hypothesis testing.
+    \item The LRT explicitly compares two competing models:
+    \begin{enumerate}
+      \item A \textbf{Full Model} that includes the random effect.
+      \item A \textbf{Reduced Model} (Null Model) that removes the random effect.
+    \end{enumerate}
+    \item The test measures how much the likelihood (fit) of the data drops when the random effect is removed. 
+    \item If the fit is significantly worse without the random effect, we reject $H_0: \sigma^2_\alpha = 0$. The test statistic follows a $\chi^2$ distribution.
+    % \item \emph{Important Rule:} When comparing models using an LRT, we must fit both models using standard Maximum Likelihood (\texttt{REML = FALSE}). REML likelihoods cannot be compared directly between models with different parameter structures.
+  \end{itemize}
+\end{frame}
+
+\section{Estimating Variance Components}
+
+\begin{frame}[allowframebreaks,fragile]{Modern Estimation in R}
+  \begin{itemize}
+    \item Historically, variance components like $\sigma^2_\alpha$ were estimated by solving systems of equations based on ANOVA tables and Expected Mean Squares (EMS). 
+    \item Modern statistical practice relies on \alert{Restricted Maximum Likelihood (REML)}.
+    \item REML provides unbiased estimates of variance components, handles unbalanced data seamlessly, and avoids the problem of negative variance estimates that can occur with ANOVA methods.
+    \item In R, the standard package for fitting these models is \texttt{lme4}.
+  \end{itemize}
+  
+  \framebreak
+  
+  \begin{block}{Implementing lme4}
+    We use the \texttt{lmer()} function. The syntax requires us to specify both the fixed effects and the random effects.
+    
+    For our model $y_{ij} = \mu + \alpha_i + \epsilon_{ij}$:
+    \begin{itemize}
+      \item The fixed grand mean ($\mu$) is represented by \texttt{1}.
+      \item The random machine effect ($\alpha_i$) is represented by \texttt{(1 | machine)}, which tells R to fit a random intercept grouped by machine.
+    \end{itemize}
+  \end{block}
+  
+<<eval=FALSE>>=
+# Install and load the lme4 package
+# install.packages("lme4")
+library(lme4)
+
+# Fit the random effects model
+mod_carton <- lmer(strength ~ 1 + (1 | machine), data = carton_data)
+
+# View the variance components
+summary(mod_carton)
+@
+  
+\end{frame}
+
+\begin{frame}[allowframebreaks,fragile]{The Intraclass Correlation Coefficient (ICC)}
+  \begin{itemize}
+    \item After fitting the model, we want to quantify how much of the total variance is driven by our random effect.
+    \item We calculate the \alert{Intraclass Correlation Coefficient (ICC)}:
+    $$
+    ICC = \frac{\hat{\sigma}^2_\alpha}{\hat{\sigma}^2_\alpha + \hat{\sigma}^2}
+    $$
+    \item The ICC represents the proportion of total variance in the response that is accounted for by the grouping factor (the machines).
+    \item An ICC of 0.40 means that 40\% of the variation in carton strength is due to the machines, while the remaining 60\% is random carton-to-carton error.
+  \end{itemize}
+  
+  \framebreak
+  
+  \begin{block}{Calculating ICC in R}
+    You can extract the variance components manually from the \texttt{summary()} output, or use the \texttt{performance} package for a direct calculation.
+  \end{block}
+  
+<<eval=FALSE>>=
+# Install and load the performance package
+# install.packages("performance")
+library(performance)
+
+# Calculate the ICC directly
+icc(mod_carton)
+@
+  
+\end{frame}
+
+\begin{frame}[allowframebreaks,fragile]{Hypothesis Testing for Random Effects}
+  \begin{itemize}
+    \item In a random effects model, the null hypothesis is that the population of treatments has zero variance:
+    $$
+    H_0: \sigma^2_\alpha = 0
+    $$
+    \item To test this in a modern framework, we use a \alert{Likelihood Ratio Test (LRT)}. 
+    \item The LRT compares the fit of a model \emph{with} the random effect against a model \emph{without} the random effect.
+    \item Note: When comparing models with different random effects structures via LRT, we must fit them using standard Maximum Likelihood (\texttt{REML = FALSE}) rather than REML.
+  \end{itemize}
+  
+  \framebreak
+  
+<<eval=FALSE>>=
+# 1. Fit the null model (fixed grand mean only, no random effect)
+mod_null <- lm(strength ~ 1, data = carton_data)
+
+# 2. Fit the random effects model using Maximum Likelihood
+mod_alt <- lmer(strength ~ 1 + (1 | machine), 
+                data = carton_data, 
+                REML = FALSE)
+
+# 3. Perform the Likelihood Ratio Test
+anova(mod_null, mod_alt)
+@
+  
+  \begin{itemize}
+    \item The \texttt{anova()} function will return a $\chi^2$ test statistic and a p-value.
+    \item If the p-value is small (e.g., $< 0.05$), we reject $H_0$ and conclude that there is significant variation in quality among the population of machines.
+  \end{itemize}
   
 \end{frame}
 
