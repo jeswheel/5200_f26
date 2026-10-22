@@ -226,7 +226,7 @@ data("Penicillin")
 
 output <- lmer(
   diameter ~ 1 + (1 | plate), 
-  data = Penicillin, REML = FALSE  # default
+  data = Penicillin, REML = TRUE  # default
 )
 @
 
@@ -325,6 +325,121 @@ confint(output, signame = FALSE, level = 0.95, method = "boot")
 lmerTest::ranova(output)  # Will do RLRT or LRT, depending on object.
 @
   
+\end{frame}
+
+\section{Factorial Random Effects Models}
+
+\begin{frame}[allowframebreaks]{Factorial models}
+  \begin{itemize}
+    \item Just like with fixed effects, we may want to consider random effects with multiple random treatment factors.
+    \item Again, we use random effects when we aren't interested in the specific treatment effects chosen, but the larger population of treatment effects.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Example: Carton Factory (continued)}
+  \begin{itemize}
+    \item Let's expand our motivating example of the Carton Factory.
+  \end{itemize}
+  
+  \begin{block}{Two-way random effects model}
+    Suppose the carton factory has multiple machines and would like to know the variance in the effect of these machines, but there are also different machine operators, and their effect may be random. 
+    \begin{itemize}
+      \item We randomly select machines and operators, and have each operator work on each each machine and produce $n = 4$ cartons each. 
+      \item We have a two-way, completely randomized factorial design.
+    \end{itemize}
+  \end{block}
+  
+  \framebreak
+  
+  \begin{itemize}
+    \item In the design proposed above, a two-way random effects model is natural:
+    $$
+    y_{ijk} = \mu + \alpha_i + \beta_j + (\alpha\beta)_{ij} + \epsilon_{ijk},
+    $$
+    with
+    \mode<presentation>{
+    \begin{align*}
+      \alpha_i \overset{iid}{\sim} N(0, \sigma^2_\alpha) &\quad \beta_j \overset{iid}{\sim} N(0, \sigma^2_\beta) \\
+      (\alpha\beta)_{ij} \overset{iid}{\sim} N(0, \sigma^2_{\alpha\beta}) &\quad \epsilon_{ijk} \overset{iid}{\sim} N(0, \sigma^2)
+    \end{align*}
+    }
+    \mode<article>{
+    $$
+    \alpha_i \overset{iid}{\sim} N(0, \sigma^2_\alpha)\quad \beta_j \overset{iid}{\sim} N(0, \sigma^2_\beta) \quad (\alpha\beta)_{ij} \overset{iid}{\sim} N(0, \sigma^2_{\alpha\beta})\quad \epsilon_{ijk} \overset{iid}{\sim} N(0, \sigma^2)
+    $$
+    }
+    \item The variance of each observation is
+    $$
+    \Var(y_{ijk}) = \sigma^2_\alpha + \sigma^2_\beta + \sigma^2_{\alpha\beta} + \sigma^2.
+    $$
+    
+    \framebreak
+    
+    \item This idea once again can generalize to higher-order factorial models
+    
+  \end{itemize}
+  
+\end{frame}
+
+\begin{frame}[allowframebreaks,fragile]{Parameter estimation}
+  \begin{itemize}
+    \item The parameter estimation will still happen in a similar way: we can use ML or REML.
+    \item If we are primarily interested in the error components, REML is unbiased, and generally preferred.
+  \end{itemize}
+
+<<twoWayRandom>>=
+carton <- read.csv('carton.csv')
+output <- lmer(
+  thickness ~ 1 + (1 | Machine) + (1 | Operator) + (1 | Machine:Operator),
+  # OR: 1 + (1 | Machine * Operator)
+  data = carton, 
+  REML = TRUE
+)
+@
+
+\end{frame}
+
+\framebreak
+
+<<summarizeOutput>>=
+summary(output)
+@
+
+\begin{frame}[allowframebreaks,fragile]{Confidence intervals}
+  \begin{itemize}
+    \item We can obtain confidence intervals the same way as before. This can be very slow.
+  \end{itemize}
+  
+<<twoWay-confint, cache=TRUE>>=
+set.seed(444)
+confint(output, method = 'boot', signame = FALSE)
+@
+
+\end{frame}
+
+\begin{frame}[allowframebreaks,fragile]{Hypothesis testing}
+  \begin{itemize}
+    \item We can also do hypothesis testing, but it can get tricky due to the interaction effect.
+    \item The \texttt{lmerTest::ranova} function just drops the term from the model, and compares REML (or ML). This may not be meaningful for all variables in the presence of an interaction effect.
+    \item Instead, we often will rely on the confidence intervals.
+  \end{itemize}
+
+\framebreak
+
+<<twoWay-test>>=
+# May not be meaningful for main (random) effects if interaction is present. 
+lmerTest::ranova(output)
+@
+
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Summary}
+  \begin{itemize}
+    \item We fit a random effects model if we are interested in the variance components specifically, rather than specific treatment effects.
+    \item Random effects are often very useful for \textbf{block-designs}. Though we may want to block to reduce variance, we are not often interested in the exact block effect; rather, we want to know how the general population of possible blocks might impact results.
+    \item Though they can be useful, random effects are often coupled with fixed effects, to create a \alert{mixed effects} model, which is covered in our next module.
+    \item Common situation: A fixed effect of interest, in a block-design; we will treat the block effect as random, giving a mixed effect model.
+  \end{itemize}
 \end{frame}
 
 \newcommand\acknowledgments{
