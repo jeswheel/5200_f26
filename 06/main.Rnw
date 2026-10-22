@@ -322,7 +322,7 @@ confint(output, signame = FALSE, level = 0.95, method = "boot")
   
 <<RLRT>>=
 # install.packages("lmerTest")
-lmerTest::ranova(output)
+lmerTest::ranova(output)  # Will do RLRT or LRT, depending on object.
 @
   
 \end{frame}
