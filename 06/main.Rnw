@@ -224,7 +224,10 @@ lmer(response ~ 1 + (1 | randomEffect), data = data)
 <<penicillinEx>>=
 data("Penicillin")
 
-output <- lmer(diameter ~ 1 + (1 | plate), data = Penicillin)
+output <- lmer(
+  diameter ~ 1 + (1 | plate), 
+  data = Penicillin, REML = FALSE  # default
+)
 @
 
 \framebreak
@@ -239,15 +242,54 @@ output <- lmer(diameter ~ 1 + (1 | plate), data = Penicillin)
   \item Now let's look at the output.
 \end{itemize}
 
-
 <<lme4Output>>=
 summary(output)
+@
+
+\end{frame}
+
+\begin{frame}[allowframebreaks, fragile]{Confidence intervals}
+  \begin{itemize}
+    \item We can get confidence intervals for our estimates using the \texttt{confint} function.
+    \item The two primary methods will be \texttt{profile} (default) and \texttt{boot}.
+    \item This computes \alert{profile likelihood} confidence intervals, which are effectively the same as a \textbf{likelihood ratio test} (LRT).
+    \mode<article>{
+    \item Mathematically, we can obtain a confidence interval using profiled restricted likelihoods, but unfortunately there's not an immediate way to do this in R; we can use \texttt{method = "boot"} for a bootstrap interval for REML estimates, or \texttt{method = "profile"} for a profile likelihood. Both should give very similar output. 
+    }
+  \end{itemize}
+
+<<lme4-confInt, cache=TRUE>>=
+set.seed(123)
+confint(output, signame = FALSE, level = 0.95, method = "boot")
 @
 
 
 \end{frame}
 
-\begin{frame}[allowframebreaks]{Likelihood Ratio Tests (LRT)}
+\begin{frame}[allowframebreaks]{Hypothesis testing}
+  \begin{itemize}
+    \item For random effects, the hypothesis that we would like to test is:
+    $$
+    H_0: \sigma^2_\alpha = 0, \quad H_1: \sigma^2_\alpha > 0
+    $$
+    \item This is always one-sided, because $\sigma_\alpha^2$ can't be negative.
+    \item \alert{Notice:} Our assumption was $\alpha_i \sim N(0, \sigma_\alpha^2)$. If $H_0$ is true, then $\sigma^2_\alpha = 0$, and $\alpha_i = 0$ for all $i$.
+    \item Thus, for a simple random effects model, we have the same null hypothesis and tests!
+    $$
+    H_0: \sigma^2_\alpha = 0 \iff \alpha_i = 0 \, \text{ for all } i
+    $$
+    
+    \framebreak
+    
+    \item Because of this, we \emph{could} just use a standard F-test for random effects. 
+    \item \alert{However:} this approach does not generalize well to more complex models with random effects.
+    \item Rather than using an F-test, we will introduce the idea of a Likelihood Ratio Test.
+  \end{itemize}
+  
+
+\end{frame}
+
+\begin{frame}[allowframebreaks,fragile]{Likelihood Ratio Tests (LRT)}
   \begin{itemize}
     \item Instead of using exact F-tests derived from ratios of Mean Squares, modern mixed modeling often uses the \alert{Likelihood Ratio Test (LRT)} for hypothesis testing.
     \item The LRT explicitly compares two competing models:
@@ -256,107 +298,32 @@ summary(output)
       \item A \textbf{Reduced Model} (Null Model) that removes the random effect.
     \end{enumerate}
     \item The test measures how much the likelihood (fit) of the data drops when the random effect is removed. 
-    \item If the fit is significantly worse without the random effect, we reject $H_0: \sigma^2_\alpha = 0$. The test statistic follows a $\chi^2$ distribution.
-    % \item \emph{Important Rule:} When comparing models using an LRT, we must fit both models using standard Maximum Likelihood (\texttt{REML = FALSE}). REML likelihoods cannot be compared directly between models with different parameter structures.
-  \end{itemize}
-\end{frame}
-
-\section{Estimating Variance Components}
-
-\begin{frame}[allowframebreaks,fragile]{Modern Estimation in R}
-  \begin{itemize}
-    \item Historically, variance components like $\sigma^2_\alpha$ were estimated by solving systems of equations based on ANOVA tables and Expected Mean Squares (EMS). 
-    \item Modern statistical practice relies on \alert{Restricted Maximum Likelihood (REML)}.
-    \item REML provides unbiased estimates of variance components, handles unbalanced data seamlessly, and avoids the problem of negative variance estimates that can occur with ANOVA methods.
-    \item In R, the standard package for fitting these models is \texttt{lme4}.
-  \end{itemize}
-  
-  \framebreak
-  
-  \begin{block}{Implementing lme4}
-    We use the \texttt{lmer()} function. The syntax requires us to specify both the fixed effects and the random effects.
     
-    For our model $y_{ij} = \mu + \alpha_i + \epsilon_{ij}$:
-    \begin{itemize}
-      \item The fixed grand mean ($\mu$) is represented by \texttt{1}.
-      \item The random machine effect ($\alpha_i$) is represented by \texttt{(1 | machine)}, which tells R to fit a random intercept grouped by machine.
-    \end{itemize}
-  \end{block}
-  
-<<eval=FALSE>>=
-# Install and load the lme4 package
-# install.packages("lme4")
-library(lme4)
-
-# Fit the random effects model
-mod_carton <- lmer(strength ~ 1 + (1 | machine), data = carton_data)
-
-# View the variance components
-summary(mod_carton)
-@
-  
-\end{frame}
-
-\begin{frame}[allowframebreaks,fragile]{The Intraclass Correlation Coefficient (ICC)}
-  \begin{itemize}
-    \item After fitting the model, we want to quantify how much of the total variance is driven by our random effect.
-    \item We calculate the \alert{Intraclass Correlation Coefficient (ICC)}:
     $$
-    ICC = \frac{\hat{\sigma}^2_\alpha}{\hat{\sigma}^2_\alpha + \hat{\sigma}^2}
+    \Lambda = \frac{\text{Likelihood}_{\text{reduced}}}{\text{Likelihood}_{\text{Full}}}, \quad \implies \quad -2 \log \Lambda \sim \chi^2_d
     $$
-    \item The ICC represents the proportion of total variance in the response that is accounted for by the grouping factor (the machines).
-    \item An ICC of 0.40 means that 40\% of the variation in carton strength is due to the machines, while the remaining 60\% is random carton-to-carton error.
+    
+    \framebreak
+    
+    \item Using properties of logarithms, we often consider differences in log-likelihood:
+    $$
+    \ell_{\text{full}} - \ell_{\text{reduced}} \sim \frac{1}{2}\chi^2_d,
+    $$
+    where $d$ is the difference in number parameters between the models.
+    
+    % \item If the fit is significantly worse without the random effect, we reject $H_0: \sigma^2_\alpha = 0$. The test statistic follows a $\chi^2$ distribution.
+    % \item \emph{Important Rule:} When comparing models using an LRT, we must fit both models using standard Maximum Likelihood (\texttt{REML = FALSE}). REML likelihoods cannot be compared directly between models with different parameter structures.
+    
+    \framebreak 
+    
+    \item The test can be extended for restricted likelihood ratio tests (RLRT); the idea is similar: fit two models (full vs reduced) using REML, compare differences in the restricted log-likelihoods.
+    \item Rather than fitting two models manually and comparing, we will use the \texttt{lmerTest} package to do this automatically for us.
   \end{itemize}
   
-  \framebreak
-  
-  \begin{block}{Calculating ICC in R}
-    You can extract the variance components manually from the \texttt{summary()} output, or use the \texttt{performance} package for a direct calculation.
-  \end{block}
-  
-<<eval=FALSE>>=
-# Install and load the performance package
-# install.packages("performance")
-library(performance)
-
-# Calculate the ICC directly
-icc(mod_carton)
+<<RLRT>>=
+# install.packages("lmerTest")
+lmerTest::ranova(output)
 @
-  
-\end{frame}
-
-\begin{frame}[allowframebreaks,fragile]{Hypothesis Testing for Random Effects}
-  \begin{itemize}
-    \item In a random effects model, the null hypothesis is that the population of treatments has zero variance:
-    $$
-    H_0: \sigma^2_\alpha = 0
-    $$
-    \item To test this in a modern framework, we use a \alert{Likelihood Ratio Test (LRT)}. 
-    \item The LRT compares the fit of a model \emph{with} the random effect against a model \emph{without} the random effect.
-    \item Note: When comparing models with different random effects structures via LRT, we must fit them using standard Maximum Likelihood (\texttt{REML = FALSE}) rather than REML.
-  \end{itemize}
-  
-  \framebreak
-
-TODO: Let's move this part into the actual example above. 
-  
-<<eval=FALSE>>=
-# 1. Fit the null model (fixed grand mean only, no random effect)
-mod_null <- lm(strength ~ 1, data = carton_data)
-
-# 2. Fit the random effects model using Maximum Likelihood
-mod_alt <- lmer(strength ~ 1 + (1 | machine), 
-                data = carton_data, 
-                REML = FALSE)
-
-# 3. Perform the Likelihood Ratio Test
-anova(mod_null, mod_alt)
-@
-  
-  \begin{itemize}
-    \item The \texttt{anova()} function will return a $\chi^2$ test statistic and a p-value.
-    \item If the p-value is small (e.g., $< 0.05$), we reject $H_0$ and conclude that there is significant variation in quality among the population of machines.
-  \end{itemize}
   
 \end{frame}
 
