@@ -75,10 +75,10 @@ Please read the [grading rubric](rubric_homework.html) before submitting homewor
 ## Midterm
 
 * October, 29, 2026 *(tentatively scheduled)*.
+* [Review (pdf)](midterm01/MidtermReview.pdf).
 
 <!--
 
-* [Review](midterm/MidtermReview.pdf).
 
 * [Formula Sheet](midterm/formulaSheet.pdf)
 
