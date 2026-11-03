@@ -62,6 +62,8 @@
 \end{center}
 
 \begin{enumerate}
+  
+  \item Finish the problems below, and submit your academic integrity statement (did you use outside resources? If so, how is this work still your own?)
 
   \item (Factorial model, textbook problem 8.4) Implantable heart pacemakers contain small circuit boards called substrates. 
   These substrates are assembled, cut to shape, and fired.
@@ -71,7 +73,7 @@
   \begin{itemize} 
     \item A: firing profile time, 8 versus 13 hours with the theory suggesting 13 hours is better;
   \item B: furnace airflow, low versus high, with theory suggesting high is better;
-  \item and C: laser, old versus new, with theory suggesting new cutting lasers are better.
+  \item C: laser, old versus new, with theory suggesting new cutting lasers are better.
   \end{itemize}
   
   A large number of raw, assembled substrates are divided into sixteen groups. 
