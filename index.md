@@ -61,11 +61,15 @@ Please read the [grading rubric](rubric_homework.html) before submitting homewor
 * [Homework 4](hw04/hw04.pdf), due Fri Oct 23, 11:59pm.
 [TeX file](hw04/hw04.tex)
 [milk.csv](hw04/milk.csv)
+* [Homework 5](hw05/hw05.pdf), due Fri Nov 13, 11:59pm.
+[TeX file](hw05/hw05.tex)
+[soybeans.csv](hw05/soybeans.csv)
+[graininess.csv](hw05/graininess.csv)
+[delaminate.csv](hw05/delaminate.csv)
 
 <!--
 * [Homework 4](hw04/hw04.pdf), due Wed Feb 25, 11:59pm.
 [TeX file](hw04/hw04.tex)
-* [Homework 5](hw05/hw05.pdf), due Wed March 11, 11:59pm.
 [TeX file](hw05/hw05.tex)
 -->
 
