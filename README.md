@@ -31,6 +31,22 @@ Can this framework be updated / modified?
 
 ### Notes to self
 
+**Future changes**: 
+
+- In early lectures, give more concrete examples of EUs vs MUs, and a simulation study demonstrating why we need to aggregate over the MUs.
+- (CONSIDER) I'm considering putting a few examples of designs right-off the bat. Like instead of a CRD, then a month of ANOVA, then RCBD, what about doing a CRD, show examples of other designs (like RCBD), then focus on ANOVA of CRD? It's not as continuous, but I do think it helps put material in context.
+- Less time worrying about definition of grand mean; perhaps just introduce the main two approaches (weighted mean, and reference group).
+   - Do one or two example calculations by hand in the notes and slides. Then, compare the `lm()` and `aov()` output.
+   - While tying the math and code together, emphasize how `aov()` is a wrapper on `lm()`, and how the `emmeans()` package helps us interpret the results.
+- On unbalanced data analysis:
+   - This is an important topic; for Ecology students, unbalanced data is the norm.
+   - Rather than a deep emphasis on Type I vs Type II vs Type III, just discuss Type II.
+   - Emphasize the Type II is a calculation of $SS_{II}(A) = SS(A | B) = SS_{\text{error}}(B) - SS_{\text{error}}(A, B)$.
+      - Don't worry about higher-order models. That math will confuse students, just point them to the textbook. 
+   - Though Type III do arise in contrasts, I don't think this needs to be pointed out explicitly.
+- We *should* cover orthogonal and polynomial contrasts; that was skipped this semester, but I think that was a mistake.
+
+
 - Lecture 0: syllabus. I think this went fairly well. Introduction and syllabus took about an hour, left 15 minutes to introduce R.
 Next time, have a ready .csv file to demonstrate loading, etc. Slightly more organized R / R Studio introduction. About 20 students stayed.
 - Early on, give a homework assignment that emphasizes notation, like $y_{ij}$ and $y_{i \bullet}$. For instance, give some data from an experiment, ask students to compute specific values, checking their understanding of the notation.
