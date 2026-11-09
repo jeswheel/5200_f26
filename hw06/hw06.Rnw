@@ -58,70 +58,22 @@
 \end{flushright}
 
 \begin{center}
-{\large{\textbf{Homework 5}}}
+{\large{\textbf{Homework 6}}}
 \end{center}
 
 \begin{enumerate}
   
   \item Finish the problems below, and submit your academic integrity statement (did you use outside resources? If so, how is this work still your own?)
 
- \item A commercial coffee roasting company wants to test 3 different roasting profiles (Profile 1: Light/Fast, Profile 2: Medium/Standard, Profile 3: Slow/Dark) to see which produces the highest sensory quality score (measured on a 0–100 standardized specialty coffee scale).
-  
-  The company sources green coffee beans from 5 distinct origin countries (Colombia, Ethiopia, Guatemala, Vietnam, and Kenya). The lead roaster knows that bean density, moisture content, and elevation vary significantly by country of origin, which heavily influences how beans react to heat. The roaster has acquired one large bag of green coffee from each of the 5 countries---enough to run 3 roasting batches per country.
-  
-  \textbf{Your task is to design a rigorous experiment for the roaster}.
-  
-  \begin{enumerate}
-    \item Identify the response variable, the treatments, and any blocking factor you may consider.
-    \item Define what constitutes an experimental unit in your experiment. 
-    \item Construct a recommended model that will be used to analyze the results of your experiment.
-  \end{enumerate}
+  % TODO: Latin Square Design
+  \item (Exercise 13.3 from textbook) The \texttt{LS.csv} data file in Canvas contains data from a replicated Latin Square with four treatments; row blocks were reused, but column blocks were not. Test for treatment differences and use Tukey HSD with level 0.01 to analyze the pairwise treatment differences.
 
- 
-  \item (Exercise 13.2 from the textbook) Grains or crystals adversely affect the sensory qualities of foods using dried pulp. A factorial experiment was conducted to determine which factors affect graininess. The factors were drying temperature (three levels), acidity (pH) of pulp (two levels), and sugar content (two levels). The experiment has two replications, with each replication using a different batch of pulp. The response measure is a measure of graininess.
+  % TODO: Latin Square Analysis
+  \item 
   
-  \begin{figure}[ht]
-  \centering
-  \includegraphics[width=0.65\textwidth]{figure/grainData.png}
-  \caption{\label{fig:prob1}Figure taken from Exercise 13.2 of Oehlert (2020).}
-  \end{figure}
+  % TODO: Replicated Latin Square Analysis
+  \item 
   
-  Analyze these data to determine which factors effect graininess, and which combination of factors leads to the least graininess. The data file is uploaded to canvas (\texttt{graininess.csv}).
-  
-  
-  \item (Problem 13.6 from the textbook) An experiment was conducted to determine how different soybean varieties compete against weeds. There were sixteen varieties of soybeans and three weed treatments: no herbicide, apply herbicide 2 weeks after planing the soybeans, and apply herbicide 4 weeks after planting the soybeans.
-  The measured response is weed biomass (kg / ha). There were two replications of the experiment --- one in St. Paul (MN), and one is Rosemount (MN).
-  
-  \begin{enumerate}
-    \item Describe what type of design was used, what are the experimental units, and what are the measurement units.
-    \item The data are uploaded to Canvas in the file \texttt{soybeans.csv}. Analyze these data for the effects of herbicide and variety, and report your findings.
-  \end{enumerate}
-
- \item \textbf{(6000-level only)} (Factorial model, textbook problem 8.4) Implantable heart pacemakers contain small circuit boards called substrates. 
-  These substrates are assembled, cut to shape, and fired.
-  Some of the substrates will separate, or delaminate, making them useless. 
-  The purpose of this experiment was to study the effects of three factors on the rate of delamination.
-  The factors were 
-  \begin{itemize} 
-    \item A: firing profile time, 8 versus 13 hours with the theory suggesting 13 hours is better;
-  \item B: furnace airflow, low versus high, with theory suggesting high is better;
-  \item C: laser, old versus new, with theory suggesting new cutting lasers are better.
-  \end{itemize}
-  
-  A large number of raw, assembled substrates are divided into sixteen groups. 
-These sixteen groups are assigned at random to the eight factor-level combinations of the three factors, two groups per combination.
-The substrates are then processed, and the response is the fraction of substrates
-that delaminate (Figure~\ref{fig:delaminate}).
-
-\begin{figure}[ht]
-\centering
-\includegraphics[width=0.45\textwidth]{figure/delaminate.png}
-\caption{\label{fig:delaminate}Screenshot taken of the table in Problem 8.4 of Oehlert (2000).}
-\end{figure}
-
-\textbf{Analyze these data to determine how the treatments affect delamination.} The data are available in Canvas (\texttt{delaminate.csv}).
-
-
 \end{enumerate}
 
 
