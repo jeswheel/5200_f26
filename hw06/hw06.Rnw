@@ -66,14 +66,75 @@
   \item Finish the problems below, and submit your academic integrity statement (did you use outside resources? If so, how is this work still your own?)
 
   % TODO: Latin Square Design
-  \item (Exercise 13.3 from textbook) The \texttt{LS.csv} data file in Canvas contains data from a replicated Latin Square with four treatments; row blocks were reused, but column blocks were not. Test for treatment differences and use Tukey HSD with level 0.01 to analyze the pairwise treatment differences.
+  \item (Exercise 13.3 from textbook) The \texttt{RepLS.csv} data file in Canvas contains data from a replicated Latin Square with four treatments; \textbf{row blocks were reused, but column blocks were not.} 
+  
+  \begin{enumerate}
+    \item Write the ``standard model" for these data; clearly define which each term in the model represents, and the assumptions you are using. \textbf{Be very careful with the subscript notation for blocking factors}.
+    \item Perform a hypothesis test for an overall treatment effect; state your conclusions and any evidence used to arrive at your conclusion.
+    \item Test for treatment differences and use Tukey HSD with level 0.01 to analyze the pairwise treatment differences.
+  \end{enumerate}
+  
 
-  % TODO: Latin Square Analysis
-  \item 
+  % TODO: Random effects analysis
+  \item \label{prob:bulls} (Exercise 11.2 from textbook) We wish to examine the average daily weight gain by calves sired by four bulls selected at random from a population of bulls. Bulls denoted A through D were mated with randomly selected cows. Average daily weight gain by the calves is given in Figure~\ref{fig:bulls}.
   
-  % TODO: Replicated Latin Square Analysis
-  \item 
+  \begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.8\textwidth]{figure/bulls.png}
+  \caption{\label{fig:bulls}Data for Problem~\ref{prob:bulls}, also available in the \texttt{bulls.csv} file in Canvas. This table is a screenshot from the table in Exercise 11.2 from Oehlert (2000).}
+  \end{figure}
   
+  \begin{enumerate}
+    \item Write down a random effects model that could be used to analyze these data. \textbf{Be clear about your assumptions, and careful with subscripts}.
+    
+    \item Test the null hypothesis that there is no sire to sire variability in the response.
+  \end{enumerate}
+  
+
+% \item (\textbf{6000-level only}) An agritech company has designed automated vertical farming systems for growing micro-greens. You have been contracted to help them evaluate four different LED light spectrum combinations to see which one maximizes biomass yield (grams per tray).
+%   
+%   The systems have 5 distinct shelf heights, which are believed to have a potential impact on plant growth due to temperature and humidity micro-gradients. 
+%   Each shelf can hold up to 5 trays side-by-side. 
+%   The systems are independently ventilated from the center, meaning a tray's horizontal proximity to the ventilation fans may also impact air quality.
+%   
+%   \textbf{Your task:} Design an experiment to \textbf{test the impact of the LED light spectrum on total biomass} under the following real-world constraints:
+%   \begin{itemize}
+%       \item You have a budget that allows for testing a maximum of 50 trays.
+%       \item The company has agreed to set aside either 1, 2, or 3 vertical systems for your testing.
+%       \item It requires one month for the micro-greens to grow, and the company requires a full report in 4 months time (meaning you can run sequential growth cycles if needed, so long as you leave time to write the report). 
+%   \end{itemize}
+%   
+%   Please report the following:
+%   \begin{enumerate}
+%     \item \textbf{The Design:} Describe your chosen Latin Square or Replicated Latin Square design. Explicitly identify your treatments, your squares, your row blocks, and your column blocks. 
+%     \item \textbf{Randomized Array:} Provide the actual randomized assigment array(s) you would hand to the technicians to set up the experiment. (You may display this as matrices or grids).
+%     \item \textbf{Replication Structure:} Decide and justify whether your row blocks, column blocks, or neither are reused (crossed) across your squares.
+%     \item \textbf{The Model:} Write the full mathematical model for your design using standard subscript notation (e.g., $y = \mu + \dots$). Ensure your subscripts and interaction terms correctly reflect your choice of whether or not blocks are reused.
+%   \end{enumerate}
+
+
+\item (\textbf{6000-level only}) An urban farming startup grows micro-greens in modular, retrofitted shipping containers. You have been contracted to help them evaluate four different LED light spectrum combinations to see which one maximizes biomass yield (grams per tray).
+  
+  Inside the containers, the plants are grown on racks with 5 distinct shelf heights.
+  It is believed that the tray height has a potential impact on plant growth due to temperature and humidity micro-gradients. 
+  Each shelf holds up to 5 trays side-by-side, and proximity to the ventilation fans in the shipping container may impact air quality.
+  Notably, the HVAC units and ventilation fans are mounted in completely different locations in each container, meaning the horizontal airflow patterns across the trays are unique to each container.
+  
+  \textbf{Your task:} Design an experiment to \textbf{test the impact of the LED light spectrum on total biomass} under the following real-world constraints:
+  \begin{itemize}
+      \item You have a budget that allows for testing a maximum of 50 trays.
+      \item The company has agreed to set aside either 1, 2, or 3 shipping containers for your testing. 
+      \item It requires exactly one month for the micro-greens to grow, and the company requires a full report in 4 months time (meaning you can run sequential growth cycles if needed, so long as you leave time to write the report). 
+  \end{itemize}
+  
+  Please report the following:
+  \begin{enumerate}
+    \item \textbf{The Design:} Describe your chosen Latin Square or Replicated Latin Square design. Explicitly identify your treatments, your squares, your row blocks, and your column blocks. 
+    \item \textbf{Randomized Array:} Provide the actual randomized assignment array(s) you would hand to the technicians to set up the experiment. (You may display this as matrices or grids).
+    \item \textbf{Replication Structure:} Decide and justify whether your row blocks, column blocks, or neither are reused (crossed) across your squares.
+    \item \textbf{The Model:} Write the full mathematical model for your design using standard subscript notation (e.g., $y = \mu + \dots$). Ensure your subscripts and interaction terms correctly reflect your choice of whether or not blocks are reused.
+  \end{enumerate}
+
 \end{enumerate}
 
 

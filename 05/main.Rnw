@@ -707,19 +707,77 @@ formulation of the gasoline that is used. We wish to test $g = 4$ different form
 \begin{itemize}
   \item The impact of formulation likely depends on cars (Block 1), and routes (Block 2). 
   \item Standard LS: pick four cars, four routes.
-  \item Replicated LS: reuse the 4 cars on 12 routes (3 Latin-Squares, replicated rows); or have 12 cars use them 4 at a time in the 12 routes (replicated columns); or have 12 cars, 12 routes (no replicates).
-  \item Replicates can repeat the same designs, or each come from uniquely designed squares; the analysis changes in each case!
+  \item Replicated LS: reuse the 4 cars on 12 routes (3 Latin-Squares, replicated rows); or have 12 cars use them 4 at a time in same 4 routes (replicated columns); or have 12 cars, 12 routes (no replicates).
+  \item Replicates can repeat the same designs, or each come from uniquely designed squares.
 \end{itemize}
   \end{exampleblock}
- 
-  \framebreak
+
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Models for replicated LS designs}
   
   \begin{itemize}
     \item Replicated LS designs have the potential to add a ``square" effect. That is, the three replicated squares may have slightly different behaviors.
     \item They can also introduce ``nested" effects: the specific effect of a block depends on the specific square (e.g., if car 5 was only used in the 2nd square, then we can't estimate the effect of that block using data from the 1st and 3rd squares).
-    \item We will discuss the analysis of nested effects later in the course (if time permits).
   \end{itemize}
+
+\framebreak
+
+\begin{block}{Model for Replicated LS (Replicated Columns)}
+  Consider a study measuring the $\text{CO}_2$ emissions of 4 different types of gasoline. We have 12 cars available for testing. 
   
+  We suspect the specific car and the route it takes both impact $\text{CO}_2$ emissions.
+  
+  \textbf{Our design:} Identify 4 representative routes. We will use a replicated Latin Square where columns (routes) are reused, but rows (cars) are not. We divide the 12 cars into 3 batches of 4. For each batch (a single Latin Square), we assign the 4 gasoline types so that each gasoline is tested exactly once per car and exactly once per route. We repeat this for all 3 batches.
+\end{block}
+  
+  \framebreak
+  
+  \begin{itemize}
+    \item The ``standard" model for these data is:
+    $$
+    y_{ijkl} = \mu + \alpha_i + \beta_j + (\beta\delta)_{jl} + \gamma_{k(l)} + \delta_l + \epsilon_{ijkl}
+    $$
+    \begin{itemize}
+      \item $\alpha_i$: Treatment effect (gasoline type), $i \in \{1, 2, 3, 4\}$.
+      \item $\beta_j$: Main Column effect (route), $j \in \{1, 2, 3, 4\}$. This factor is reused.
+      \item $\delta_l$: Square effect (batch of cars), $l \in \{1, 2, 3\}$.
+      \item $(\beta\delta)_{jl}$: Route $\times$ Square interaction. Tests if the route effect changes across different squares.
+      \item $\gamma_{k(l)}$: Nested Row effect (car within square). Cars are unique to each square, so they do not cross with the square.
+      \item $\epsilon_{ijkl}$: Residual error.
+    \end{itemize}
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}[allowframebreaks,fragile]{Analyzing in R}
+
+\begin{itemize}
+  \item We need to be careful about analyzing replicated squares in R, because the ``correct" approach depends on how the data are encoded.
+  \item Suppose we reused columns (routes), but not rows (cars). Then, our data \emph{could} have cars encoded as 1--4, (with three replicates each, one for each LS), or encoded as 1--12 (unique car numbers, since they were unused).
+  \item If unique numbers for unreplicated blocks (1--12):
+  
+<<eval=FALSE>>=
+aov(y ~ square*column + row + trt, data = ...)
+aov(CO ~ square*route + car + gas, data = ...)
+@
+
+\framebreak
+
+  \item \textbf{If repeated numbers for unreplicated blocks (1--4)}:
+  \item We must explicitly tell R that car 1 in square 1 is NOT the same vehicle as car 1 in square 2. We use the nesting operator (\texttt{/}) or the interaction operator (\texttt{:}) to create the $\gamma_{k(l)}$ term.
+
+<<eval=FALSE>>=
+aov(y ~ square*column + square/row + trt, data = ...)
+# OR
+aov(y ~ column*square + square:row + trt, data = ...)
+aov(CO ~ route*square + square:car + gas, data = ...)
+@
+
+
+\end{itemize}
+  
+
 \end{frame}
 
 \begin{frame}{Further Reading and Topics}
