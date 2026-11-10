@@ -44,6 +44,8 @@ Can this framework be updated / modified?
    - Emphasize the Type II is a calculation of $SS_{II}(A) = SS(A | B) = SS_{\text{error}}(B) - SS_{\text{error}}(A, B)$.
       - Don't worry about higher-order models. That math will confuse students, just point them to the textbook. 
    - Though Type III do arise in contrasts, I don't think this needs to be pointed out explicitly.
+- Type I vs Type II errors (and power) should come in the first set of lectures. That way, we can talk about how confusing MUs with EUs leads to higher Type I errors.
+- ? Rename "randomization test" to "permutation test"? Maybe skip this altogether?
 - We *should* cover orthogonal and polynomial contrasts; that was skipped this semester, but I think that was a mistake.
 
 
