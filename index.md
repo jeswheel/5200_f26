@@ -66,6 +66,10 @@ Please read the [grading rubric](rubric_homework.html) before submitting homewor
 [soybeans.csv](hw05/soybeans.csv)
 [graininess.csv](hw05/graininess.csv)
 [delaminate.csv](hw05/delaminate.csv)
+* [Homework 6](hw06/hw06.pdf), due Fri Nov 20, 11:59pm.
+[TeX file](hw06/hw06.tex)
+[RepLS.csv](hw06/RepLS.csv)
+[bulls.csv](hw06/bulls.csv)
 
 <!--
 * [Homework 4](hw04/hw04.pdf), due Wed Feb 25, 11:59pm.

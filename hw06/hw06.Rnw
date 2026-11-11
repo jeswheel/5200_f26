@@ -130,8 +130,8 @@
   Please report the following:
   \begin{enumerate}
     \item \textbf{The Design:} Describe your chosen Latin Square or Replicated Latin Square design. Explicitly identify your treatments, your squares, your row blocks, and your column blocks. 
-    \item \textbf{Randomized Array:} Provide the actual randomized assignment array(s) you would hand to the technicians to set up the experiment. (You may display this as matrices or grids).
-    \item \textbf{Replication Structure:} Decide and justify whether your row blocks, column blocks, or neither are reused (crossed) across your squares.
+    \item \textbf{Randomized Array:} Provide the actual randomized assignment array(s) (the Latin Squares containing specific treatment assignments) you would hand to the technicians to set up the experiment. (You may display this as matrices or grids).
+    \item \textbf{Replication Structure:} Decide and justify whether your row blocks, column blocks, or neither are reused across your squares.
     \item \textbf{The Model:} Write the full mathematical model for your design using standard subscript notation (e.g., $y = \mu + \dots$). Ensure your subscripts and interaction terms correctly reflect your choice of whether or not blocks are reused.
   \end{enumerate}
 

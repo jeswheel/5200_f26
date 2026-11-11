@@ -1,0 +1,190 @@
+\documentclass[10pt,twoside]{article}\usepackage[]{graphicx}\usepackage[dvipsnames,svgnames,table]{xcolor}
+% maxwidth is the original width if it is less than linewidth
+% otherwise use linewidth (to make sure the graphics do not exceed the margin)
+\makeatletter
+\def\maxwidth{ %
+  \ifdim\Gin@nat@width>\linewidth
+    \linewidth
+  \else
+    \Gin@nat@width
+  \fi
+}
+\makeatother
+
+\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
+\newcommand{\hlsng}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}%
+\newcommand{\hldef}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}%
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.161,0.373,0.58}{\textbf{#1}}}%
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
+\let\hlipl\hlkwb
+
+\usepackage{framed}
+\makeatletter
+\newenvironment{kframe}{%
+ \def\at@end@of@kframe{}%
+ \ifinner\ifhmode%
+  \def\at@end@of@kframe{\end{minipage}}%
+  \begin{minipage}{\columnwidth}%
+ \fi\fi%
+ \def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
+ \colorbox{shadecolor}{##1}\hskip-\fboxsep
+     % There is no \\@totalrightmargin, so:
+     \hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
+ \MakeFramed {\advance\hsize-\width
+   \@totalleftmargin\z@ \linewidth\hsize
+   \@setminipage}}%
+ {\par\unskip\endMakeFramed%
+ \at@end@of@kframe}
+\makeatother
+
+\definecolor{shadecolor}{rgb}{.97, .97, .97}
+\definecolor{messagecolor}{rgb}{0, 0, 0}
+\definecolor{warningcolor}{rgb}{1, 0, 1}
+\definecolor{errorcolor}{rgb}{1, 0, 0}
+\newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
+
+\usepackage{alltt}
+\usepackage[marginparsep=1em]{geometry}
+\geometry{lmargin=1.0in,rmargin=1.0in, bmargin=1.2in,  tmargin=1.2in}
+\usepackage[dvipsnames,svgnames,table]{xcolor}
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{epstopdf}
+\usepackage{verbatim}
+\usepackage{enumerate}
+\usepackage{bm}
+\usepackage{amsthm}
+\usepackage{float}
+\usepackage{amsmath}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+\usepackage{mathtools}
+\usepackage{booktabs}
+            
+%%%%  SHORTCUT COMMANDS  %%%%
+\newcommand{\ds}{\displaystyle}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\T}{\mathcal{T}}
+\newcommand{\arc}{\rightarrow}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\RP}{\mathbb{R}(+)}
+\newcommand{\Rs}{\mathbb{R}^{**}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\B}{\mathcal{B}}
+\newcommand{\PX}{\mathcal{P}(X)}
+\newcommand*\rot{\rotatebox{90}}
+\newcommand*\OK{\ding{51}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\Answer}{\vspace{2mm}\textbf{\underline{Answer}}\\}
+\newcolumntype{L}{>{$}l<{$}}
+\newcolumntype{C}{>{$}c<{$}}
+\newcommand{\GL}{\text{GL}}
+\newcommand{\SL}{\text{SL}}
+
+\newcommand{\stirling}[2]{\genfrac{\{}{\}}{0pt}{}{#1}{#2}}
+
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\sectionmark}[1]{\markright{\thesection.\ #1}}
+\lhead{\fancyplain{}{}} 
+\fancyhead[RE,RO]{Stat 5200/6200, Fall 2026}
+\fancyfoot[RE,RO]{\thepage}
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\begin{document}
+\begin{flushright}
+\begin{minipage}{.33\textwidth}
+\rightline{YOUR NAME}
+\rightline{\href{mailto:YOUR EMAIL}{YOUR EMAIL}}
+\rightline{\today}
+\end{minipage}
+\end{flushright}
+
+\begin{center}
+{\large{\textbf{Homework 6}}}
+\end{center}
+
+\begin{enumerate}
+  
+  \item Finish the problems below, and submit your academic integrity statement (did you use outside resources? If so, how is this work still your own?)
+
+  % TODO: Latin Square Design
+  \item (Exercise 13.3 from textbook) The \texttt{RepLS.csv} data file in Canvas contains data from a replicated Latin Square with four treatments; \textbf{row blocks were reused, but column blocks were not.} 
+  
+  \begin{enumerate}
+    \item Write the ``standard model" for these data; clearly define which each term in the model represents, and the assumptions you are using. \textbf{Be very careful with the subscript notation for blocking factors}.
+    \item Perform a hypothesis test for an overall treatment effect; state your conclusions and any evidence used to arrive at your conclusion.
+    \item Test for treatment differences and use Tukey HSD with level 0.01 to analyze the pairwise treatment differences.
+  \end{enumerate}
+  
+
+  % TODO: Random effects analysis
+  \item \label{prob:bulls} (Exercise 11.2 from textbook) We wish to examine the average daily weight gain by calves sired by four bulls selected at random from a population of bulls. Bulls denoted A through D were mated with randomly selected cows. Average daily weight gain by the calves is given in Figure~\ref{fig:bulls}.
+  
+  \begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.8\textwidth]{figure/bulls.png}
+  \caption{\label{fig:bulls}Data for Problem~\ref{prob:bulls}, also available in the \texttt{bulls.csv} file in Canvas. This table is a screenshot from the table in Exercise 11.2 from Oehlert (2000).}
+  \end{figure}
+  
+  \begin{enumerate}
+    \item Write down a random effects model that could be used to analyze these data. \textbf{Be clear about your assumptions, and careful with subscripts}.
+    
+    \item Test the null hypothesis that there is no sire to sire variability in the response.
+  \end{enumerate}
+  
+
+% \item (\textbf{6000-level only}) An agritech company has designed automated vertical farming systems for growing micro-greens. You have been contracted to help them evaluate four different LED light spectrum combinations to see which one maximizes biomass yield (grams per tray).
+%   
+%   The systems have 5 distinct shelf heights, which are believed to have a potential impact on plant growth due to temperature and humidity micro-gradients. 
+%   Each shelf can hold up to 5 trays side-by-side. 
+%   The systems are independently ventilated from the center, meaning a tray's horizontal proximity to the ventilation fans may also impact air quality.
+%   
+%   \textbf{Your task:} Design an experiment to \textbf{test the impact of the LED light spectrum on total biomass} under the following real-world constraints:
+%   \begin{itemize}
+%       \item You have a budget that allows for testing a maximum of 50 trays.
+%       \item The company has agreed to set aside either 1, 2, or 3 vertical systems for your testing.
+%       \item It requires one month for the micro-greens to grow, and the company requires a full report in 4 months time (meaning you can run sequential growth cycles if needed, so long as you leave time to write the report). 
+%   \end{itemize}
+%   
+%   Please report the following:
+%   \begin{enumerate}
+%     \item \textbf{The Design:} Describe your chosen Latin Square or Replicated Latin Square design. Explicitly identify your treatments, your squares, your row blocks, and your column blocks. 
+%     \item \textbf{Randomized Array:} Provide the actual randomized assigment array(s) you would hand to the technicians to set up the experiment. (You may display this as matrices or grids).
+%     \item \textbf{Replication Structure:} Decide and justify whether your row blocks, column blocks, or neither are reused (crossed) across your squares.
+%     \item \textbf{The Model:} Write the full mathematical model for your design using standard subscript notation (e.g., $y = \mu + \dots$). Ensure your subscripts and interaction terms correctly reflect your choice of whether or not blocks are reused.
+%   \end{enumerate}
+
+
+\item (\textbf{6000-level only}) An urban farming startup grows micro-greens in modular, retrofitted shipping containers. You have been contracted to help them evaluate four different LED light spectrum combinations to see which one maximizes biomass yield (grams per tray).
+  
+  Inside the containers, the plants are grown on racks with 5 distinct shelf heights.
+  It is believed that the tray height has a potential impact on plant growth due to temperature and humidity micro-gradients. 
+  Each shelf holds up to 5 trays side-by-side, and proximity to the ventilation fans in the shipping container may impact air quality.
+  Notably, the HVAC units and ventilation fans are mounted in completely different locations in each container, meaning the horizontal airflow patterns across the trays are unique to each container.
+  
+  \textbf{Your task:} Design an experiment to \textbf{test the impact of the LED light spectrum on total biomass} under the following real-world constraints:
+  \begin{itemize}
+      \item You have a budget that allows for testing a maximum of 50 trays.
+      \item The company has agreed to set aside either 1, 2, or 3 shipping containers for your testing. 
+      \item It requires exactly one month for the micro-greens to grow, and the company requires a full report in 4 months time (meaning you can run sequential growth cycles if needed, so long as you leave time to write the report). 
+  \end{itemize}
+  
+  Please report the following:
+  \begin{enumerate}
+    \item \textbf{The Design:} Describe your chosen Latin Square or Replicated Latin Square design. Explicitly identify your treatments, your squares, your row blocks, and your column blocks. 
+    \item \textbf{Randomized Array:} Provide the actual randomized assignment array(s) (the Latin Squares containing specific treatment assignments) you would hand to the technicians to set up the experiment. (You may display this as matrices or grids).
+    \item \textbf{Replication Structure:} Decide and justify whether your row blocks, column blocks, or neither are reused across your squares.
+    \item \textbf{The Model:} Write the full mathematical model for your design using standard subscript notation (e.g., $y = \mu + \dots$). Ensure your subscripts and interaction terms correctly reflect your choice of whether or not blocks are reused.
+  \end{enumerate}
+
+\end{enumerate}
+
+
+\end{document}
