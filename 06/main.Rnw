@@ -523,8 +523,8 @@ lmerTest::ranova(output)  # Will do RLRT or LRT, depending on object.
 <<twoWayRandom>>=
 carton <- read.csv('carton.csv')
 output <- lmer(
-  thickness ~ 1 + (1 | Machine) + (1 | Operator) + (1 | Machine:Operator),
-  # OR: 1 + (1 | Machine * Operator)
+  # thickness ~ 1 + (1 | Machine) + (1 | Operator) + (1 | Machine:Operator),
+  thickness ~ (1 | Machine * Operator),
   data = carton, 
   REML = TRUE
 )
@@ -592,9 +592,125 @@ lmerTest::ranova(output)
 
 \begin{frame}[allowframebreaks]{Mixed Effects: an introduction}
   \begin{itemize}
-    \item One of the most common ways we see a random effect is in the context of a \alert{mixed effect model}.
-    \item Idea: we are interested in estimated the fixed effects of specific treatments, but have factors in the study that are randomly drawn from a population.
-    \item Mixed effect models are extremely common for \alert{block-designs}: we have a treatment factor $A$ we are interested (fixed effect), and a block factor $B$ from a block-design; if we are not interested in the effect of our specificly chosen blocks, rather we want to account for the potential variation of all possible blocks that could have been chosen, then a mixed-effects models is the correct choice.
+    \item One of the most common ways we see a random effect is in the context of a \alert{mixed effects model}.
+    \item \textbf{Idea:} We wish to estimate the fixed effects of specific treatments, while accounting for nuisance or contextual factors that are randomly drawn from a larger population.
+    \item Mixed effects models are common for \alert{block designs}: 
+    \begin{itemize}
+      \item We have a treatment factor $A$ of direct interest (\textbf{fixed effect}).
+      \item We have a blocking factor $B$ (\textbf{random effect}).
+    \end{itemize}
+    \item Appropriate if blocks are randomly drawn from a population of possible blocks; we want to account for the variation across the population of blocks.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Model Formulation}
+  \begin{itemize}
+    \item Consider a Randomized Complete Block Design (RCBD) with $a$ fixed treatments and $b$ randomly selected blocks:
+    $$
+    y_{ij} = \mu + \alpha_i + \beta_j + \epsilon_{ij}
+    $$
+    \item Here, $\alpha_i$ are \textbf{fixed parameters} (we assume $\sum_i \alpha_i = 0$), while $\beta_j$ and $\epsilon_{ij}$ are \textbf{independent random variables}:
+    $$
+    \beta_j \overset{iid}{\sim} N(0, \sigma^2_\beta), \qquad \epsilon_{ij} \overset{iid}{\sim} N(0, \sigma^2).
+    $$
+    
+    \framebreak
+    
+    \item Because $\beta_j$ is random, observations within the same block share a common random shift, inducing correlation:
+    $$
+    \Var(y_{ij}) = \sigma^2_b + \sigma^2, \qquad \Cor(y_{ij}, y_{i'j}) = \frac{\sigma^2_b}{\sigma^2_b + \sigma^2} \quad (i \neq i').
+    $$
+    \item \textbf{Key advantage:} Treating blocks as random allows our conclusions about the fixed treatments ($\alpha_i$) to generalize to the broader population of blocks, rather than being restricted to the specific blocks in our experiment.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Inference in Mixed Effects Models}
+  \begin{itemize}
+    \item When our model contains both fixed and random effects, we separate our inference workflow into two distinct steps using \texttt{lme4} and \texttt{lmerTest}:
+    
+    \vspace{0.2cm}
+    \item \textbf{1. Fixed Effects (Treatments):} Use F-tests via \texttt{anova(lmer_model)}.
+    \begin{itemize}
+      \item \texttt{lmerTest} uses REML to estimate variances and applies the \alert{Satterthwaite approximation} to calculate fractional denominator degrees of freedom.
+    \end{itemize}
+    
+    \vspace{0.2cm}
+    \item \textbf{2. Random Effects (Blocks):} Use Restricted Likelihood Ratio Tests via \texttt{lmerTest::ranova(model)}.
+    \begin{itemize}
+      \item \textbf{Crucial Workflow Step:} If your model includes a random interaction (e.g., Block $\times$ Treatment), test the interaction first. 
+      \item If the interaction is significant, retain it and stop. Do not test the main random effect.
+      \item If non-significant, drop it, fit a reduced additive model, and test the main random block effect on the reduced model.
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[allowframebreaks,fragile]{Example: Ergonomic Stools (RCBD)}
+  \begin{itemize}
+    \item Consider the \texttt{ergoStool} dataset (from the \texttt{nlme} package). 
+    \item We measure the physical effort required to arise from $4$ stool types (\textbf{fixed treatments}) across $9$ randomly selected subjects (\textbf{random blocks}).
+  \end{itemize}
+
+<<ergo-setup, message=FALSE, warning=FALSE>>=
+library(lme4)
+library(lmerTest)
+data(ergoStool, package = "nlme")
+
+# Fit mixed model: Subject is random, Type is fixed
+mod_ergo <- lmer(effort ~ Type + (1 | Subject), data = ergoStool)
+@
+
+\framebreak
+
+<<ergo-summary>>=
+summary(mod_ergo)
+@
+
+\end{frame}
+
+\begin{frame}[allowframebreaks,fragile]{Testing Fixed vs. Random Effects}
+  \begin{itemize}
+    \item First, we test the fixed treatment effect (\texttt{Type}) using the Satterthwaite approximated F-test:
+  \end{itemize}
+
+<<ergo-fixed>>=
+anova(mod_ergo)
+@
+
+  \begin{itemize}
+    \item Next, we test whether the baseline random variance between subjects ($\sigma^2_b$) is significant using a restricted likelihood ratio test:
+  \end{itemize}
+
+<<ergo-random>>=
+ranova(mod_ergo)
+@
+
+  \mode<article>{
+  Because this is a perfectly balanced RCBD with no interactions, notice that the Satterthwaite denominator degrees of freedom for the fixed effect is exactly 24: $(a-1)(b-1) = (3)(8)$. This yields the exact same F-statistic as classical \texttt{aov()}, but using \texttt{lmer()} safely allows for missing data, robust post-hoc comparisons, and straightforward variance component extraction.
+  }
+\end{frame}
+
+\begin{frame}[allowframebreaks,fragile]{Post-Hoc Comparisons with Mixed Models}
+  \begin{itemize}
+    \item Just like with fixed-effects models, we can use the \texttt{emmeans} package on an \texttt{lmer} object to estimate marginal means and perform pairwise comparisons for our fixed treatments.
+    \item \texttt{emmeans} automatically incorporates the random effect variance into the standard errors and uses the Satterthwaite degrees of freedom.
+  \end{itemize}
+
+<<ergo-emmeans, message=FALSE>>=
+library(emmeans)
+emmeans(mod_ergo, pairwise ~ Type)
+@
+
+\end{frame}
+
+\begin{frame}[allowframebreaks,fragile]{Factorial Mixed Models: The Interaction Rule}
+  \begin{itemize}
+    \item If we had replicated data (multiple trials per subject per stool), we would include a Subject $\times$ Type interaction.
+    \item Because Subject is random, the interaction is also a \alert{random effect}:
+    $$
+    y_{ijk} = \mu + \alpha_i + b_j + (\alpha b)_{ij} + \epsilon_{ijk}.
+    $$
+    \item \textbf{In R:} \texttt{lmer(y ~ Type + (1 | Subject) + (1 | Type:Subject), data = df)}
+    \item Using \texttt{anova(mod)} automatically tests the fixed main effect against the random interaction variance (using fractional degrees of freedom)—avoiding complex manual Expected Mean Squares algebra entirely!
   \end{itemize}
 \end{frame}
 

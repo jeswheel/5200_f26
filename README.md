@@ -47,6 +47,7 @@ Can this framework be updated / modified?
 - Type I vs Type II errors (and power) should come in the first set of lectures. That way, we can talk about how confusing MUs with EUs leads to higher Type I errors.
 - ? Rename "randomization test" to "permutation test"? Maybe skip this altogether?
 - We *should* cover orthogonal and polynomial contrasts; that was skipped this semester, but I think that was a mistake.
+- Move all analysis from `aov()` to `lm()`, perhaps use the `car::Anova()` function because it immediately allows use to do Type I vs Type II vs Type III, whereas the base `anova()` does not. 
 
 
 - Lecture 0: syllabus. I think this went fairly well. Introduction and syllabus took about an hour, left 15 minutes to introduce R.
