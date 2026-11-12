@@ -138,9 +138,87 @@
   
 \end{frame}
 
+\begin{frame}[allowframebreaks,fragile]{Hypothesis Testing}
+  \begin{itemize}
+    \item If we are testing for population effects based on our random sample, there are multiple ways to do this formally.
+    \item The hypothesis we are generally interested in testing in this scenario is:
+    $$
+    H_0: \sigma^2_\alpha = 0, \quad \text{vs}\quad H_0: \sigma^2 > 0.
+    $$
+    \item Surprisingly, this leads to the same F-tests that we have been using before!
+  \end{itemize}
+  
+  \mode<article>{
+    \begin{itemize}
+      \item Specifically, we have said that $E[\alpha_i] = 0$; thus, if $H_0$ is true, then $\Var(\alpha_i) = 0$, and by necessity, $\alpha_i = 0$.
+      Thus,
+      $$
+      \sigma^2_\alpha = 0 \iff \alpha_i = 0 \iff \mu_i = \mu_j \, \forall (i, j).
+      $$
+    \end{itemize}
+  }
+  
+\end{frame}
+
+\begin{frame}[allowframebreaks,fragile]{Example data in R}
+
+  \begin{itemize}  
+    \item The following example uses data synthetically generated with $\alpha_i \sim N(0, 2^2)$, $\epsilon_{ij} \sim N(0, 0.5^2)$, and $\mu = 10$.
+  \end{itemize}
+
+<<echo=FALSE, eval=FALSE>>=
+# Only need to run once, so set eval = FALSE. But here's where data come from
+set.seed(123)
+N_treatment <- 4
+N_repls <- 8
+
+randEff <- rep(rnorm(N_treatment, 0, sd = 2), each = N_repls)  # 8 replicates per treatment, 4 treatments.
+y <- 10 + randEff + rnorm(N_treatment*N_repls)
+data.frame(
+  response = y, 
+  trt = rep(1:N_treatment, each = N_repls)
+) |> 
+  write.csv('synthData.csv', row.names = FALSE)
+@
+
+
+<<>>=
+synthData <- read.csv("synthData.csv")
+mod <- aov(response ~ factor(trt), data = synthData)
+summary(mod)
+@
+
+
+\framebreak
+
+Above, we see a significant (random) treatment effect, rejecting the hypothesis that $\sigma^2_\alpha = 0$.
+
+\begin{itemize}
+  \item Note in this problem, the $F$ statistic that is used matches the R output:
+  $$
+  F_{DF_A, DF_E} = \frac{MS_A}{MS_E}.
+  $$
+  This will \emph{not} be the case for factorial models or if the data are unbalanced.
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Estimation variance components}
+  \begin{itemize}
+    \item In perfectly balanced data, we \emph{can} get point estimates for $\sigma^2_\alpha$; this follows a similar approach to estimating $\sigma^2$, like we did back in module 3.
+    \item Recall: $\hat{\sigma}^2 = \text{MS}_{\text{E}}$.
+    \item If the data are balanced, \emph{then}:
+    $$
+    \hat{\sigma}^2_\alpha = \frac{MS_\text{A} - MS_{\text{E}}}{n}
+    $$
+    \mode<article>{\item In the previous R example, this is $(31.404 - 0.772) / 8 = 3.8290$}
+    \mode<article>{\item \textbf{NOTE:} This can be problematic if $MS_A < MS_E$, because we will get negative estimates! The approach we will discuss later does not have this same problem.}
+  \end{itemize}
+\end{frame}
+
 \section{Estimation: REML and LRT}
 
-\begin{frame}[allowframebreaks]{Beyond ANOVA: Maximum Likelihood}
+\begin{frame}[allowframebreaks]{Beyond ANOVA: Likelihood Based Inference}
   \begin{itemize}
     \item Classical random effects estimation relies on Expected Mean Squares (EMS) from ANOVA tables (See \citet[][Sections~11.3--11.6]{oehlert2000}).
     \item These approaches can be computed by hand, and would naturally extend our workflow with the \texttt{aov()} function and the \texttt{emmeans} package.
@@ -214,6 +292,24 @@ library(lme4)
 lmer(response ~ 1 + (1 | randomEffect), data = data)
 @
 
+On the next slide, we will use this for the same \texttt{synthData} dataset we used the \texttt{aov} function for.
+
+\end{frame}
+
+\begin{frame}[fragile]{Example: Synthetic data}
+
+
+<<synthData-lmer>>=
+# Old Code: 
+# aov(response ~ factor(trt), data = synthData)
+synthData$trt <- factor(synthData$trt)
+lmer(response ~ (1 | trt), data = synthData)
+@
+
+\mode<article>{
+The important thing to note in the output above is that the estimated values match what we did by hand with the \texttt{aov()} output. Specifically, our estimate for treatment (\texttt{trt}) had $\hat{\sigma}_\alpha = 1.9568$; if we square it, we get the same value as the by-hand calculation of $\hat{\sigma}^2_\alpha = 3.829$.
+}
+
 \end{frame}
 
 \begin{frame}[allowframebreaks,fragile]{Example: Penicillin}
@@ -246,6 +342,43 @@ output <- lmer(
 summary(output)
 @
 
+\end{frame}
+
+\begin{frame}[allowframebreaks,fragile]{Comparing to \texttt{aov}}
+  \begin{itemize}
+    \item Since the data are balanced, the estimated parameters of this new \texttt{lmer} function will match what we can compute with \texttt{aov}:
+  \end{itemize}
+  
+  \mode<article>{
+    Here, we can tell $n = 6$ because there are $g = 24$ plates, so $120 + 24 = 144$ total observations. Since it is balanced, there are $n = 144 / 24 = 6$ observations per group.
+  }
+
+<<>>=
+# Compute (MS_plate - MS_E) / n, n = 6
+summary(aov(diameter ~ plate, data = Penicillin))
+@
+
+
+\end{frame}
+
+\begin{frame}[allowframebreaks,fragile]{Hypothesis testing}
+  \begin{itemize}
+    \item The \texttt{lmer} function uses REML to get parameter estimates, i.e., $\hat{\sigma}^2_\alpha$.
+    \item If we want to perform a hypothesis test for $\sigma^2_\alpha > 0$, we have two main options:
+    \begin{enumerate}
+      \item Refit the model with \texttt{aov()}, and use the built-in F-test.
+        \begin{itemize}
+          \item \textbf{Advantage:} Exact F-tests. These are more \alert{powerful}.
+          \item \textbf{Disadvantage:} Only works if data are balanced, and the output P-value only matches if there is a single random factor in the model (otherwise, can compute by hand).
+        \end{itemize}
+      \item Use likelihood based inference procedures (shown below).
+        \begin{itemize}
+          \item \textbf{Advantage:} Works whether or not data is balanced, and output P-values always ``correct". More robust to violations of assumptions.
+          \item \textbf{Disadvantage:} Based on large-sample sizes, so less powerful if samples are small.
+        \end{itemize}
+    \end{enumerate}
+    \item We have already seen analysis of 1-factor random effects with \texttt{aov}, now let's do the second approach.
+  \end{itemize}
 \end{frame}
 
 \begin{frame}[allowframebreaks, fragile]{Confidence intervals}
@@ -405,6 +538,22 @@ output <- lmer(
 summary(output)
 @
 
+\begin{frame}[allowframebreaks,fragile]{Hypothesis Testing (F-test)}
+  \begin{itemize}
+    \item Recall that the F-test is exact, and valid for testing the hypothesis $\sigma^2_A, \sigma^2_B, \sigma^2_{AB} > 0$.
+    \item To do this, we would re-fit the model with \texttt{aov()}.
+    \item \alert{HOWEVER}: we must be extremely careful. The output P-values are INCORRECT, because of the factorial structure.
+    \item Exact P-values can be computed by hand (visit office hours if you're interested). However, we will instead use the likelihood based inference methods.
+    
+    \mode<article>{
+    For the notes only, here are a few details regarding the ``by-hand" P-value calculations.
+    \item In the output ANOVA table, the data are balanced, meaning that the Mean Sq values that are output are correct. However, if we have factorial random effects structure, then the correct F-test does NOT match the output of \texttt{aov}. In the output ANOVA, the F-value for fixed effects is computed as $MS_{effect} / MS_E$. For random effects, the denominator must change. For the Factor $A$ test, the F value is $MS_A / MS_{AB}$; this also impacts the degrees of freedom. Our textbook \citep{oehelert2000} goes into a lot of these details if you're interested.
+    However, pure factorial random effects models are not that common in practice. We'll later go into mixed-effects models, at which point we will strictly need to use \texttt{lme4::lmer}. Because of this, it makes sense to just highlight this now, rather than going over tedious by-hand computations that are not often seen in practice.
+    }
+    
+  \end{itemize}
+\end{frame}
+
 \begin{frame}[allowframebreaks,fragile]{Confidence intervals}
   \begin{itemize}
     \item We can obtain confidence intervals the same way as before. This can be very slow.
@@ -417,7 +566,7 @@ confint(output, method = 'boot', signame = FALSE)
 
 \end{frame}
 
-\begin{frame}[allowframebreaks,fragile]{Hypothesis testing}
+\begin{frame}[allowframebreaks,fragile]{Hypothesis testing (likelihood based)}
   \begin{itemize}
     \item We can also do hypothesis testing, but it can get tricky due to the interaction effect.
     \item The \texttt{lmerTest::ranova} function just drops the term from the model, and compares REML (or ML). This may not be meaningful for all variables in the presence of an interaction effect.
@@ -436,9 +585,16 @@ lmerTest::ranova(output)
 \begin{frame}[allowframebreaks]{Summary}
   \begin{itemize}
     \item We fit a random effects model if we are interested in the variance components specifically, rather than specific treatment effects.
-    \item Random effects are often very useful for \textbf{block-designs}. Though we may want to block to reduce variance, we are not often interested in the exact block effect; rather, we want to know how the general population of possible blocks might impact results.
-    \item Though they can be useful, random effects are often coupled with fixed effects, to create a \alert{mixed effects} model, which is covered in our next module.
-    \item Common situation: A fixed effect of interest, in a block-design; we will treat the block effect as random, giving a mixed effect model.
+  \end{itemize}
+\end{frame}
+
+\section{Mixed Effects Models}
+
+\begin{frame}[allowframebreaks]{Mixed Effects: an introduction}
+  \begin{itemize}
+    \item One of the most common ways we see a random effect is in the context of a \alert{mixed effect model}.
+    \item Idea: we are interested in estimated the fixed effects of specific treatments, but have factors in the study that are randomly drawn from a population.
+    \item Mixed effect models are extremely common for \alert{block-designs}: we have a treatment factor $A$ we are interested (fixed effect), and a block factor $B$ from a block-design; if we are not interested in the effect of our specificly chosen blocks, rather we want to account for the potential variation of all possible blocks that could have been chosen, then a mixed-effects models is the correct choice.
   \end{itemize}
 \end{frame}
 
