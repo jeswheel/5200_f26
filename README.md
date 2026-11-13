@@ -50,6 +50,25 @@ Can this framework be updated / modified?
 - Move all analysis from `aov()` to `lm()`, perhaps use the `car::Anova()` function because it immediately allows use to do Type I vs Type II vs Type III, whereas the base `anova()` does not. 
 
 
+The modules should be the following:
+1. Randomization, Design, and Statistical Testing
+2. CRD + ANOVA
+3. Checking Model Assumptions
+4. Post-Hoc Analysis
+5. Factorial Designs and Models
+6. Block Designs and Models
+7. Random and Mixed Effects Models
+8. Nested Designs and Analysis
+9. Split-Plot Designs
+10. GLMs and GLMMs (time-permitting)
+
+Additional Topics (Time Permitting):
+- Incomplete Blocks
+- Incomplete Factorials
+
+
+
+
 - Lecture 0: syllabus. I think this went fairly well. Introduction and syllabus took about an hour, left 15 minutes to introduce R.
 Next time, have a ready .csv file to demonstrate loading, etc. Slightly more organized R / R Studio introduction. About 20 students stayed.
 - Early on, give a homework assignment that emphasizes notation, like $y_{ij}$ and $y_{i \bullet}$. For instance, give some data from an experiment, ask students to compute specific values, checking their understanding of the notation.

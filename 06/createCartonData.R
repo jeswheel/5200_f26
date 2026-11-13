@@ -1,8 +1,8 @@
 set.seed(2027)
 
 # Design parameters
-n_mach <- 5
-n_oper <- 4
+n_mach <- 12
+n_oper <- 8
 n_rep <- 4
 
 # Create the completely randomized factorial grid

@@ -12,7 +12,7 @@ Learning Objectives
 
 - Students will be able to distinguish between a random effect and a fixed effect.
 - Students will know how to implement random effect and mixed effects models.
-- Students will gain som familiarity with the `lme4` R pacakge and priniciples of likelihood based inference
+- Students will gain some familiarity with the `lme4` R package and principles of likelihood based inference.
 
 **Expected reading:** There is no expected reading outside of the course notes for this module 
 

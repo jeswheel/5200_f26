@@ -61,8 +61,11 @@
   \begin{itemize}
     \item So far, the treatment effects that we have been working with can be classified as \alert{fixed-effects}: we wish to estimate the effect of specific (fixed) treatments.
     \item What if the treatments themselves are a random selection from a larger population?
-    \item \textbf{Example:} A farmer has 100 pieces of equipment, and would like to know how the equipment used may impact crop-yield. Rather than testing all $100$ pieces of equipment, they \emph{randomly select} $g$ pieces of equipment, and performs a CRD with these equipment.
   \end{itemize}
+  
+  \begin{exampleblock}{Example: Farming Equipment}
+    A farmer has 100 pieces of equipment, and would like to know how the equipment used may impact crop-yield. Rather than testing all $100$ pieces of equipment, they \emph{randomly select} $g$ pieces of equipment, and performs a CRD with these equipment.
+  \end{exampleblock}
   
   \framebreak
   
@@ -71,6 +74,10 @@
     
     Random effects are useful if the focus of inference is on the \alert{population}, not the individual treatment effects. 
   \end{block}
+  
+  \begin{itemize}
+    \item When \emph{designing} for a random effect, the treatments should be a random draw from a larger population.
+  \end{itemize}
   
 \end{frame}
 
@@ -99,7 +106,7 @@
     
     \framebreak
     
-    \item We could proceed as usual, but that only tells us about the 10 specific machines that were randomly chosen, and we would get an entirely different set of machines if we repeated the experiment.
+    \item \mode<article>{We could proceed as usual, but that only tells us about the 10 specific machines that were randomly chosen.} We would get an entirely different set of machines if we repeated the experiment!
     \item Thus, we want to introduce a \alert{random effect}: let the effect $\alpha_i$ represent a random draw from a population of possible effects:
     $$
     y_{ij} = \mu + \alpha_i + \epsilon_{ij}, \qquad \alpha_i \overset{iid}{\sim} N(0, \sigma^2_\alpha), \quad \epsilon_{ij} \overset{iid}{\sim} N(0, \sigma^2).
@@ -136,7 +143,17 @@
     \end{itemize}
   \end{block}
   
+  \begin{exampleblock}{Practical Advice}
+    In fixed effects, we generally prefer larger $n$ and smaller $g$; for random effects, it's the opposite!
+    \begin{itemize}
+      \item We really would like a minimum of $g = 10$ groups for reliable estimates; otherwise, confidence intervals will be very large / meaningless.
+      \item $g = 15$ or more is preferred.
+    \end{itemize}
+  \end{exampleblock}
+  
 \end{frame}
+
+\section{Hypothesis Testing}
 
 \begin{frame}[allowframebreaks,fragile]{Hypothesis Testing}
   \begin{itemize}
@@ -168,12 +185,12 @@
 
 <<echo=FALSE, eval=FALSE>>=
 # Only need to run once, so set eval = FALSE. But here's where data come from
-set.seed(123)
-N_treatment <- 4
-N_repls <- 8
+set.seed(123456)
+N_treatment <- 12
+N_repls <- 5
 
-randEff <- rep(rnorm(N_treatment, 0, sd = 2), each = N_repls)  # 8 replicates per treatment, 4 treatments.
-y <- 10 + randEff + rnorm(N_treatment*N_repls)
+randEff <- rep(rnorm(N_treatment, 0, sd = 1.37), each = N_repls)  # 8 replicates per treatment, 4 treatments.
+y <- 10 + randEff + rnorm(N_treatment*N_repls, sd = 2)
 data.frame(
   response = y, 
   trt = rep(1:N_treatment, each = N_repls)
@@ -199,41 +216,74 @@ Above, we see a significant (random) treatment effect, rejecting the hypothesis 
   F_{DF_A, DF_E} = \frac{MS_A}{MS_E}.
   $$
   This will \emph{not} be the case for factorial models or if the data are unbalanced.
+  \item For factorials models, the denominator changes. We \emph{can} do it by hand, but the output of \texttt{aov} does \emph{not} match!
 \end{itemize}
 
 \end{frame}
 
 \begin{frame}[allowframebreaks]{Estimation variance components}
+
+\begin{block}{Estimation of Variance Components}
+
+    In perfectly balanced data, the \texttt{aov()} output can be used to obtain estimates for $\sigma^2_\alpha$; this follows a similar approach to estimating $\sigma^2$, like we did back in module 3.
+
   \begin{itemize}
-    \item In perfectly balanced data, we \emph{can} get point estimates for $\sigma^2_\alpha$; this follows a similar approach to estimating $\sigma^2$, like we did back in module 3.
     \item Recall: $\hat{\sigma}^2 = \text{MS}_{\text{E}}$.
-    \item If the data are balanced, \emph{then}:
+    \item If the data are balanced, then we can subtract off the error variance, and divide by the number of observations (per-group):
     $$
     \hat{\sigma}^2_\alpha = \frac{MS_\text{A} - MS_{\text{E}}}{n}
     $$
-    \mode<article>{\item In the previous R example, this is $(31.404 - 0.772) / 8 = 3.8290$}
-    \mode<article>{\item \textbf{NOTE:} This can be problematic if $MS_A < MS_E$, because we will get negative estimates! The approach we will discuss later does not have this same problem.}
+    \mode<article>{\item In the previous R example, this is $(10.501 - 3.387) / 5 = 1.4228$}
+    \mode<article>{\item \textbf{NOTE:} This can be problematic if $MS_A < MS_E$, because we will get negative estimates! It will also not work if the data are not balanced, because then $n$ is not the same for all groups. The approach we will discuss later does not have this same problem. }
   \end{itemize}
+  
+\end{block}
+
 \end{frame}
 
 \section{Estimation: REML and LRT}
 
 \begin{frame}[allowframebreaks]{Beyond ANOVA: Likelihood Based Inference}
   \begin{itemize}
-    \item Classical random effects estimation relies on Expected Mean Squares (EMS) from ANOVA tables (See \citet[][Sections~11.3--11.6]{oehlert2000}).
-    \item These approaches can be computed by hand, and would naturally extend our workflow with the \texttt{aov()} function and the \texttt{emmeans} package.
-    \item Unfortunately, these approaches have their weaknesses for random (and mixed) effects models.
-    \item Our models will remain the same, but how we analyze them will shift, keeping in-line with modern practices.
-    \item For the type of models considered so far (fixed-effects), the two approaches are the same.
+    
+    \item For factorial random effects models, or unbalanced data, the default \texttt{aov()} output will not work!
+    \item Classic solutions rely on Expected Mean Squares (EMS) (See \citet[][Sections~11.3--11.6]{oehlert2000}). These approaches can be computed by hand.
+    \item Unfortunately, these approaches have their weaknesses.
+    \item We will shift from the textbook and rely on \alert{likelihood-based methods}, which is in-line with modern practices.
+    \item For the type of models considered so far (fixed-effects, or balanced random effect), the two approaches are the same.
     
     \framebreak
     
-    \item Modern software relies on \alert{Likelihood} methods.
+    \item \textbf{Maximum Likelihood (ML)} finds the parameter estimates (mean and variances) that make the observed data most probable; confidence intervals are obtained using likelihood ratio tests.
     
-    \item \textbf{Maximum Likelihood (ML)} finds the parameter estimates (mean and variances) that make the observed data most probable; confidence intervals are obtained using likelihood ratio tests. 
+    \mode<article>{
+    \item Roughly speaking, the likelihood is ``what is the probability of observing what we observed, IF the parameter value is X".
     
-    \framebreak
+    For an example, consider flipping a coin 10 times. There is a parameter of interest: $p$, the probability of heads. If we don't know if the coin is fair or not, we will want to perform an experiment (flip the coin 10 times), and count the number of heads.
     
+    Now suppose we saw $n = 8$ heads. IF $p = 0$, then what is the probability that we saw 8 heads? This probability is zero! That means we can conclude that $p$ is certainly not zero. 
+    
+    What about if $p = 0.1$? What's the probability that we would get $8$ heads? The probability of this? The probability is smaller than $3.7\times 10^{-7}$. This is such a small outcome, it's highly unlikely that $p = 0.1$.
+    
+    Now what about $p = 0.8$? If this is the case, the probability of getting $n = 8$ heads is about $0.30$. This is much more likely, and in fact we might be inclined to think that $p$ \emph{could} be $0.8$.
+    
+    If we do this for all possible numbers $0 \leq p \leq 1$, and we treat this as a function, then we get the \textbf{likelihood funtion}: $L(p)$. 
+    More generally, we denote this as $L(\theta)$, and it can be computed for any probability-based model.
+    The core idea / takeaway: \textbf{Parameter values with higher-likelihood are better descriptions of reality; low-likelihood values do not correspond to observed data, so all else being equal, we should favor values with higher likelihood values.}
+    
+    One of the main concerns of the likelihood function is ``how large of a likelihood is large enough?" In our coin-flipping example, $L(0.8)$ happens to be the \alert{Maximum of the Likelihood Function}, so we call $p = 0.8$ the \alert{maximum likelihood estimate}.
+    However, the likelihood of $p = 0.8$ is not all that different from the likelihood of $p = 0.81$ or $p = 0.79$, or even $p = 0.6$ (or at least the difference isn't large enough to convince us that $p=0.6$ is not a real possibility).
+    
+    It's often possible to derive an exact cutoff of the likelihood value that satisfies a Type-I controlled level-$\alpha$ confidence interval. In fact, our F-tests are exactly this type! In many cases, however, the exact cutoff to get a level-$\alpha$ confidence interval is not available. In these cases, we can often rely on Wilks' Theorem to give us an approximate answer!
+    \textbf{If the log-likelihood of a single parameter model is within 1.92 units of the maximum, then it is ``high-likelihood", and belongs in a $95\%$ confidence interval.}
+    }
+  \end{itemize}
+    
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Restricted likelihood}
+    
+  \begin{itemize}
     \item However, standard ML has a flaw when estimating variance components: it does not account for the degrees of freedom used to estimate the fixed effects (like the grand mean). 
     \item This makes standard ML variance estimates \emph{biased} (they underestimate the true variance).
     
@@ -255,8 +305,8 @@ Above, we see a significant (random) treatment effect, rejecting the hypothesis 
 \begin{frame}[allowframebreaks]{Restricted Maximum Likelihood (REML)}
   \begin{itemize}
     \item To fix the bias in standard ML, modern software uses \alert{Restricted Maximum Likelihood (REML)}.
-    \item REML mathematically removes the fixed effects from the likelihood equation before estimating the variance components.
-    \item By accounting for the degrees of freedom lost in estimating fixed effects, REML provides \emph{unbiased} estimates of $\sigma^2$ and $\sigma^2_\alpha$.
+    % \item REML mathematically removes the fixed effects from the likelihood equation before estimating the variance components.
+    \item REML accounts for the degrees of freedom lost in estimating fixed effects, REML provides \emph{unbiased} estimates of $\sigma^2$ and $\sigma^2_\alpha$.
     
     \mode<article>{
       \textbf{Example:} building on the normally distributed model from before, 
@@ -270,15 +320,15 @@ Above, we see a significant (random) treatment effect, rejecting the hypothesis 
       $$
     }
     
-    \item Additionally, REML handles unbalanced data effortlessly and prevents the impossible ``negative variance" estimates that can sometimes occur when calculating variance using classical EMS methods.
+    \item Additionally, REML handles unbalanced data effortlessly and prevents the impossible ``negative variance" estimates that can occur when using classical EMS methods.
     % \item \textbf{Default Behavior:} Functions like \texttt{lmer()} use REML by default to estimate these variance components.
   \end{itemize}
 \end{frame}
 
 \begin{frame}[allowframebreaks,fragile]{Estimating variance components in R}
   \begin{itemize}
-    \item If we are primarily interested in the variance components $\sigma^2_\alpha$, we will want to get the REML estimate for this component, as it is unbiased.
-    \item We will shift from our \texttt{aov()} workflow and use the \texttt{lmer} function from the \texttt{lme4} package to do this in R:
+    % \item If we are primarily interested in the variance components $\sigma^2_\alpha$, we will want to get the REML estimate for this component, as it is unbiased.
+    \item For variance components (random effects) We will shift from our \texttt{aov()} workflow and use the \texttt{lmer} function from the \texttt{lme4} package to do this in R:
   \end{itemize}
 
 <<load-lme4, include=FALSE, echo=FALSE>>=
@@ -298,7 +348,6 @@ On the next slide, we will use this for the same \texttt{synthData} dataset we u
 
 \begin{frame}[fragile]{Example: Synthetic data}
 
-
 <<synthData-lmer>>=
 # Old Code: 
 # aov(response ~ factor(trt), data = synthData)
@@ -307,7 +356,7 @@ lmer(response ~ (1 | trt), data = synthData)
 @
 
 \mode<article>{
-The important thing to note in the output above is that the estimated values match what we did by hand with the \texttt{aov()} output. Specifically, our estimate for treatment (\texttt{trt}) had $\hat{\sigma}_\alpha = 1.9568$; if we square it, we get the same value as the by-hand calculation of $\hat{\sigma}^2_\alpha = 3.829$.
+The important thing to note in the output above is that the estimated values match what we did by hand with the \texttt{aov()} output. Specifically, our estimate for treatment (\texttt{trt}) had $\hat{\sigma}_\alpha = 1.193$; if we square it, we get the same value as the by-hand calculation of $\hat{\sigma}^2_\alpha = 1.423$.
 }
 
 \end{frame}
@@ -381,49 +430,10 @@ summary(aov(diameter ~ plate, data = Penicillin))
   \end{itemize}
 \end{frame}
 
-\begin{frame}[allowframebreaks, fragile]{Confidence intervals}
-  \begin{itemize}
-    \item We can get confidence intervals for our estimates using the \texttt{confint} function.
-    \item The two primary methods will be \texttt{profile} (default) and \texttt{boot}.
-    \item This computes \alert{profile likelihood} confidence intervals, which are effectively the same as a \textbf{likelihood ratio test} (LRT).
-    \mode<article>{
-    \item Mathematically, we can obtain a confidence interval using profiled restricted likelihoods, but unfortunately there's not an immediate way to do this in R; we can use \texttt{method = "boot"} for a bootstrap interval for REML estimates, or \texttt{method = "profile"} for a profile likelihood. Both should give very similar output. 
-    }
-  \end{itemize}
-
-<<lme4-confInt, cache=TRUE>>=
-set.seed(123)
-confint(output, signame = FALSE, level = 0.95, method = "boot")
-@
-
-
-\end{frame}
-
-\begin{frame}[allowframebreaks]{Hypothesis testing}
-  \begin{itemize}
-    \item For random effects, the hypothesis that we would like to test is:
-    $$
-    H_0: \sigma^2_\alpha = 0, \quad H_1: \sigma^2_\alpha > 0
-    $$
-    \item This is always one-sided, because $\sigma_\alpha^2$ can't be negative.
-    \item \alert{Notice:} Our assumption was $\alpha_i \sim N(0, \sigma_\alpha^2)$. If $H_0$ is true, then $\sigma^2_\alpha = 0$, and $\alpha_i = 0$ for all $i$.
-    \item Thus, for a simple random effects model, we have the same null hypothesis and tests!
-    $$
-    H_0: \sigma^2_\alpha = 0 \iff \alpha_i = 0 \, \text{ for all } i
-    $$
-    
-    \framebreak
-    
-    \item Because of this, we \emph{could} just use a standard F-test for random effects. 
-    \item \alert{However:} this approach does not generalize well to more complex models with random effects.
-    \item Rather than using an F-test, we will introduce the idea of a Likelihood Ratio Test.
-  \end{itemize}
-  
-
-\end{frame}
 
 \begin{frame}[allowframebreaks,fragile]{Likelihood Ratio Tests (LRT)}
   \begin{itemize}
+    \item The profile likelihood confidence intervals are based on the Likelihood Ratio Test.
     \item Instead of using exact F-tests derived from ratios of Mean Squares, modern mixed modeling often uses the \alert{Likelihood Ratio Test (LRT)} for hypothesis testing.
     \item The LRT explicitly compares two competing models:
     \begin{enumerate}
@@ -459,6 +469,26 @@ lmerTest::ranova(output)  # Will do RLRT or LRT, depending on object.
 @
   
 \end{frame}
+
+\begin{frame}[allowframebreaks, fragile]{Confidence intervals}
+  \begin{itemize}
+    \item We can get confidence intervals for our estimates using the \texttt{confint} function.
+    \item The two primary methods will be \texttt{profile} (default) and \texttt{boot}.
+    \item This computes \alert{profile likelihood} confidence intervals, which are effectively the same as a \textbf{likelihood ratio test} (LRT).
+    \mode<article>{
+    \item Mathematically, we can obtain a confidence interval using profiled restricted likelihoods, but unfortunately there's not an immediate way to do this in R; we can use \texttt{method = "boot"} for a bootstrap interval for REML estimates, or \texttt{method = "profile"} for a profile likelihood. Both should give very similar output. 
+    }
+  \end{itemize}
+
+<<lme4-confInt, cache=TRUE>>=
+set.seed(123)
+confint(output, signame = FALSE, level = 0.95, method = "boot")
+confint(output, signame = FALSE)
+@
+
+
+\end{frame}
+
 
 \section{Factorial Random Effects Models}
 
@@ -556,12 +586,14 @@ summary(output)
 
 \begin{frame}[allowframebreaks,fragile]{Confidence intervals}
   \begin{itemize}
-    \item We can obtain confidence intervals the same way as before. This can be very slow.
+    \item We can obtain confidence intervals the same way as before. 
+    (can be slow).
   \end{itemize}
   
-<<twoWay-confint, cache=TRUE>>=
+<<twoWay-confint>>=
 set.seed(444)
-confint(output, method = 'boot', signame = FALSE)
+# Or method = 'boot'
+confint(output, method = 'profile', signame = FALSE)
 @
 
 \end{frame}
@@ -593,13 +625,19 @@ lmerTest::ranova(output)
 \begin{frame}[allowframebreaks]{Mixed Effects: an introduction}
   \begin{itemize}
     \item One of the most common ways we see a random effect is in the context of a \alert{mixed effects model}.
-    \item \textbf{Idea:} We wish to estimate the fixed effects of specific treatments, while accounting for nuisance or contextual factors that are randomly drawn from a larger population.
+    
+    \begin{block}{Mixed Effects Modes: Motivation}
+    `\textbf{Idea:} We wish to estimate the fixed effects of specific treatments, while accounting for nuisance or contextual factors that are randomly drawn from a larger population.
+    \end{block}
+    
+    \framebreak
+    
     \item Mixed effects models are common for \alert{block designs}: 
     \begin{itemize}
       \item We have a treatment factor $A$ of direct interest (\textbf{fixed effect}).
       \item We have a blocking factor $B$ (\textbf{random effect}).
     \end{itemize}
-    \item Appropriate if blocks are randomly drawn from a population of possible blocks; we want to account for the variation across the population of blocks.
+    \item Appropriate if blocks are randomly drawn from a population of possible blocks.
   \end{itemize}
 \end{frame}
 
@@ -618,7 +656,7 @@ lmerTest::ranova(output)
 
     \item Because $\beta_j$ is random, observations within the same block share a common random shift, inducing correlation:
     $$
-    \Var(y_{ij}) = \sigma^2_b + \sigma^2, \qquad \Cor(y_{ij}, y_{i'j}) = \frac{\sigma^2_b}{\sigma^2_b + \sigma^2} \quad (i \neq i').
+    \Var(y_{ij}) = \sigma^2_b + \sigma^2, \qquad \Cor(y_{ij}, y_{ij'}) = \frac{\sigma^2_b}{\sigma^2_b + \sigma^2} \quad (j \neq j').
     $$
     \item \textbf{Key advantage:} Treating blocks as random allows our conclusions about the fixed treatments ($\alpha_i$) to generalize to the broader population of blocks, rather than being restricted to the specific blocks in our experiment.
   \end{itemize}
@@ -637,9 +675,9 @@ lmerTest::ranova(output)
     \vspace{0.2cm}
     \item \textbf{2. Random Effects (Blocks):} Use Restricted Likelihood Ratio Tests via \texttt{lmerTest::ranova(model)}.
     \begin{itemize}
-      \item \textbf{Crucial Workflow Step:} If your model includes a random interaction (e.g., Block $\times$ Treatment), test the interaction first.
+      \item If your model includes a random interaction (e.g., Block $\times$ Treatment), test the interaction first.
       \item If the interaction is significant, retain it and stop. Do not test the main random effect.
-      \item If non-significant, drop it, fit a reduced additive model, and test the main random block effect on the reduced model.
+      \item If non-significant, you can test the main random block effects.
     \end{itemize}
   \end{itemize}
 \end{frame}
@@ -647,8 +685,11 @@ lmerTest::ranova(output)
 \begin{frame}[allowframebreaks,fragile]{Example: Ergonomic Stools (RCBD)}
   \begin{itemize}
     \item Consider the \texttt{ergoStool} dataset (from the \texttt{nlme} package).
+    \item The data come from a Randomized Complete Block study, with the treatment being stool-type ($g = 4$ levels), and the block the test subject ($r = 9$).
     \item We measure the physical effort required to arise from $4$ stool types (\textbf{fixed treatments}) across $9$ randomly selected subjects (\textbf{random blocks}).
   \end{itemize}
+  
+  \framebreak
 
 <<ergo-setup, message=FALSE, warning=FALSE>>=
 library(lme4)
@@ -659,11 +700,6 @@ data(ergoStool, package = "nlme")
 mod_ergo <- lmer(effort ~ Type + (1 | Subject), data = ergoStool)
 @
 
-\framebreak
-
-<<ergo-summar>>=
-summary(mod_ergo)
-@
 
 \end{frame}
 
@@ -673,8 +709,23 @@ summary(mod_ergo)
   \end{itemize}
 
 <<ergo-fixed>>=
-anova(mod_ergo)
+anova(mod_ergo, type = 3)
 @
+
+\framebreak
+
+\begin{itemize}
+  \item Next, we may be interested in the estimated variance component for the subject-to-subject variation:
+\end{itemize}
+
+<<>>=
+# Either summary, or just inspect the object
+mod_ergo
+@
+
+
+\framebreak
+  
 
   \begin{itemize}
     \item Next, we test whether the baseline random variance between subjects ($\sigma^2_b$) is significant using a restricted likelihood ratio test:
@@ -697,7 +748,8 @@ ranova(mod_ergo)
 
 <<ergo-emmeans, message=FALSE>>=
 library(emmeans)
-emmeans(mod_ergo, pairwise ~ Type)
+em_mod <- emmeans(mod_ergo,  ~ Type)
+plot(pairs(em_mod))
 @
 
 \end{frame}
@@ -710,7 +762,7 @@ emmeans(mod_ergo, pairwise ~ Type)
     y_{ijk} = \mu + \alpha_i + b_j + (\alpha b)_{ij} + \epsilon_{ijk}.
     $$
     \item \textbf{In R:} \texttt{lmer(y ~ Type + (1 | Subject) + (1 | Type:Subject), data = df)}
-    \item Using \texttt{anova(mod)} automatically tests the fixed main effect against the random interaction variance (using fractional degrees of freedom)—avoiding complex manual Expected Mean Squares algebra entirely!
+    \item Using \texttt{anova(lmer\_mod)} automatically tests the fixed main effect against the random interaction variance (using fractional degrees of freedom)---avoiding complex manual Expected Mean Squares algebra entirely!
   \end{itemize}
 \end{frame}
 
