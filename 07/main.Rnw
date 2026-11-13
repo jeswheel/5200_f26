@@ -54,6 +54,137 @@
   \end{itemize}
 \end{frame}
 
+\section{Nesting vs. Crossing}
+
+\begin{frame}[allowframebreaks]{Nesting Versus Crossing}
+  \begin{itemize}
+    \item Up to this point, our multi-factor designs have utilized \alert{crossed factors}.
+    \item \textbf{Crossed Factors:} Treatments are formed by all possible combinations of the levels of two or more factors. The same levels of Factor A are applied across all levels of Factor B.
+    \item \textbf{Nested Factors:} Factor B is \textit{nested} in Factor A if there is a completely different, unique set of levels of B for every level of A.
+    \item \textbf{Example (Baby Carrots):} We want to test Vitamin A consistency across 3 brands of baby food. We buy 4 jars of each brand, and take 2 samples from each jar.
+    \begin{itemize}
+      \item Jar 1 of Brand A has absolutely nothing to do with Jar 1 of Brand B. 
+      \item Jars are \textbf{nested} within Brand. They do not cross.
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[allowframebreaks]{The Nested Model}
+  \begin{itemize}
+    \item Because Jar is nested in Brand, it makes no sense to estimate a "Main Effect of Jar 1" across all brands. 
+    \item If a main effect doesn't make sense, a crossed interaction (Brand $\times$ Jar) doesn't make sense either.
+    \item We write nested models using parentheses in the subscripts:
+    $$
+    y_{ijk} = \mu + \alpha_i + \beta_{j(i)} + \epsilon_{k(ij)}
+    $$
+    \item $\alpha_i$: Fixed effect of Brand $i$.
+    \item $\beta_{j(i)}$: Random effect of Jar $j$ \textit{nested within} Brand $i$.
+    \item $\epsilon_{k(ij)}$: Random error of sample $k$ nested in Jar $j$ and Brand $i$.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Why do we use Nesting?}
+  \begin{itemize}
+    \item We don't just "choose" to use a nested model. We use it because the experimental logistics or physical constraints dictate it.
+    \item \textbf{Subsampling:} Taking smaller units from a larger selected bundle (Brands $\rightarrow$ Jars $\rightarrow$ Aliquots).
+    \item \textbf{Logistical Constraints:} Suppose there are 3 specialized clinics in the country. We can't realistically send the same patient to all 3 clinics to "cross" patients with clinics. Patients are nested in clinics.
+    \item \textbf{Biological Constraints:} Mating experiments. If we want to identify the sire (father), a female can only be mated to one male at a time. If females only live through one breeding, we must have completely different females for every male. Females are nested in males.
+  \end{itemize}
+\end{frame}
+
+\section{Nesting in R}
+
+\begin{frame}[allowframebreaks,fragile]{The Nesting Coding Trap in R}
+  \begin{itemize}
+    \item When recording nested data, you might number your jars $1, 2, 3, 4$ for Brand A, and $1, 2, 3, 4$ for Brand B.
+    \item \alert{Warning:} If you fit \texttt{(1 | Jar)}, \texttt{lme4} will assume Jar 1 in Brand A is the exact same entity as Jar 1 in Brand B (treating them as crossed).
+    \item \textbf{The Fix:} Use the interaction operator \texttt{:} to explicitly define the unique combinations, or use the nesting shortcut \texttt{/}.
+  \end{itemize}
+
+<<carrots-example, eval=FALSE>>=
+library(lme4)
+library(lmerTest)
+
+# Assume 'carrots' data is loaded (Oehlert, Ch 12)
+# Brand is Fixed. Jar is Random.
+
+# INCORRECT: Treats Jar as crossed with Brand!
+bad_mod <- lmer(VitA ~ Brand + (1 | Jar), data = carrots)
+
+# CORRECT: Explicitly nests Jar within Brand
+mod_carrots <- lmer(VitA ~ Brand + (1 | Brand:Jar), data = carrots)
+
+# ALTERNATIVE CORRECT: shorthand for nesting
+mod_carrots_alt <- lmer(VitA ~ Brand + (1 | Brand/Jar), data = carrots)
+@
+\end{frame}
+
+\section{Crossed and Nested Factors}
+
+\begin{frame}[allowframebreaks]{Combining Crossed and Nested Factors}
+  \begin{itemize}
+    \item Real-world designs often combine both structures. 
+    \item \textbf{Example (Gum Arabic - Oehlert 12.1):} 
+    \begin{itemize}
+      \item We want to test how emulsion shelf life is affected by acacia tree Variety (2 types) and Demineralization treatment (Yes/No).
+      \item We obtain 4 raw gum \textbf{samples} from each \textbf{Variety}. (Samples are nested in Variety).
+      \item Each sample is split into 2 subsamples. One gets Demineralized, the other does not. (Demineralization is \textbf{crossed} with Variety AND crossed with Sample).
+    \end{itemize}
+    \item \textbf{The Model:}
+    $$
+    y_{ijkl} = \mu + \alpha_i + \beta_{j(i)} + \gamma_k + (\alpha\gamma)_{ik} + (\beta\gamma)_{jk(i)} + \epsilon_{l(ijk)}
+    $$
+    \item Notice: Fixed main effects ($\alpha, \gamma$), Random nested effects ($\beta_{j(i)}$), Fixed crossed interaction ($(\alpha\gamma)$), and Random mixed nested interaction ($(\beta\gamma)_{jk(i)}$).
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[allowframebreaks,fragile]{Fitting Crossed + Nested in lme4}
+  \begin{itemize}
+    \item Translating the Gum Arabic design into \texttt{lme4} syntax requires specifying the fixed crossed terms and the random nested terms separately.
+  \end{itemize}
+
+<<gum-example, eval=FALSE>>=
+# Assuming 'gum' data is loaded
+# Variety (A) and Demin (C) are fixed and crossed.
+# Sample (B) is random, nested in Variety.
+
+mod_gum <- lmer(ShelfLife ~ Variety * Demin + 
+                  (1 | Variety:Sample) + 
+                  (1 | Variety:Sample:Demin), 
+                data = gum)
+
+# (1 | Variety:Sample) accounts for the random variance of the samples.
+# (1 | Variety:Sample:Demin) accounts for the random interaction: 
+# how individual samples react differently to demineralization.
+@
+\end{frame}
+
+\section{Hasse Diagrams}
+
+\begin{frame}[allowframebreaks]{Visualizing Design: Hasse Diagrams}
+  \begin{itemize}
+    \item As designs get complex, keeping track of what is nested inside what, and what crosses with what, becomes incredibly difficult.
+    \item \textbf{Hasse Diagrams} (Lohr 1995) are graphical representations of a model showing the exact nesting/crossing and random/fixed structure.
+    \item While historically used to manually derive Expected Mean Squares (EMS), today their primary value is helping you build your \texttt{lmer} formula without making structural mistakes.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Rules for Drawing a Hasse Diagram}
+  \begin{enumerate}
+    \item Start at the top with a node \textbf{M} for the Grand Mean.
+    \item Add nodes below M for each factor that is not nested. Draw lines connecting them to M.
+    \item \textbf{Random factors go in parentheses:} e.g., (Jar)
+    \item For nested factors, draw them \textit{below} the factor they nest in, connected by a line (e.g., Brand $\rightarrow$ (Jar)).
+    \item For crossed interactions, draw a node below the interacting main effects, with lines connecting up to both parents.
+    \item \textbf{Infection Rule:} Any term located below a random term in the diagram becomes random itself, and must be in parentheses!
+    \item End at the bottom with a node for \textbf{(E)} Error.
+  \end{enumerate}
+  
+  \mode<article>{
+  Drawing these on the board for the Carrots and Gum Arabic examples is highly recommended here! You can show how (Sample) drops cleanly below Variety, but Demineralization sits at the top level and crosses down into the nested structure.
+  }
+\end{frame}
+
 \newcommand\acknowledgments{
 \begin{itemize}
 \item   Compiled on {\today} using \Rlanguage version \Sexpr{getRversion()}.
