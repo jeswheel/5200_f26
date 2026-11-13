@@ -613,9 +613,9 @@ lmerTest::ranova(output)
     $$
     \beta_j \overset{iid}{\sim} N(0, \sigma^2_\beta), \qquad \epsilon_{ij} \overset{iid}{\sim} N(0, \sigma^2).
     $$
-    
+
     \framebreak
-    
+
     \item Because $\beta_j$ is random, observations within the same block share a common random shift, inducing correlation:
     $$
     \Var(y_{ij}) = \sigma^2_b + \sigma^2, \qquad \Cor(y_{ij}, y_{i'j}) = \frac{\sigma^2_b}{\sigma^2_b + \sigma^2} \quad (i \neq i').
@@ -627,17 +627,17 @@ lmerTest::ranova(output)
 \begin{frame}[allowframebreaks]{Inference in Mixed Effects Models}
   \begin{itemize}
     \item When our model contains both fixed and random effects, we separate our inference workflow into two distinct steps using \texttt{lme4} and \texttt{lmerTest}:
-    
+
     \vspace{0.2cm}
-    \item \textbf{1. Fixed Effects (Treatments):} Use F-tests via \texttt{anova(lmer_model)}.
+    \item \textbf{1. Fixed Effects (Treatments):} Use F-tests via \texttt{anova(lmer\_model)}.
     \begin{itemize}
       \item \texttt{lmerTest} uses REML to estimate variances and applies the \alert{Satterthwaite approximation} to calculate fractional denominator degrees of freedom.
     \end{itemize}
-    
+
     \vspace{0.2cm}
     \item \textbf{2. Random Effects (Blocks):} Use Restricted Likelihood Ratio Tests via \texttt{lmerTest::ranova(model)}.
     \begin{itemize}
-      \item \textbf{Crucial Workflow Step:} If your model includes a random interaction (e.g., Block $\times$ Treatment), test the interaction first. 
+      \item \textbf{Crucial Workflow Step:} If your model includes a random interaction (e.g., Block $\times$ Treatment), test the interaction first.
       \item If the interaction is significant, retain it and stop. Do not test the main random effect.
       \item If non-significant, drop it, fit a reduced additive model, and test the main random block effect on the reduced model.
     \end{itemize}
@@ -646,7 +646,7 @@ lmerTest::ranova(output)
 
 \begin{frame}[allowframebreaks,fragile]{Example: Ergonomic Stools (RCBD)}
   \begin{itemize}
-    \item Consider the \texttt{ergoStool} dataset (from the \texttt{nlme} package). 
+    \item Consider the \texttt{ergoStool} dataset (from the \texttt{nlme} package).
     \item We measure the physical effort required to arise from $4$ stool types (\textbf{fixed treatments}) across $9$ randomly selected subjects (\textbf{random blocks}).
   \end{itemize}
 
@@ -661,7 +661,7 @@ mod_ergo <- lmer(effort ~ Type + (1 | Subject), data = ergoStool)
 
 \framebreak
 
-<<ergo-summary>>=
+<<ergo-summar>>=
 summary(mod_ergo)
 @
 
