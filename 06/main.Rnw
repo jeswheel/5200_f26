@@ -179,18 +179,20 @@
 
 \begin{frame}[allowframebreaks,fragile]{Example data in R}
 
-  \begin{itemize}  
-    \item The following example uses data synthetically generated with $\alpha_i \sim N(0, 2^2)$, $\epsilon_{ij} \sim N(0, 0.5^2)$, and $\mu = 10$.
-  \end{itemize}
+<<echo=FALSE, eval=TRUE>>=
+N_treatment <- 12
+N_repls <- 5
+sd_rand <- 1.37
+sd_meas <- 2
+@
+
 
 <<echo=FALSE, eval=FALSE>>=
 # Only need to run once, so set eval = FALSE. But here's where data come from
 set.seed(123456)
-N_treatment <- 12
-N_repls <- 5
 
-randEff <- rep(rnorm(N_treatment, 0, sd = 1.37), each = N_repls)  # 8 replicates per treatment, 4 treatments.
-y <- 10 + randEff + rnorm(N_treatment*N_repls, sd = 2)
+randEff <- rep(rnorm(N_treatment, 0, sd = sd_rand), each = N_repls)  # 8 replicates per treatment, 4 treatments.
+y <- 10 + randEff + rnorm(N_treatment*N_repls, sd = sd_meas)
 data.frame(
   response = y, 
   trt = rep(1:N_treatment, each = N_repls)
@@ -198,6 +200,10 @@ data.frame(
   write.csv('synthData.csv', row.names = FALSE)
 @
 
+
+  \begin{itemize}  
+    \item The following example uses data synthetically generated with $\alpha_i \sim N(0, \Sexpr{sd_rand}^2)$, $\epsilon_{ij} \sim N(0, \Sexpr{sd_meas}^2)$, and $\mu = 10$.
+  \end{itemize}
 
 <<>>=
 synthData <- read.csv("synthData.csv")
