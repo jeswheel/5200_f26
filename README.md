@@ -48,6 +48,7 @@ Can this framework be updated / modified?
 - ? Rename "randomization test" to "permutation test"? Maybe skip this altogether?
 - We *should* cover orthogonal and polynomial contrasts; that was skipped this semester, but I think that was a mistake.
 - Move all analysis from `aov()` to `lm()`, perhaps use the `car::Anova()` function because it immediately allows use to do Type I vs Type II vs Type III, whereas the base `anova()` does not. 
+- I probably want to ``add back" some math. In particular, F-tests: deriving the correct MS ratios and degrees of freedom.
 
 
 The modules should be the following:

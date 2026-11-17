@@ -49,7 +49,9 @@
     \item This material is based Chapter~12 on the textbook ``A First Course in Design and Analysis of Experiments" \citep{oehlert2000}.
     \item Chapter outcomes include: 
     \begin{itemize}
-      \item TODO
+      \item Students will be able to define both crossed and nested effects, and articulate the differences.
+      \item Students will be able to fit mixed effects models to data with nested or crossed designs.
+      \item Students will be able understand Hasse diagrams, and be able to build the basic ``skeleton" of these diagrams.
     \end{itemize}
   \end{itemize}
 \end{frame}
@@ -59,36 +61,222 @@
 \begin{frame}[allowframebreaks]{Nesting Versus Crossing}
   \begin{itemize}
     \item Up to this point, our multi-factor designs have utilized \alert{crossed factors}.
-    \item \textbf{Crossed Factors:} Treatments are formed by all possible combinations of the levels of two or more factors. The same levels of Factor A are applied across all levels of Factor B.
-    \item \textbf{Nested Factors:} Factor B is \textit{nested} in Factor A if there is a completely different, unique set of levels of B for every level of A.
-    \item \textbf{Example (Baby Carrots):} We want to test Vitamin A consistency across 3 brands of baby food. We buy 4 jars of each brand, and take 2 samples from each jar.
+    
+    \begin{block}{Definition: Crossed Factors}
+      Factors $A$ and $B$ are said to be \alert{crossed} if treatments are formed by all possible combinations of the levels of the factors.
+      That is, the same levels of Factor A are applied across all levels of Factor B.
+    \end{block}
+    
+    \begin{exampleblock}{Example: Replicated Latin Squares (LS)}
+      In a replicated LS design, if we reuse one of the block factors (e.g., row blocks) across the squares, then the \textbf{Row} and \textbf{Square} factors are \alert{crossed}, because each row sees each block.
+    \end{exampleblock}
+    
+    \begin{block}{Definition: Nested Factors}
+      Factor B is \textit{nested} in Factor A if there is a completely different, unique set of levels of B for every level of A.
+      That is, some levels of $B$ only exist \emph{within} certain levels of $A$.
+    \end{block}
+ 
+    \begin{exampleblock}{Example: Replicated Latin Squares (LS)}
+      In a replicated LS design, if we \emph{do not} reuse any blocking factors, (i.e., unique row and column blocks for each square), then the \textbf{Row} and \textbf{Column} factors are said to be \alert{nested} in \textbf{square}.
+    \end{exampleblock}
+
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Example: Testing vitamin A content}
+
+\begin{block}{Vitamin A study}
+    Suppose you are concerned about differences in Vitamin A content of within jars of baby food carrots. Our designed study: 
     \begin{itemize}
-      \item Jar 1 of Brand A has absolutely nothing to do with Jar 1 of Brand B. 
-      \item Jars are \textbf{nested} within Brand. They do not cross.
+      \item Go to the grocery store, randomly select 4 jars from each of the 3 brands of baby food that are sold in our region.
+      \item Take two samples from each jar and measure the vitamin A in every sample.
+      \item In total, there are 24 responses (2 per jar, 4 jars per brand, 3 brands).
+    \end{itemize}
+\end{block}
+
+\begin{itemize}
+  \item In the study design above, there are 3 sources of variation:
+  \begin{itemize}
+    \item Variation between brands.
+    \item Variation between jars for each brand.
+    \item Variation between samples for every jar.
+  \end{itemize}
+  \item It does \emph{not} make sense to consider the main-effect of jar, OR the brand-by-jar interaction.
+  \mode<article>{For instance, Jar one for brand A has absolutely nothing to do with jar one for brand B; they might both have lots of vitamin A by chance, but it would just be chance. They are not linked, so there should be no jar main effect across the brands.
+  
+  Notably, if the main effect of Jar does not make sense, then neither does a jar by brand interaction, because the two-factor interaction can be interpreted as how the main effect of Jar must be altered at each level of brand.}
+    % \item \textbf{Example (Baby Carrots):} We want to test Vitamin A consistency across 3 brands of baby food. We buy 4 jars of each brand, and take 2 samples from each jar.
+    % \begin{itemize}
+    %   \item Jar 1 of Brand A has absolutely nothing to do with Jar 1 of Brand B. 
+    %   \item Jars are \textbf{nested} within Brand. They do not cross.
+    % \end{itemize}
+  
+  \framebreak
+  
+    \item Let $A$ be the brand factor, $B$ the jar factor. A nested model for this situation may be:
+    $$
+    y_{ijk} = \mu + \alpha_i + \beta_{j(i)} + \epsilon_{k(ij)}.
+    $$
+    \begin{itemize}
+    \item $\alpha_i$: Fixed effect of Brand $i$.
+    \item $\beta_{j(i)}$: Random effect of Jar $j$ \textit{nested within} Brand $i$.
+    \item $\epsilon_{k(ij)}$: Random error of sample $k$ nested in Jar $j$ and Brand $i$.
     \end{itemize}
   \end{itemize}
 \end{frame}
 
-\begin{frame}[allowframebreaks]{The Nested Model}
+\begin{frame}[allowframebreaks]{Fixed vs Random effects}
   \begin{itemize}
-    \item Because Jar is nested in Brand, it makes no sense to estimate a "Main Effect of Jar 1" across all brands. 
-    \item If a main effect doesn't make sense, a crossed interaction (Brand $\times$ Jar) doesn't make sense either.
-    \item We write nested models using parentheses in the subscripts:
-    $$
-    y_{ijk} = \mu + \alpha_i + \beta_{j(i)} + \epsilon_{k(ij)}
-    $$
-    \item $\alpha_i$: Fixed effect of Brand $i$.
-    \item $\beta_{j(i)}$: Random effect of Jar $j$ \textit{nested within} Brand $i$.
-    \item $\epsilon_{k(ij)}$: Random error of sample $k$ nested in Jar $j$ and Brand $i$.
+    \item Nested factors can be random or fixed.
+    \item A common situation is a random effect, resulting from some king of subsampling.
+    
+    \begin{exampleblock}{Random nested effect}
+    Within brand, we randomly sampled jars. It makes sense for Brand to be fixed, whereas we are not interested in the specific jars we picked, rather we want to use them as a representative of the brand that it is nested in. Thus, $A$ (brand) should be fixed, and the nested factor $B$ should be random.
+    \end{exampleblock}
+    
+    \framebreak
+    
+    \item Nested factors can also be fixed. 
+    
+       \begin{exampleblock}{Fixed nested effect}
+    Consider a compnay with work crews. Each crew consists of four members.
+    
+    \begin{itemize}
+      \item Members are nested in crews
+      \item We get the same four crew members whenever we look at a given crew.
+    \end{itemize}
+    
+    In this case, crew members would naturally be a fixed effect. 
+    
+    \end{exampleblock} 
+    
   \end{itemize}
 \end{frame}
 
+
 \begin{frame}[allowframebreaks]{Why do we use Nesting?}
   \begin{itemize}
-    \item We don't just "choose" to use a nested model. We use it because the experimental logistics or physical constraints dictate it.
-    \item \textbf{Subsampling:} Taking smaller units from a larger selected bundle (Brands $\rightarrow$ Jars $\rightarrow$ Aliquots).
-    \item \textbf{Logistical Constraints:} Suppose there are 3 specialized clinics in the country. We can't realistically send the same patient to all 3 clinics to "cross" patients with clinics. Patients are nested in clinics.
-    \item \textbf{Biological Constraints:} Mating experiments. If we want to identify the sire (father), a female can only be mated to one male at a time. If females only live through one breeding, we must have completely different females for every male. Females are nested in males.
+    \item We don't just ``choose" to use a nested model. We use it because the experimental logistics or physical constraints dictate it.
+  \end{itemize}
+
+    
+    \begin{exampleblock}{Example: subsampling}
+      A common example is \textbf{subsampling:} Taking smaller units from a larger selected ``bundle" (Carrot example: Brands $\rightarrow$ Jars $\rightarrow$ samples).
+    \end{exampleblock}
+    
+    \begin{exampleblock}{Example: Logistical constraints}
+      Sometimes nested designs are necessary due to logistical constraints:
+      
+      Suppose there are 3 specialized clinics in the country. We can't realistically send the same patient to all 3 clinics to ``cross" patients with clinics. Patients are nested in clinics.
+    \end{exampleblock}
+
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Nesting vs Averaging MUs}
+  \begin{itemize}
+    \item Distinctions between experimental units and measurements units can sometimes be explained by nested factors.
+  \end{itemize}
+  \begin{block}{Testing Feed on Pig Growth}
+    Suppose we have multiple pens of pigs, and $g$ different feeds we would like to test.
+    We randomly select pens to apply different feed, and observe the growth of individual pigs.
+    \begin{itemize}
+      \item The EUs are pig pens, the MUs are pigs.
+      \item Previously: To test differences in treatment, we aggregated results over the measurement unit. 
+      \item Blindly treating the pigs as EUs would lead to ``pseudo-replication", because randomization was not done to the MUs, which is why we aggregated.
+    \end{itemize}
+  \end{block}
+  
+  \framebreak
+  
+  \begin{itemize}
+    \item This same design that we discussed really has a \alert{nested} structure.
+  \end{itemize}
+  
+  \begin{exampleblock}{Nested Design: pig pens}
+    In the same design, there are 3 sources of variation: Treatment effect $(A)$, pen effect $(B)$, and individual pig effect (error).
+    
+    Rather than aggregating MUs, we could instead use a nested model: pen ($B$) is nested in feed type ($A$) because Pen 1 only gets one level of the treatment
+  \end{exampleblock}
+  
+  \framebreak
+  
+  \begin{itemize}
+    \item Which is the correct approach? \textbf{They Both are}!
+    \item If the design is \alert{balanced}, the $F$ statistic and $P$ value for the main treatment effect (feed, factor $A$) \alert{will be the same} regardless of the approach we pick.
+    \item This new approach (nested instead of averaging) does not change the treatment effect estimates, but now allows us to compare / estimate pen-to-pen variance $\sigma^2_{pen}$ against the pig-to-pig variance $\sigma^2$.
+    \mode<article>{
+    \item This information can be useful for designing future studies; for instance, if $\sigma^2$ is much larger than $\sigma^2_{pen}$, then future studies on the treatment effect should prioritize having more pigs-per-pen. If $\sigma^2_{pen}$ is much larger than $\sigma^2$, we should have fewer pigs-per-pen and prioritize more pens.
+    }
+  \end{itemize}
+  
+\end{frame}
+
+\section{Crossed and Nested Factors}
+
+\begin{frame}[allowframebreaks]{Designs with Crossed and Nested Factors}
+  \begin{itemize}
+    \item Designs can have both crossed an nested factors.
+    \item In addition to a nesting structure, there can be treatment factors that can be combined and assigned at random to units such that all combinations of nesting factors and treatment factors get an equal number of units.
+    \item \textbf{Figuring out which factors are crossed and which are nested, and the appropriate model, can be challenging.} The best way to figure it out is practice!
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Example: Gum arabic (Example 12.1)}
+  \begin{itemize}
+    \item Gum arabic is used to lengthen the shelf life of food items.
+    \item We wish to see how different gums and gum preparation effect shelf-life.
+  \end{itemize}
+  
+  \begin{block}{Gum arabic design}
+    \begin{itemize}
+      \item We obtain 4 raw gum samples from each of 2 varieties of trees (8 total samples).
+      \item Each sample is split into 2 subsamples (16 total).
+      \item One of the subsamples (randomly selected) will be demineralized, the other will not.
+      \item All 16 subsamples are dried, and we make 5 measurements from each subsample.
+    \end{itemize}
+  \end{block}
+  
+  \framebreak
+  
+  First, what are the sources of variability?
+  \begin{itemize}
+    \item Variance Tree variety (2-levels)
+    \item Variance from random samples from each tree (4-levels for each variety)
+    \item Variance from the treatment effects (2 levels)
+    \item Variance of the sub-sample*
+    \mode<article>{ *(The interaction of sample and treatment effect defines the sub-sample; this is already accounted for in any interaction effects of sample and treatment, as we'll see later).}
+  \end{itemize}
+  
+  \pagebreak
+  
+  \begin{itemize}
+    \item The larger samples are \alert{nested} in tree variety;
+    \item The subsamples are \alert{nested} in the samples.
+    \item Subsamples get applied one of two treatments (demineralization)
+    \begin{itemize}
+      \item Because each subsample gets exactly one of each treatment, each sample gets both levels of the treatment, and sample and treatment are \alert{crossed}.
+      \item Similarly, each variety of tree gets both levels of treatment, so variety and treatment are \alert{crossed}.
+    \end{itemize}
+    \item The five individual measurements within a single subsample are nested in subsample, or the variety-sample-treatment combinations.
+  \end{itemize}
+
+\framebreak
+
+\begin{itemize}
+  \item Finally, the model. Let Variety, Sample, and dimneralization (treatment) be factors $A$, $B$, and $C$. An appropriate model would be:
+  $$
+  y_{ijkl} = \mu + \alpha_i + \beta_{j(i)} + \gamma_k + (\alpha\gamma)_{ik} + (\beta\gamma)_{jk(i)} + \epsilon_{l(ijk)},
+  $$
+  \item $\alpha_i$ and $\gamma_k$ (and their interaction) are fixed effects, and are fully crossed.
+  \item $\beta_{j(i)}$ is the sample (random) effect, and is nested in variety. It is crossed with treatment, giving an interaction (random) effect: $(\beta\gamma)_{jk(i)}$.
+\end{itemize}
+  
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Example: Cheese tasting (Ex 12.2)}
+  \begin{itemize}
+    \item TODO
   \end{itemize}
 \end{frame}
 
