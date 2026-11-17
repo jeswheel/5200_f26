@@ -31,6 +31,10 @@ figure
 *.synctex.gz
 *.old
 
+fcdae/*
+oehlert2000.pdf
+
+
 *-concordance.tex
 
 hw01Sol.*
