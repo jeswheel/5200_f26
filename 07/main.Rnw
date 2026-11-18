@@ -45,6 +45,17 @@
 \section{Overview}
 
 \begin{frame}[allowframebreaks]{Objectives and overview}
+
+\mode<article>{
+  This section introduces the idea of nesting.
+  At this point, the designs and data start to become a lot more complex, but otherwise the ideas and principles directly follow what we have already discussed this semester.
+  This material really represents the culmination of each of the topics we have covered thus far: randomization, CRDs, Blocking, Random and Mixed effects models, etc.
+  
+  As you study this material, be patient with yourself. Our textbook author readily acknowledges that this material can be difficult to comprehend the first time you see it; the best way to understand this material is practice!
+  
+  In this section, we will start to use data coming from measurement units, rather than needing to aggregate these data by experimental unitl. This is possible with appropriate nesting and use of random effects.
+}
+
   \begin{itemize}
     \item This material is based Chapter~12 on the textbook ``A First Course in Design and Analysis of Experiments" \citep{oehlert2000}.
     \item Chapter outcomes include: 
@@ -84,6 +95,34 @@
 
 \end{frame}
 
+\begin{frame}[allowframebreaks]{Fixed vs Random effects}
+  \begin{itemize}
+    \item Nested factors can be random or fixed.
+    \item A common situation is a random effect, resulting from some king of subsampling.
+    
+    \begin{exampleblock}{Random nested effect}
+    Within brand, we randomly sampled jars. It makes sense for Brand to be fixed, whereas we are not interested in the specific jars we picked, rather we want to use them as a representative of the brand that it is nested in. Thus, $A$ (brand) should be fixed, and the nested factor $B$ should be random.
+    \end{exampleblock}
+    
+    \framebreak
+    
+    \item Nested factors can also be fixed. 
+    
+       \begin{exampleblock}{Fixed nested effect}
+    Consider a compnay with work crews. Each crew consists of four members.
+    
+    \begin{itemize}
+      \item Members are nested in crews
+      \item We get the same four crew members whenever we look at a given crew.
+    \end{itemize}
+    
+    In this case, crew members would naturally be a fixed effect. 
+    
+    \end{exampleblock} 
+    
+  \end{itemize}
+\end{frame}
+
 \begin{frame}[allowframebreaks]{Example: Testing vitamin A content}
 
 \begin{block}{Vitamin A study}
@@ -94,6 +133,8 @@
       \item In total, there are 24 responses (2 per jar, 4 jars per brand, 3 brands).
     \end{itemize}
 \end{block}
+
+\framebreak
 
 \begin{itemize}
   \item In the study design above, there are 3 sources of variation:
@@ -123,43 +164,59 @@
     \item $\beta_{j(i)}$: Random effect of Jar $j$ \textit{nested within} Brand $i$.
     \item $\epsilon_{k(ij)}$: Random error of sample $k$ nested in Jar $j$ and Brand $i$.
     \end{itemize}
+    We have the standard model assumptions of normality and independence of random terms.
   \end{itemize}
 \end{frame}
 
-\begin{frame}[allowframebreaks]{Fixed vs Random effects}
+\section{Nesting in R}
+
+\begin{frame}[allowframebreaks,fragile]{The Nesting Coding in R}
   \begin{itemize}
-    \item Nested factors can be random or fixed.
-    \item A common situation is a random effect, resulting from some king of subsampling.
-    
-    \begin{exampleblock}{Random nested effect}
-    Within brand, we randomly sampled jars. It makes sense for Brand to be fixed, whereas we are not interested in the specific jars we picked, rather we want to use them as a representative of the brand that it is nested in. Thus, $A$ (brand) should be fixed, and the nested factor $B$ should be random.
-    \end{exampleblock}
-    
-    \framebreak
-    
-    \item Nested factors can also be fixed. 
-    
-       \begin{exampleblock}{Fixed nested effect}
-    Consider a compnay with work crews. Each crew consists of four members.
-    
-    \begin{itemize}
-      \item Members are nested in crews
-      \item We get the same four crew members whenever we look at a given crew.
-    \end{itemize}
-    
-    In this case, crew members would naturally be a fixed effect. 
-    
-    \end{exampleblock} 
-    
+    \item How the data are encoded dictates your \texttt{lme4} syntax.
+    \item \textbf{Implicit IDs:} If you number Jars $1, 2, 3, 4$ for Brand A, and $1, 2, 3, 4$ for Brand B, fitting \texttt{(1 | Jar)} is \alert{wrong}. The software assumes Jar 1 is crossed between brands.
+    \item \textbf{Explicit IDs:} If you number Jars uniquely ($1 \dots 8$), \texttt{(1 | Jar)} works perfectly.
   \end{itemize}
+
+<<carrots-example, eval=FALSE>>=
+library(lme4)
+library(lmerTest)
+
+# Assume 'carrots' data is loaded (Oehlert, Ch 12)
+# Brand is Fixed. Jar is Random.
+
+# SCENARIO 1: Implicit IDs (Jars 1-4 repeated in each Brand)
+# You MUST use the interaction operator ':' to nest Jar in Brand
+mod_implicit <- lmer(VitA ~ Brand + (1 | Brand:Jar), data = carrots)
+
+# SCENARIO 2: Explicit IDs (Jars uniquely numbered 1-8)
+# lme4 automatically recognizes the nesting structure 
+mod_explicit <- lmer(VitA ~ Brand + (1 | Jar), data = carrots)
+@
+
 \end{frame}
 
+\begin{frame}[allowframebreaks]{R formula ``shortcuts"}
+  \begin{itemize}
+    \item There are R formula shortcuts. For instance, we have used already:
+    \begin{center}
+      \texttt{A*B} $\implies$ \texttt{A + B + A:B}
+    \end{center}
+    \item Similarly, there is a common nesting shortcut:
+    \begin{center}
+      \texttt{A/B} $\implies$ \texttt{A + A:B}
+    \end{center}
+    \item \textbf{We must be careful with fixed vs random effects!} shortcuts will give you either fixed, or random, but not both:
+    \begin{center}
+      \texttt{(1 | A/B)} $\implies$ \texttt{(1 | A) + (1 | A:B)}
+    \end{center}
+    This may not be what you want if $A$ is fixed and $B$ is a nested, random effect! 
+  \end{itemize}
+\end{frame}
 
 \begin{frame}[allowframebreaks]{Why do we use Nesting?}
   \begin{itemize}
     \item We don't just ``choose" to use a nested model. We use it because the experimental logistics or physical constraints dictate it.
   \end{itemize}
-
     
     \begin{exampleblock}{Example: subsampling}
       A common example is \textbf{subsampling:} Taking smaller units from a larger selected ``bundle" (Carrot example: Brands $\rightarrow$ Jars $\rightarrow$ samples).
@@ -212,7 +269,89 @@
   
 \end{frame}
 
-\section{Crossed and Nested Factors}
+\section{Crossed and Nested Factors: Examples}
+
+\begin{frame}[allowframebreaks,fragile]{Example: Cheese tasting (Ex 12.2)}
+
+\mode<article>{
+  \begin{itemize}
+    \item Cheese manufacturers want to understand how urban and rural consumers rate different types of cheeses. The study design is given below.
+  \end{itemize}
+}
+  
+  \begin{block}{Cheese tasting experiment}
+    \begin{itemize}
+      \item 4 different types of 50-lb \textbf{blocks of cheese} selected.
+      \item The \textbf{raters} are students from a large, introductory food-science class.
+      \item Student \textbf{background} (urban vs rural) identified; 10 students from each background randomly selected.
+      \item Each rater will taste 8 \textbf{bites} of cheese in random order; there are 2 ``bites" of each of the 4 different types (raters don't know this).
+    \end{itemize}
+  \end{block}
+
+\framebreak
+
+What are the sources of variability?
+\begin{itemize}
+  \item Variability due to different cheese \alert{types}.
+  \item Variability due to \alert{background}.
+  \item Variability due to different \alert{raters}.
+  \item Random error across bites.
+\end{itemize}
+  
+\framebreak
+
+\begin{itemize}
+  \item The Raters are \alert{nested} in Backgrounds (i.e., rater 1 has only one of the backgrounds, rural vs urban).
+  \item Samples (or bites) are \alert{nested} in Rater (they don't share bites).
+  \item Each rater sees each cheese type, so they are \alert{crossed}.
+  \item Similarly, each background sees each cheese type, so they are also \alert{crossed}.
+  \item The random error across bites is nested in the Rater-by-Type interaction (and Rater itself is nested in Background).
+\end{itemize}
+  
+  \framebreak
+
+\begin{itemize}
+  \item Finally, the model. The factors are Cheese type (C), Background (B), and Rater (R). The Bites serve as our measurement units (error). An appropriate model would be:
+  $$
+  y_{ijkl} = \mu + \alpha_i + \beta_{j(i)} + \gamma_k + (\alpha\gamma)_{ik} + (\beta\gamma)_{jk(i)} + \epsilon_{l(ijk)},
+  $$
+  \item $\alpha_i$ (background) and $\gamma_k$ (cheese type) are fixed effects, and are fully crossed.
+  \item $\beta_{j(i)}$ is the rater (random) effect, and is nested in background. It is crossed with cheese type, giving an interaction (random) effect: $(\beta\gamma)_{jk(i)}$.
+\end{itemize}
+  
+\framebreak
+
+<<cheese-example, eval=FALSE>>=
+# Assuming 'cheese' data is loaded
+# Type (C) and Background (B) are fixed and crossed.
+# Rater (R) is random, nested in Background (B).
+
+mod_cheese <- lmer(score ~ Type * Background + 
+                     (1 | Background:Rater) + 
+                     (1 | Background:Rater:Type), 
+                   data = cheese)
+
+# (1 | Background:Rater) accounts for the random variance of the raters.
+# (1 | Background:Rater:Type) accounts for the random interaction: 
+#   how individual raters react differently to different cheese types.
+#   The Background is included because of the nesting.
+#   Because we have 2 bites per combination, this can be separated from residual error.
+@
+
+\mode<article>{
+  \begin{itemize}
+    \item Our mathematical model has Rater-by-type interaction, not Rater-by-type-by-background. Why then does the R code show \texttt{(1 | Background:Rater:Type)} rather than \texttt{(1 | Rater:Type)}? 
+    \item This is that same data-encoding trap that we had previously: if each rater is given a unique identifier (e.g., Rater is listed 1--20, rather than 1--10, with repeated values based on background), then we actually \emph{could} use \texttt{(1 | Rater:Type)}. In that case, the full model would be:
+    \begin{center}
+      \texttt{score ~ Type * Background + 
+                     (1 | Rater) + 
+                     (1 | Rater:Type)}
+    \end{center}
+    We need to think carefully about how the data are encoded!
+  \end{itemize}
+}
+
+\end{frame}
 
 \begin{frame}[allowframebreaks]{Designs with Crossed and Nested Factors}
   \begin{itemize}
@@ -274,62 +413,11 @@
   
 \end{frame}
 
-\begin{frame}[allowframebreaks]{Example: Cheese tasting (Ex 12.2)}
-  \begin{itemize}
-    \item TODO
-  \end{itemize}
-\end{frame}
+\begin{frame}[allowframebreaks,fragile]{Gum Example Code in R}
 
-\section{Nesting in R}
-
-\begin{frame}[allowframebreaks,fragile]{The Nesting Coding Trap in R}
-  \begin{itemize}
-    \item When recording nested data, you might number your jars $1, 2, 3, 4$ for Brand A, and $1, 2, 3, 4$ for Brand B.
-    \item \alert{Warning:} If you fit \texttt{(1 | Jar)}, \texttt{lme4} will assume Jar 1 in Brand A is the exact same entity as Jar 1 in Brand B (treating them as crossed).
-    \item \textbf{The Fix:} Use the interaction operator \texttt{:} to explicitly define the unique combinations, or use the nesting shortcut \texttt{/}.
-  \end{itemize}
-
-<<carrots-example, eval=FALSE>>=
-library(lme4)
-library(lmerTest)
-
-# Assume 'carrots' data is loaded (Oehlert, Ch 12)
-# Brand is Fixed. Jar is Random.
-
-# INCORRECT: Treats Jar as crossed with Brand!
-bad_mod <- lmer(VitA ~ Brand + (1 | Jar), data = carrots)
-
-# CORRECT: Explicitly nests Jar within Brand
-mod_carrots <- lmer(VitA ~ Brand + (1 | Brand:Jar), data = carrots)
-
-# ALTERNATIVE CORRECT: shorthand for nesting
-mod_carrots_alt <- lmer(VitA ~ Brand + (1 | Brand/Jar), data = carrots)
-@
-\end{frame}
-
-\section{Crossed and Nested Factors}
-
-\begin{frame}[allowframebreaks]{Combining Crossed and Nested Factors}
-  \begin{itemize}
-    \item Real-world designs often combine both structures. 
-    \item \textbf{Example (Gum Arabic - Oehlert 12.1):} 
-    \begin{itemize}
-      \item We want to test how emulsion shelf life is affected by acacia tree Variety (2 types) and Demineralization treatment (Yes/No).
-      \item We obtain 4 raw gum \textbf{samples} from each \textbf{Variety}. (Samples are nested in Variety).
-      \item Each sample is split into 2 subsamples. One gets Demineralized, the other does not. (Demineralization is \textbf{crossed} with Variety AND crossed with Sample).
-    \end{itemize}
-    \item \textbf{The Model:}
-    $$
-    y_{ijkl} = \mu + \alpha_i + \beta_{j(i)} + \gamma_k + (\alpha\gamma)_{ik} + (\beta\gamma)_{jk(i)} + \epsilon_{l(ijk)}
-    $$
-    \item Notice: Fixed main effects ($\alpha, \gamma$), Random nested effects ($\beta_{j(i)}$), Fixed crossed interaction ($(\alpha\gamma)$), and Random mixed nested interaction ($(\beta\gamma)_{jk(i)}$).
-  \end{itemize}
-\end{frame}
-
-\begin{frame}[allowframebreaks,fragile]{Fitting Crossed + Nested in lme4}
-  \begin{itemize}
-    \item Translating the Gum Arabic design into \texttt{lme4} syntax requires specifying the fixed crossed terms and the random nested terms separately.
-  \end{itemize}
+  %  \begin{itemize}
+  %   \item Translating the Gum Arabic design into \texttt{lme4} syntax requires specifying the fixed crossed terms and the random nested terms separately.
+  % \end{itemize}
 
 <<gum-example, eval=FALSE>>=
 # Assuming 'gum' data is loaded
@@ -345,6 +433,19 @@ mod_gum <- lmer(ShelfLife ~ Variety * Demin +
 # (1 | Variety:Sample:Demin) accounts for the random interaction: 
 # how individual samples react differently to demineralization.
 @
+
+\end{frame}
+
+\section{Building models}
+
+\begin{frame}[allowframebreaks]{Recommendations for building models}
+  \begin{itemize}
+    \item Building designs and models for nested, mixed-effects models is not easy, and takes some practice. Some recommended things to keep in mind:
+    \item \textbf{Identify sources of variability}. These are things that we think might be important to account for, both intentional treatments and also natural structure of the data. These become the \alert{Factors} in our model.
+    \item \textbf{Determine Nested vs Crossed}. Identify which (if any) of the factors are nested, and which are crossed.
+    \item \textbf{Identify fixed vs Random Effects}. TODO
+    \item TODO.
+  \end{itemize}
 \end{frame}
 
 \section{Hasse Diagrams}
