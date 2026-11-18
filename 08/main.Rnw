@@ -21,7 +21,7 @@
 % \newcommand\answer[2]{\textcolor{red}{#2}} % to show answers
  \newcommand\answer[2]{#1} % to show blank space
 
-\title{\vspace{2mm} \link{https://jeswheel.github.io/5200_f26/}{Stat 5200: Analysis of Designed Experiments}}
+\title{\vspace{2mm} \link{https://jeswheel.github.io/5200_f26/}{Split-Plot Designs}}
 \author{Jesse Wheeler}
 \date{}
 
@@ -45,12 +45,201 @@
 \section{Overview}
 
 \begin{frame}[allowframebreaks]{Objectives and overview}
+  \mode<article>{
+  This section introduces split-plot designs, which are heavily used when logistical or cost constraints prevent us from fully crossing and randomizing our factors in a standard way.
+  Building on our knowledge of nesting and random effects, split-plot designs introduce the idea of having more than one size of experimental unit and more than one randomization in the same experiment.
+}
   \begin{itemize}
-    \item This material is based Chapter~12 on the textbook ``A First Course in Design and Analysis of Experiments" \citep{oehlert2000}.
-    \item Chapter outcomes include: 
+    \item This material is based on Chapter~16 of the textbook ``A First Course in Design and Analysis of Experiments" \citep{oehlert2000}.
+    \item Chapter outcomes include:
+      \begin{itemize}
+        \item Students will be able to identify split-plot designs and explain how they differ from CRD, RCB, and Nested designs.
+        \item Students will be able to distinguish between whole-plot factors and split-plot factors.
+        \item Students will understand how to formulate mixed-effects models that account for multiple randomizations.
+        \item Students will be able to analyze split-plot data using \texttt{lme4} in R.
+      \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\section{What Is a Split Plot?}
+
+\begin{frame}[allowframebreaks]{The Need for Split Plots}
+  \begin{itemize}
+    \item We generally choose a split-plot design when some factors are more difficult or expensive to vary than others.
+    \item \textbf{Key Feature 1:} There are \alert{two sizes of experimental units}.
+    \item \textbf{Key Feature 2:} There are \alert{two separate randomizations}.
+  \end{itemize}
+  \begin{block}{Definition: Whole Plots and Split Plots}
     \begin{itemize}
-      \item TODO
+      \item \textbf{Whole plots:} The larger experimental units used for the first randomization.
+      \item \textbf{Split plots:} The smaller units (subdivisions of the whole plots) used for the second randomization.
     \end{itemize}
+  \end{block}
+  \framebreak
+  \begin{exampleblock}{Example: Corn Varieties and Irrigation}
+    We want to determine the effects of 4 corn varieties and 3 levels of irrigation on yield.
+    \begin{itemize}
+      \item Sprinklers irrigate large areas. It is logistically difficult to use small units for irrigation.
+      \item \textbf{Whole plots:} Divide land into 6 large plots. Randomly assign irrigation levels (2 plots per level). Irrigation is the \alert{whole-plot factor}.
+      \item \textbf{Split plots:} Divide each whole plot into 4 smaller split plots. Randomly assign the 4 corn varieties within each whole plot. Variety is the \alert{split-plot factor}.
+    \end{itemize}
+  \end{exampleblock}
+  
+  \framebreak
+  
+  \begin{itemize}
+    \item A split plot is essentially a restricted randomization.
+    \item All split plots within a given whole plot must receive the \emph{same level} of the whole-plot factor.
+    \item \textbf{Trade-off:} Because they act as blocks for the split plots, comparisons involving the split-plot factor are generally \alert{more precise} than comparisons involving the whole-plot factor.
+  \end{itemize}
+  \mode<article>{
+  You cannot distinguish a split-plot design from a completely randomized factorial design just by looking at a table of factor levels and responses.
+  You \emph{must} know how the randomization was done! Always follow the randomization to identify the units.
+}
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Example: Piano Ratings}
+  \begin{block}{Testing Pianos}
+    A music student wants to evaluate pianos: a baby grand and a concert grand from each of 4 manufacturers.
+    \begin{itemize}
+      \item 40 students divided into 8 panels of 5 students each.
+      \item 2 panels randomly assigned to each manufacturer.
+      \item Each panel goes to a concert hall for a session. They listen to the baby grand and concert grand of their assigned manufacturer in a random order.
+    \end{itemize}
+  \end{block}
+
+  \framebreak
+
+  \textbf{Identify the Split-Plot Structure:}
+  \begin{itemize}
+    \item What are the whole plots? \answer{\textbf{The Panels.}}{}
+    \item What is the whole-plot factor? \answer{\textbf{Manufacturer.}}{}
+    \item What are the split plots? \answer{\textbf{The listening sessions.}}{}
+    \item What is the split-plot factor? \answer{\textbf{Piano Type (Baby vs. Concert).}}{}
+  \end{itemize}
+  
+  \mode<article>{
+  Notice that the individual panelists are \emph{measurement units}, not experimental units. 
+  The response for any session must be some summary (like an average) of the 5 panelist ratings, or they must be modeled with an additional nested error term.
+}
+
+\end{frame}
+
+\section{Analysis of a Split Plot}
+
+\begin{frame}[allowframebreaks]{Modeling the Split Plot}
+
+  \begin{itemize}
+    \item \textbf{Golden Rule:} We assume that there is a random effect for \alert{every randomization}.
+    \item For a basic split-plot, we have:
+    \begin{enumerate}
+      \item A random value for each whole plot (Whole-Plot Error).
+      \item A random value for each split plot (Split-Plot Error).
+    \end{enumerate}
+  \end{itemize}
+  \framebreak
+  Let factor $A$ be the whole-plot factor, and factor $B$ be the split-plot factor.
+$$
+y_{ijk} = \mu + \alpha_i + \eta_{k(i)} + \beta_j + (\alpha\beta)_{ij} + \epsilon_{k(ij)}
+$$
+
+  \begin{itemize}
+    \item $\alpha_i$: Fixed effect of whole-plot factor $A$.
+    \item $\eta_{k(i)}$: Random error for whole plot $k$ (nested in $A$). \textbf{(Whole-Plot Error)}
+    \item $\beta_j$: Fixed effect of split-plot factor B.
+    \item $(\alpha\beta)_{ij}$: Interaction between whole-plot and split-plot factors.
+    \item $\epsilon_{k(ij)}$: Random error for the split plot. 
+    \textbf{(Split-Plot Error)}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Decomposing the Variation}
+
+  \begin{itemize}
+    \item A useful heuristic is to split the total variation into two bundles:
+    \begin{enumerate}
+      \item \textbf{Between Whole Plots:} Variation due to effects that impact complete whole plots (Whole-plot treatments, whole-plot blocks, whole-plot error).
+      \item \textbf{Within Whole Plots (Between Split Plots):} Variation due to effects acting on individual split plots (Split-plot treatments, interaction, split-plot error).
+    \end{enumerate}
+  \end{itemize}
+  \mode<article>{
+Notice why the interaction between the whole- and split-plot factors sits at the split-plot level: The interaction describes how the split-plot treatment effects change across levels of the whole-plot factor.
+Because this involves changing levels of the split-plot factor, it must be evaluated at the lower (split-plot) level.
+}
+\end{frame}
+
+\section{Split Plots in R}
+
+\begin{frame}[allowframebreaks,fragile]{Example: Anxiety, Tension, and Memory}
+
+  \begin{block}{Memory Experiment}
+    12 subjects are randomly assigned to one of 4 Anxiety-Tension combinations (Low/High Anxiety $\times$ Low/High Tension).
+    \begin{itemize}
+      \item Each subject does 4 memory trials testing different types of memory.
+      \item Trial type (1-4) is randomized to the 4 trials for a given subject.
+    \end{itemize}
+  \end{block}
+  
+  \framebreak
+  
+  \begin{itemize}
+    \item \textbf{Whole plots:} Subjects.
+    \item \textbf{Whole-plot factors:} Anxiety and Tension.
+    \item \textbf{Split plots:} Trials within subjects.
+    \item \textbf{Split-plot factor:} Memory Type.
+  \end{itemize}
+  
+<<memory-example, eval=FALSE>>=
+library(lme4)
+library(lmerTest)
+# Assume 'memory' data is loadedSubject is uniquely numbered 1-12Anxiety, Tension, and Type are fixed factors
+
+mod_memory <- lmer(
+  Errors ~ Anxiety * Tension * Type + (1 | Subject),
+  data = memory
+)
+anova(mod_memory)
+@
+
+  \framebreak
+
+  \begin{itemize}
+    \item By using \texttt{(1 | Subject)}, we explicitly add the \alert{Whole-Plot Error} term $\eta_{k(i)}$.
+    \item The residual error automatically handles the \alert{Split-Plot Error} term $\epsilon_{k(ij)}$.
+    \item \textbf{Important:} Remember from the nested module—because Subject is given a unique ID (Explicit IDs: 1 to 12), we don't need to write \texttt{(1 | Anxiety:Tension:Subject)}.
+  \end{itemize}
+\end{frame}
+
+\section{Extensions}
+
+\begin{frame}[allowframebreaks]{Fancier Split Plots}
+
+  \begin{itemize}
+    \item Just like factorial designs, split plots can be extended to fit logistical needs:
+    \item \textbf{Blocking at the whole-plot level:} Often, whole plots are grouped into blocks (e.g., RCB) before treatments are assigned.
+    \item \textbf{Split-Split Plots:} We can split the units again!
+  \end{itemize}
+  
+  \framebreak
+  
+  \begin{block}{Split-Split Plot Example: Wetland Weeds}
+    \begin{itemize}
+      \item \textbf{Whole plot (Tray):} Assigned a Nitrogen level.
+      \item \textbf{Split plot (Wetland):} Assigned a Weed treatment.
+      \item \textbf{Split-Split plot (Half-Wetland):} Assigned a Clipping treatment.
+    \end{itemize}
+    This requires \textbf{three} sizes of experimental units and \textbf{three} randomizations!
+  \end{block}
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Strip Plots and Repeated Measures}
+
+  \begin{itemize}
+    \item \textbf{Strip Plots (Split Block):} Occurs when the units \alert{cross} rather than nest. 
+    E.g., You randomize Tool Brand to Lathes (Rows), and Material Supplier to Days (Columns). 
+    Both are restricted randomizations, but they cross each other.
+    \item \textbf{Repeated Measures:} Looks like a split-plot (Subjects = Whole plots, Time = Split plots), but \alert{lacks a randomization} at the split-plot level because time cannot be randomized. 
+    Analyzing it like a split-plot requires specific assumptions about the correlation structure (e.g., compound symmetry).
   \end{itemize}
 \end{frame}
 
