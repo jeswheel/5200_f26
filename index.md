@@ -32,9 +32,9 @@ PREREQ: Earn a minimum grade of C- one of the following:
 4. [Factorial Designs](04/index.html)
 5. [Block Designs](05/index.html)
 6. [Random and Mixed Effects Models](06/index.html)
+7. [Designs with Nested Factors](07/index.html)
 
 <!--
-7. [Designs with Nested Factors](07/index.html)
 8. [Block Designs](08/index.html)
 -->
 
