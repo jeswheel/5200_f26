@@ -53,7 +53,8 @@
   
   As you study this material, be patient with yourself. Our textbook author readily acknowledges that this material can be difficult to comprehend the first time you see it; the best way to understand this material is practice!
   
-  In this section, we will start to use data coming from measurement units, rather than needing to aggregate these data by experimental unitl. This is possible with appropriate nesting and use of random effects.
+  In this section, we will start to use data coming from measurement units, rather than needing to aggregate these data by experimental unit.
+  This is possible with appropriate nesting and use of random effects.
 }
 
   \begin{itemize}
@@ -98,7 +99,7 @@
 \begin{frame}[allowframebreaks]{Fixed vs Random effects}
   \begin{itemize}
     \item Nested factors can be random or fixed.
-    \item A common situation is a random effect, resulting from some king of subsampling.
+    \item A common situation is a random effect, resulting from some kind of subsampling.
     
     \begin{exampleblock}{Random nested effect}
     Within brand, we randomly sampled jars. It makes sense for Brand to be fixed, whereas we are not interested in the specific jars we picked, rather we want to use them as a representative of the brand that it is nested in. Thus, $A$ (brand) should be fixed, and the nested factor $B$ should be random.
@@ -109,7 +110,7 @@
     \item Nested factors can also be fixed. 
     
        \begin{exampleblock}{Fixed nested effect}
-    Consider a compnay with work crews. Each crew consists of four members.
+    Consider a company with work crews. Each crew consists of four members.
     
     \begin{itemize}
       \item Members are nested in crews
@@ -126,7 +127,7 @@
 \begin{frame}[allowframebreaks]{Example: Testing vitamin A content}
 
 \begin{block}{Vitamin A study}
-    Suppose you are concerned about differences in Vitamin A content of within jars of baby food carrots. Our designed study: 
+    Suppose you are concerned about differences in Vitamin A content within jars of baby food carrots. Our designed study: 
     \begin{itemize}
       \item Go to the grocery store, randomly select 4 jars from each of the 3 brands of baby food that are sold in our region.
       \item Take two samples from each jar and measure the vitamin A in every sample.
@@ -253,7 +254,7 @@ mod_explicit <- lmer(VitA ~ Brand + (1 | Jar), data = carrots)
   \begin{exampleblock}{Nested Design: pig pens}
     In the same design, there are 3 sources of variation: Treatment effect $(A)$, pen effect $(B)$, and individual pig effect (error).
     
-    Rather than aggregating MUs, we could instead use a nested model: pen ($B$) is nested in feed type ($A$) because Pen 1 only gets one level of the treatment
+    Rather than aggregating MUs, we could instead use a nested model: pen ($B$) is nested in feed type ($A$) because Pen 1 only gets one level of the treatment.
   \end{exampleblock}
   
   \framebreak
@@ -380,7 +381,7 @@ mod_cheese <- lmer(score ~ Type * Background +
   
   First, what are the sources of variability?
   \begin{itemize}
-    \item Variance Tree variety (2-levels)
+    \item Variance from Tree variety (2-levels)
     \item Variance from random samples from each tree (4-levels for each variety)
     \item Variance from the treatment effects (2 levels)
     \item Variance of the sub-sample*
@@ -403,7 +404,7 @@ mod_cheese <- lmer(score ~ Type * Background +
 \framebreak
 
 \begin{itemize}
-  \item Finally, the model. Let Variety, Sample, and dimneralization (treatment) be factors $A$, $B$, and $C$. An appropriate model would be:
+  \item Finally, the model. Let Variety, Sample, and demineralization (treatment) be factors $A$, $B$, and $C$. An appropriate model would be:
   $$
   y_{ijkl} = \mu + \alpha_i + \beta_{j(i)} + \gamma_k + (\alpha\gamma)_{ik} + (\beta\gamma)_{jk(i)} + \epsilon_{l(ijk)},
   $$
@@ -443,8 +444,7 @@ mod_gum <- lmer(ShelfLife ~ Variety * Demin +
     \item Building designs and models for nested, mixed-effects models is not easy, and takes some practice. Some recommended things to keep in mind:
     \item \textbf{Identify sources of variability}. These are things that we think might be important to account for, both intentional treatments and also natural structure of the data. These become the \alert{Factors} in our model.
     \item \textbf{Determine Nested vs Crossed}. Identify which (if any) of the factors are nested, and which are crossed.
-    \item \textbf{Identify fixed vs Random Effects}. TODO
-    \item TODO.
+    \item \textbf{Identify fixed vs Random Effects}. Are the specific sources of variance of interest, or are they more of a nuisance / sample of larger population?
   \end{itemize}
 \end{frame}
 
@@ -453,8 +453,8 @@ mod_gum <- lmer(ShelfLife ~ Variety * Demin +
 \begin{frame}[allowframebreaks]{Visualizing Design: Hasse Diagrams}
   \begin{itemize}
     \item As designs get complex, keeping track of what is nested inside what, and what crosses with what, becomes incredibly difficult.
-    \item \textbf{Hasse Diagrams} (Lohr 1995) are graphical representations of a model showing the exact nesting/crossing and random/fixed structure.
-    \item While historically used to manually derive Expected Mean Squares (EMS), today their primary value is helping you build your \texttt{lmer} formula without making structural mistakes.
+    \item \textbf{Hasse Diagrams} \citep{Lohr95} are graphical representations of a model showing the exact nesting/crossing and random/fixed structure.
+    \item While historically used to manually derive F tests and random effects estimates, they are useful for building \texttt{lmer} formulas and understanding designs.
   \end{itemize}
 \end{frame}
 
