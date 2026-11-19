@@ -21,7 +21,7 @@
 % \newcommand\answer[2]{\textcolor{red}{#2}} % to show answers
  \newcommand\answer[2]{#1} % to show blank space
 
-\title{\vspace{2mm} \link{https://jeswheel.github.io/5200_f26/}{Stat 5200: Cost Optimization in Experimental Design}}
+\title{\vspace{2mm} \link{https://jeswheel.github.io/5200_f26/}{Stat 5200, Module 3: Cost Optimization in Experimental Design}}
 \author{Jesse Wheeler}
 \date{}
 
@@ -46,7 +46,7 @@
       \item Understanding how variance components affect the precision of treatment means.
       \item Formulating a cost function for two-stage/nested designs.
       \item Deriving the optimal sample size (Measurement Units per Experimental Unit) to maximize statistical power on a fixed budget.
-      \item Applying optimum allocation theory to real-world constraints.
+      \item Combining optimal allocation with power analysis to determine total sample size.
     \end{itemize}
   \end{itemize}
 \end{frame}
@@ -56,7 +56,7 @@
 \begin{frame}[allowframebreaks]{Deriving the Variance of a Treatment Mean}
   \begin{itemize}
     \item To understand where the variance formula comes from, we start with the linear statistical model for a nested design (subsampling):
-    $$Y_{ijk} = \mu + \alpha_i + \beta_{ij} + \delta_{ijk} $$
+    $$ y_{ijk} = \mu + \alpha_i + \beta_{ij} + \epsilon_{ijk} $$
     \item Where:
     \begin{itemize}
       \item $\mu$ is the overall grand mean (fixed).
@@ -67,30 +67,30 @@
 
   \framebreak
 
-    \item The treatment mean ($\bar{Y}_{i..}$) is the average of all observations in group $i$, which has $b$ EUs and $n$ MUs per EU:
-    $$ \bar{Y}_{i..} = \frac{1}{bn} \sum_{j=1}^{b} \sum_{k=1}^{n} Y_{ijk} $$
+    \item The treatment mean ($\bar{y}_{i..}$) is the average of all observations in group $i$, which has $b$ EUs and $n$ MUs per EU:
+    $$ \bar{y}_{i..} = \frac{1}{bn} \sum_{j=1}^{b} \sum_{k=1}^{n} y_{ijk} $$
     \item Substituting the model into this average yields:
-    $$ \bar{Y}_{i..} = \mu + \tau_i + \left( \frac{1}{b} \sum_{j=1}^{b} \beta_{ij} \right) + \left( \frac{1}{bn} \sum_{j=1}^{b} \sum_{k=1}^{n} \epsilon_{ijk} \right)$$
+    $$ \bar{y}_{i..} = \mu + \alpha_i + \left( \frac{1}{b} \sum_{j=1}^{b} \beta_{ij} \right) + \left( \frac{1}{bn} \sum_{j=1}^{b} \sum_{k=1}^{n} \epsilon_{ijk} \right) $$
 
   \framebreak
 
-    \item Next, we apply the variance operator, $Var(\bar{Y}_{i..})$. 
+    \item Next, we apply the variance operator, $Var(\bar{y}_{i..})$. 
     \item Because $\mu$ and $\alpha_i$ are constants, their variance is 0. 
-    \item Because the errors ($\epsilon_{ij}$ and $\delta_{ijk}$) are independent, the variance of their sum is the sum of their variances:
-    $$ \Var(\bar{Y}_{i..}) = \Var\left( \frac{1}{b} \sum_{j=1}^{b} \beta_{ij} \right) + \Var\left( \frac{1}{bn} \sum_{j=1}^{b} \sum_{k=1}^{n} \epsilon_{ijk} \right) $$
+    \item Because the errors ($\beta_{ij}$ and $\epsilon_{ijk}$) are independent, the variance of their sum is the sum of their variances:
+    $$ Var(\bar{y}_{i..}) = Var\left( \frac{1}{b} \sum_{j=1}^{b} \beta_{ij} \right) + Var\left( \frac{1}{bn} \sum_{j=1}^{b} \sum_{k=1}^{n} \epsilon_{ijk} \right) $$
 
   \framebreak
 
     \item Using the fundamental property of variance $Var(cX) = c^2 Var(X)$:
     \item \textbf{EU Component:}
-    $$ \Var\left( \frac{1}{b} \sum_{j=1}^{b} \beta_{ij} \right) = \frac{1}{b^2} \sum_{j=1}^{b} \Var(\beta_{ij}) = \frac{1}{b^2} (b \cdot \sigma^2_{EU}) = \frac{\sigma^2_{EU}}{b} $$
+    $$ Var\left( \frac{1}{b} \sum_{j=1}^{b} \beta_{ij} \right) = \frac{1}{b^2} \sum_{j=1}^{b} Var(\beta_{ij}) = \frac{1}{b^2} (b \cdot \sigma^2_{EU}) = \frac{\sigma^2_{EU}}{b} $$
     \item \textbf{MU Component:}
-    $$ \Var\left( \frac{1}{bn} \sum_{j=1}^{b} \sum_{k=1}^{n} \epsilon_{ijk} \right) = \frac{1}{(bn)^2} \sum_{j=1}^{b} \sum_{k=1}^{n} \Var(\delta_{ijk}) = \frac{1}{(bn)^2} (bn \cdot \sigma^2_{MU}) = \frac{\sigma^2_{MU}}{bn} $$
+    $$ Var\left( \frac{1}{bn} \sum_{j=1}^{b} \sum_{k=1}^{n} \epsilon_{ijk} \right) = \frac{1}{(bn)^2} \sum_{j=1}^{b} \sum_{k=1}^{n} Var(\epsilon_{ijk}) = \frac{1}{(bn)^2} (bn \cdot \sigma^2_{MU}) = \frac{\sigma^2_{MU}}{bn} $$
     
   \framebreak
 
     \item Combining these components provides the final formula for the variance of the treatment mean:
-    $$ Var(\bar{Y}_{i..}) = \frac{\sigma^2_{EU}}{b} + \frac{\sigma^2_{MU}}{b \cdot n} $$
+    $$ Var(\bar{y}_{i..}) = \frac{\sigma^2_{EU}}{b} + \frac{\sigma^2_{MU}}{b \cdot n} $$
   \end{itemize}
 \end{frame}
 
@@ -168,11 +168,27 @@
   \end{itemize}
 \end{frame}
 
+\section{Combining with Power Analysis}
+
+\begin{frame}[allowframebreaks]{From Allocation to Total Sample Size}
+  \begin{itemize}
+    \item Optimum allocation gives us the ideal \textbf{shape} of our design (the ratio $n$), but it does not tell us the \textbf{scale} (the total number of Experimental Units, $b$) needed to actually detect an effect.
+    \item To find $b$, we combine the optimal $n$ with a traditional power analysis.
+    \item For comparing two treatments, the approximate number of EUs required \emph{per treatment group} is:
+    $$ b \approx \frac{2(Z_{1-\alpha/2} + Z_{power})^2}{\Delta^2} \left( \sigma^2_{EU} + \frac{\sigma^2_{MU}}{n} \right) $$
+    \item Where:
+    \begin{itemize}
+      \item $\Delta$ is the minimum detectable difference between the two treatment means.
+      \item $Z_{1-\alpha/2}$ and $Z_{power}$ are the standard normal quantiles for the chosen significance level (e.g., 0.05) and desired statistical power (e.g., 80\%).
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
 \section{Applied Example in R}
 
-\begin{frame}[fragile, allowframebreaks]{R Implementation}
+\begin{frame}[fragile, allowframebreaks]{Step 1: Find Optimal Allocation}
   \begin{itemize}
-    \item Suppose we fit a mixed model on previous pig data and extracted the variance components using \texttt{lme4}.
+    \item Suppose we fit a mixed model on previous pig data and extracted the variance components:
     \item $\sigma^2_{pen} = 214.5$, $\sigma^2_{pig} = 796.3$.
     \item A single pen costs \$500 to rent, and a pig costs \$100 to purchase and feed.
   \end{itemize}
@@ -188,14 +204,34 @@ cost_pig <- 100
 
 # Calculate optimal MU per EU
 n_opt <- sqrt((var_pig * cost_pen) / (var_pen * cost_pig))
-n_opt
-
-# Round to nearest practical integer
-round(n_opt)
+n_opt <- round(n_opt) 
+n_opt # Optimal pigs per pen
 @
+\end{frame}
 
+\begin{frame}[fragile, allowframebreaks]{Step 2: Power Analysis for Total Units}
   \begin{itemize}
-    \item \textbf{Conclusion:} The optimal design is 4 pigs per pen. To maximize statistical power, the researcher should configure their study into "4-pig pen units" and purchase as many of these units as their grant budget allows.
+    \item We know we need 4 pigs per pen. Now, how many pens do we need to detect a weight difference of $\Delta = 25$ lbs with 80\% power at $\alpha = 0.05$?
+  \end{itemize}
+
+<<power_analysis, size='small'>>=
+# Power analysis parameters
+delta <- 25
+alpha <- 0.05
+power <- 0.80
+
+# Z-scores
+z_alpha <- qnorm(1 - alpha/2)
+z_power <- qnorm(power)
+
+# Calculate b (pens per treatment)
+var_effective <- var_pen + (var_pig / n_opt)
+b <- 2 * (z_alpha + z_power)^2 * var_effective / delta^2
+
+ceiling(b) # Round up to whole pens
+@
+  \begin{itemize}
+    \item \textbf{Conclusion:} To maximize statistical power cost-effectively, the researcher should design the study using 4 pigs per pen, and recruit a total of 11 pens per treatment group.
   \end{itemize}
 \end{frame}
 
