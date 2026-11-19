@@ -33,6 +33,7 @@ Can this framework be updated / modified?
 
 **Future changes**: 
 
+- Fixed main.Rnw slide titles, so they all don't just say the class, but identify the lecture slides.
 - In early lectures, give more concrete examples of EUs vs MUs, and a simulation study demonstrating why we need to aggregate over the MUs.
 - (CONSIDER) I'm considering putting a few examples of designs right-off the bat. Like instead of a CRD, then a month of ANOVA, then RCBD, what about doing a CRD, show examples of other designs (like RCBD), then focus on ANOVA of CRD? It's not as continuous, but I do think it helps put material in context.
 - Less time worrying about definition of grand mean; perhaps just introduce the main two approaches (weighted mean, and reference group).
