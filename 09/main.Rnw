@@ -1,0 +1,260 @@
+\input{../header}
+
+% \mode<beamer>{\usetheme{AnnArbor}}
+\mode<beamer>{\usetheme{metropolis}}
+\mode<beamer>{\metroset{block=fill}}
+% \mode<beamer>{\usecolortheme{wolverine}}
+
+\mode<beamer>{\setbeamertemplate{section in toc}[sections numbered]}
+\mode<beamer>{\setbeamertemplate{subsection in toc}[subsections numbered indented]}
+
+% \mode<beamer>{\usefonttheme{serif}}
+\mode<beamer>{\setbeamertemplate{footline}}
+\mode<beamer>{\setbeamertemplate{footline}[frame number]}
+\mode<beamer>{\setbeamertemplate{frametitle continuation}[from second][\insertcontinuationcountroman]}
+\mode<beamer>{\setbeamertemplate{navigation symbols}{}}
+
+\mode<handout>{\pgfpagesuselayout{2 on 1}[letterpaper,border shrink=5mm]}
+
+\newcommand\CHAPTER{3}
+% \newcommand\answer[2]{\textcolor{blue}{#2}} % to show answers
+% \newcommand\answer[2]{\textcolor{red}{#2}} % to show answers
+ \newcommand\answer[2]{#1} % to show blank space
+
+\title{\vspace{2mm} \link{https://jeswheel.github.io/5200_f26/}{Stat 5200: Cost Optimization in Experimental Design}}
+\author{Jesse Wheeler}
+\date{}
+
+\setbeamertemplate{footline}[frame number]
+
+<<setup,include=FALSE,cache=FALSE,purl=FALSE,child="../setup.Rnw">>=
+@
+
+\begin{document}
+
+\maketitle
+
+\mode<article>{\tableofcontents}
+
+\section{Overview}
+
+\begin{frame}[allowframebreaks]{Objectives and overview}
+  \begin{itemize}
+    \item This supplement covers optimal resource allocation in nested experimental designs.
+    \item Module outcomes include: 
+    \begin{itemize}
+      \item Understanding how variance components affect the precision of treatment means.
+      \item Formulating a cost function for two-stage/nested designs.
+      \item Deriving the optimal sample size (Measurement Units per Experimental Unit) to maximize statistical power on a fixed budget.
+      \item Applying optimum allocation theory to real-world constraints.
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\section{Variance in Nested Designs}
+
+\begin{frame}[allowframebreaks]{Deriving the Variance of a Treatment Mean}
+  \begin{itemize}
+    \item To understand where the variance formula comes from, we start with the linear statistical model for a nested design (subsampling):
+    $$Y_{ijk} = \mu + \alpha_i + \beta_{ij} + \delta_{ijk} $$
+    \item Where:
+    \begin{itemize}
+      \item $\mu$ is the overall grand mean (fixed).
+      \item $\alpha_i$ is the effect of the $i$-th treatment (fixed).
+      \item $\beta_{ij} \sim N(0, \sigma^2_{EU})$ is the random error for the $j$-th Experimental Unit (EU).
+      \item $\epsilon_{ijk} \sim N(0, \sigma^2_{MU})$ is the random error for the $k$-th Measurement Unit (MU) nested within the EU.
+    \end{itemize}
+
+  \framebreak
+
+    \item The treatment mean ($\bar{Y}_{i..}$) is the average of all observations in group $i$, which has $b$ EUs and $n$ MUs per EU:
+    $$ \bar{Y}_{i..} = \frac{1}{bn} \sum_{j=1}^{b} \sum_{k=1}^{n} Y_{ijk} $$
+    \item Substituting the model into this average yields:
+    $$ \bar{Y}_{i..} = \mu + \tau_i + \left( \frac{1}{b} \sum_{j=1}^{b} \beta_{ij} \right) + \left( \frac{1}{bn} \sum_{j=1}^{b} \sum_{k=1}^{n} \epsilon_{ijk} \right)$$
+
+  \framebreak
+
+    \item Next, we apply the variance operator, $Var(\bar{Y}_{i..})$. 
+    \item Because $\mu$ and $\alpha_i$ are constants, their variance is 0. 
+    \item Because the errors ($\epsilon_{ij}$ and $\delta_{ijk}$) are independent, the variance of their sum is the sum of their variances:
+    $$ \Var(\bar{Y}_{i..}) = \Var\left( \frac{1}{b} \sum_{j=1}^{b} \beta_{ij} \right) + \Var\left( \frac{1}{bn} \sum_{j=1}^{b} \sum_{k=1}^{n} \epsilon_{ijk} \right) $$
+
+  \framebreak
+
+    \item Using the fundamental property of variance $Var(cX) = c^2 Var(X)$:
+    \item \textbf{EU Component:}
+    $$ \Var\left( \frac{1}{b} \sum_{j=1}^{b} \beta_{ij} \right) = \frac{1}{b^2} \sum_{j=1}^{b} \Var(\beta_{ij}) = \frac{1}{b^2} (b \cdot \sigma^2_{EU}) = \frac{\sigma^2_{EU}}{b} $$
+    \item \textbf{MU Component:}
+    $$ \Var\left( \frac{1}{bn} \sum_{j=1}^{b} \sum_{k=1}^{n} \epsilon_{ijk} \right) = \frac{1}{(bn)^2} \sum_{j=1}^{b} \sum_{k=1}^{n} \Var(\delta_{ijk}) = \frac{1}{(bn)^2} (bn \cdot \sigma^2_{MU}) = \frac{\sigma^2_{MU}}{bn} $$
+    
+  \framebreak
+
+    \item Combining these components provides the final formula for the variance of the treatment mean:
+    $$ Var(\bar{Y}_{i..}) = \frac{\sigma^2_{EU}}{b} + \frac{\sigma^2_{MU}}{b \cdot n} $$
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Precision of Treatment Means}
+  \begin{itemize}
+    \item In a nested design, our goal is often to maximize the precision (minimize the variance) of the estimated treatment effects.
+    \item Using the formula we just derived, let $V$ be the variance of the treatment mean:
+    $$ V = \frac{\sigma^2_{EU}}{b} + \frac{\sigma^2_{MU}}{b \cdot n} $$
+    
+  \framebreak
+  
+    \item \emph{EX:} If EUs are pens and MUs are pigs, this is:
+    $$ V = \frac{\sigma^2_{pen}}{b} + \frac{\sigma^2_{pig}}{b \cdot n} $$
+    \item If our only constraint is the total number of MUs ($K = b \times n$), then rewriting the variance gives:
+    $$ V = \frac{n \cdot \sigma^2_{pen}}{K} + \frac{\sigma^2_{pig}}{K} $$
+    \item Because $K$ and the variance components are fixed, the only way to minimize $V$ is to minimize $n$.
+    \item Thus, if EUs are ``free", the optimal design is $n=1$ MU per EU (which reduces the nested design to a Completely Randomized Design).
+  \end{itemize}
+\end{frame}
+
+\section{The Cost Function}
+
+\begin{frame}[allowframebreaks]{Budget Constraints}
+  \begin{itemize}
+    \item In reality, Experimental Units (like pens, hospital rooms, or field plots) are rarely free.
+    \item We must optimize our study based on a fixed financial budget ($C$).
+    \item Let $C_{EU}$ be the fixed cost to run one EU (e.g., rent and maintenance for a pen).
+    \item Let $C_{MU}$ be the marginal cost to add one MU to an existing EU (e.g., purchase and feed for a pig).
+    \item The total budget for one treatment group is the sum of these costs:
+    $$ C = b \cdot C_{EU} + (b \cdot n) \cdot C_{MU} $$
+  \end{itemize}
+\end{frame}
+
+\section{Optimum Allocation}
+
+\begin{frame}[allowframebreaks]{Minimizing Variance for a Fixed Cost}
+  \begin{itemize}
+    \item We want to find the optimal number of MUs per EU ($n$) that minimizes variance $V$, subject to the cost constraint $C$.
+    \item First, isolate $b$ in the cost equation:
+    $$ b = \frac{C}{C_{EU} + n \cdot C_{MU}} $$
+    \item Substitute this into the variance equation:
+    $$ V = \left( \sigma^2_{EU} + \frac{\sigma^2_{MU}}{n} \right) \cdot \frac{C_{EU} + n \cdot C_{MU}}{C} $$
+    
+  \framebreak
+  
+    \item Expanding the terms yields:
+    $$ V = \frac{1}{C} \left[ \sigma^2_{EU}C_{EU} + n \sigma^2_{EU}C_{MU} + \frac{\sigma^2_{MU}C_{EU}}{n} + \sigma^2_{MU}C_{MU} \right] $$
+    \item To minimize variance, we take the derivative of $V$ with respect to $n$ and set it to zero. The constant terms drop out:
+    $$ \frac{dV}{dn} = \frac{1}{C} \left[ \sigma^2_{EU}C_{MU} - \frac{\sigma^2_{MU}C_{EU}}{n^2} \right] = 0 $$
+    
+  \framebreak
+  
+    \item Solving for $n$ gives the optimum allocation formula:
+    $$ n = \sqrt{ \frac{\sigma^2_{MU} \cdot C_{EU}}{\sigma^2_{EU} \cdot C_{MU}} } $$
+    
+    \mode<article>{
+    This formula elegantly balances biological variation with financial cost in experimental design. Notice the intuition of the formula:
+    \begin{itemize}
+        \item As EU cost ($C_{EU}$) gets more expensive, the numerator grows, driving $n$ up (you must pack more MUs into the few EUs you can afford).
+        \item As EU variance ($\sigma^2_{EU}$) grows, the denominator gets larger, driving $n$ down (MUs are redundant; you \emph{must} prioritize buying more EUs to capture the large variation between them).
+    \end{itemize}
+    }
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Practical Considerations: Estimating Variance}
+  \begin{itemize}
+    \item A common question is: \emph{How do we know $\sigma^2_{EU}$ and $\sigma^2_{MU}$ before the experiment is run?}
+    \item To use the optimum allocation formula, you need \emph{a priori} estimates of these variance components. Common sources include:
+    \begin{itemize}
+      \item \textbf{Pilot Studies:} Running a small-scale nested design specifically to estimate variance components via REML (e.g., using \texttt{lme4}).
+      \item \textbf{Historical Data:} Re-analyzing data from previous experiments conducted in the same lab, field, or facility.
+      \item \textbf{Literature Review:} Searching for published papers that report variance components or mean squares for similar nested structures.
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\section{Applied Example in R}
+
+\begin{frame}[fragile, allowframebreaks]{R Implementation}
+  \begin{itemize}
+    \item Suppose we fit a mixed model on previous pig data and extracted the variance components using \texttt{lme4}.
+    \item $\sigma^2_{pen} = 214.5$, $\sigma^2_{pig} = 796.3$.
+    \item A single pen costs \$500 to rent, and a pig costs \$100 to purchase and feed.
+  \end{itemize}
+  
+<<opt_alloc, size='small'>>=
+# Variance components
+var_pen <- 214.5
+var_pig <- 796.3
+
+# Cost parameters
+cost_pen <- 500
+cost_pig <- 100
+
+# Calculate optimal MU per EU
+n_opt <- sqrt((var_pig * cost_pen) / (var_pen * cost_pig))
+n_opt
+
+# Round to nearest practical integer
+round(n_opt)
+@
+
+  \begin{itemize}
+    \item \textbf{Conclusion:} The optimal design is 4 pigs per pen. To maximize statistical power, the researcher should configure their study into "4-pig pen units" and purchase as many of these units as their grant budget allows.
+  \end{itemize}
+\end{frame}
+
+\section{Further Reading}
+
+\begin{frame}[allowframebreaks]{Recommended Resources}
+  \begin{itemize}
+    \item For students interested in exploring cost optimization and sample size allocation further, the following texts are highly recommended:
+    \vspace{3mm}
+    \item \textbf{Design of Experiments:}
+    \begin{itemize}
+      \item \emph{Design of Experiments: Statistical Principles of Research Design and Analysis} by Robert O. Kuehl. (Excellent coverage of variance components and nested designs in biological/agricultural contexts).
+      \item \emph{Design and Analysis of Experiments} by Douglas C. Montgomery. (A standard text covering random effects, mixed models, and optimal resource allocation).
+      \item \emph{A First Course in Design and Analysis of Experiments} by Gary W. Oehlert. (Provides highly accessible breakdowns of expected mean squares and optimal sizes).
+    \end{itemize}
+    \framebreak
+    \item \textbf{Sampling Theory (The origin of the formula):}
+    \begin{itemize}
+      \item \emph{Sampling Techniques} by William G. Cochran. (Chapter 10 on "Subsampling with Units of Equal Size" provides the foundational mathematical derivation of this cost optimization formula, originally developed for survey sampling).
+      \item \emph{Sampling: Design and Analysis} by Sharon L. Lohr. (A modern, accessible take on two-stage cluster sampling and optimal cost allocation).
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\newcommand\acknowledgments{
+\begin{itemize}
+\item   Compiled on {\today} using \Rlanguage version \Sexpr{getRversion()}.
+\item   \parbox[t]{0.75\textwidth}{Licensed under the \link{http://creativecommons.org/licenses/by-nc/4.0/}{Creative Commons Attribution-NonCommercial license}.
+    Please share and remix non-commercially, mentioning its origin.}
+    \parbox[c]{1.5cm}{\includegraphics[height=12pt]{../cc-by-nc}}
+\item We acknowledge \link{https://jeswheel.github.io/5200_f26/acknowledge.html}{students and instructors for previous versions of this course / slides}.
+\end{itemize}
+}
+
+\mode<presentation>{
+\begin{frame}[allowframebreaks=0.8]{References and Acknowledgements}
+  
+\bibliography{../bib5200}
+
+\vspace{3mm}
+
+\acknowledgments
+
+\end{frame}
+}
+
+\mode<article>{
+
+\newpage
+
+{\bf \Large \noindent Acknowledgments}
+
+\acknowledgments
+
+\newpage
+
+\bibliography{../bib5200}
+
+}
+
+\end{document}
+
