@@ -70,6 +70,10 @@ Please read the [grading rubric](rubric_homework.html) before submitting homewor
 [TeX file](hw06/hw06.tex)
 [RepLS.csv](hw06/RepLS.csv)
 [bulls.csv](hw06/bulls.csv)
+* [Homework 7](hw07/hw07.pdf), due Fri Dec 4, 11:59pm.
+[TeX file](hw07/hw07.tex)
+[nestedDesignData.csv](hw07/nestedDesignData.csv)
+[pig\_feed\_data.csv](hw07/pig_feed_data.csv)
 
 <!--
 * [Homework 4](hw04/hw04.pdf), due Wed Feb 25, 11:59pm.
