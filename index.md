@@ -34,6 +34,8 @@ PREREQ: Earn a minimum grade of C- one of the following:
 6. [Random and Mixed Effects Models](06/index.html)
 7. [Designs with Nested Factors](07/index.html)
 
+- [Supplemental Notes](supplemental/index.html)
+
 <!--
 8. [Block Designs](08/index.html)
 -->
