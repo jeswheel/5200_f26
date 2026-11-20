@@ -129,7 +129,7 @@
 \begin{frame}[allowframebreaks]{Minimizing Variance for a Fixed Cost}
   \begin{itemize}
     \item We want to find the optimal number of MUs per EU ($n$) that minimizes variance $V$, subject to the cost constraint $C$.
-    \item First, isolate $b$ in the cost equation:
+    \item First, isolate $b$ (the number of EUs) in the cost equation:
     $$ b = \frac{C}{C_{EU} + n \cdot C_{MU}} $$
     \item Substitute this into the variance equation:
     $$ V = \left( \sigma^2_{EU} + \frac{\sigma^2_{MU}}{n} \right) \cdot \frac{C_{EU} + n \cdot C_{MU}}{C} $$
@@ -143,8 +143,10 @@
     
   \framebreak
   
-    \item Solving for $n$ gives the optimum allocation formula:
-    $$ n = \sqrt{ \frac{\sigma^2_{MU} \cdot C_{EU}}{\sigma^2_{EU} \cdot C_{MU}} } $$
+    \item Solving for $n$ (number of MUs per EU) gives the optimum allocation formula, based on cost:
+    \begin{align}
+    n = \sqrt{ \frac{\sigma^2_{MU} \cdot C_{EU}}{\sigma^2_{EU} \cdot C_{MU}} } \label{eq:optimalMUperEU}
+    \end{align}
     
     \mode<article>{
     This formula elegantly balances biological variation with financial cost in experimental design. Notice the intuition of the formula:
