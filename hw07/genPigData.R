@@ -32,27 +32,3 @@ Weight <- mu + feed_eff + pen_eff + pig_eff
 pig_data <- data.frame(Feed, Pen, Pig, Weight)
 
 write.csv(pig_data, "pig_feed_data.csv", row.names = FALSE)
-
-library(lme4)
-library(lmerTest)
-
-lme4_output <- lmer(Weight ~ Feed + (1 | Pen), data = pig_data)
-anova(lme4_output)
-
-# IF NECESSARY: 
-# install.packages("dplyr") 
-library(dplyr)
-
-mean_pig_data <- pig_data |> 
-  group_by(Pen, Feed) |> 
-  summarize(Weight = mean(Weight))
-
-aov(Weight ~ Feed, data = mean_pig_data) |> 
-  summary()
-
-library(emmeans)
-
-em_mod <- emmeans(lme4_output, ~ Feed)
-plot(pairs(em_mod))
-
-summary(lme4_output)
