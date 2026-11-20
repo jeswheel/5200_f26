@@ -112,18 +112,45 @@
 
 \begin{enumerate}
   
-    \item (\textbf{Modified Exercise 12.1 from textbook}) Consider a four-factor model with $A$ and $D$ fixed, each with three levels. Factors $B$ and $C$ are random with two levels each. All factors are crossed. There is a total of 72 observations.
-  
-  \begin{enumerate}
-    \item Write an appropriate linear model for this situation. Be careful with subscripts!
-    \item How many total parameters need to be estimated?
-  \end{enumerate}
-  
+  %   \item (\textbf{Modified Exercise 12.1 from textbook}) Consider a four-factor model with $A$ and $D$ fixed, each with three levels. Factors $B$ and $C$ are random with two levels each. All factors are crossed. There is a total of 72 observations.
+  % 
+  % \begin{enumerate}
+  %   \item Write an appropriate linear model for this situation. Be careful with subscripts!
+  %   
+  %   {\color{blue}The standard model for this situation would be:
+  %   $$
+  %   y_{ijklm} = \mu + \alpha_i + (\beta_j) + (\gamma_k) + \delta_l + (\alpha\beta)_{ij} + (\alpha\beta)_{ik} + \alpha\delta_{il} + 
+  %   $$
+  %   
+  %   }
+  %   
+  %   \item How many total parameters need to be estimated?
+  % \end{enumerate}
+
   \item (\textbf{Modified Exercise 12.2 from textbook}) Consider a four-factor model with $A$ and $D$ fixed, each with three levels. Factors $B$ and $C$ are random with two levels each. B nests in A, C nests in B, and D crosses with the others. There is a total of 72 observations.
   
   \begin{enumerate}
     \item Write an appropriate linear model for this situation. Be careful with subscripts!
-    \item How many total parameters need to be estimated?
+    
+  \item How many total parameters are in your model? (You may state either the total theoretical parameters in the equation or the number of strictly free parameters estimated by software. Specify which you are counting).
+
+ \item The dataset \texttt{nestedDesignData.csv} contains 72 observations generated from this exact design. Load the data and use \texttt{lmer()} from the \texttt{lme4} package to fit the mixed-effects model you specified in part (a). Print the summary of the model, and analyze the fixed treatment effects using the \texttt{anova()}. \textit{\textbf{Hint:} Ensure your categorical variables are formatted as factors in R before fitting the model, and use the colon operator \texttt{:} to construct unique nested groupings. Also, you need to load \texttt{lmerTest} prior to fitting the model for \texttt{anova()} to work.}
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{library}\hldef{(lme4)}
+\hlkwd{library}\hldef{(lmerTest)}
+
+\hldef{...} \hlkwb{<-} \hlkwd{read.csv}\hldef{(}\hlsng{"nestedDesignData.csv"}\hldef{)}
+
+\hlcom{# Fit the model}
+\hldef{mod1C} \hlkwb{<-} \hlkwd{lmer}\hldef{(...)}
+\hldef{...}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+  
   \end{enumerate}
   
   \item \textbf{Pig Pens: CRD vs Nesting}.
@@ -141,16 +168,12 @@ The data in Canvas include changes in weight values for every single pig, not ju
 \begin{enumerate}
   \item \textbf{Fit a fixed-effects only ANOVA model by aggregating the data, as suggested in module 3}.
   That is, we want to avoid pseudo-replication by using only data aggregated by the experimental units (pen).
-  The code below can be used to compute the mean-weight for each pen:
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlcom{# IF NECESSARY: }
-\hlcom{# install.packages("dplyr") }
 \hlkwd{library}\hldef{(dplyr)}
 
-\hlcom{# Double check your file-paths}
 \hldef{pig_data} \hlkwb{<-} \hlkwd{read.csv}\hldef{(}\hlsng{'pig_feed_data.csv'}\hldef{)}
 
 \hlcom{# Get mean-weight for each Pen.}
@@ -161,30 +184,24 @@ The data in Canvas include changes in weight values for every single pig, not ju
 \end{kframe}
 \end{knitrout}
 
-
 \item Now we will refit a model to the raw-data (values for each pig) using a nested model structure.
 
 \begin{enumerate}
   \item Write down a model with a nested structure appropriate for these data. Carefully define your subscripts and model assumptions.
-  \item Use the \texttt{lme4} and \texttt{lmerTest} packages to fit this model and perform a hypothesis test for the fixed effects. \textbf{You need to load both \texttt{lme4} and \texttt{lmerTest} packages before fitting the model to get the anova() function to work properly}
+  
+  \item Use the \texttt{lme4} and \texttt{lmerTest} packages to fit this model and perform a hypothesis test for the fixed effects. \textbf{You need to load both \texttt{lme4} and \texttt{lmerTest} packages before fitting the model to get the \texttt{anova()} function to work properly. If you did this already for the problem above, you don't necessarily need to reload packages.}
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlcom{# IF NECESSARY: }
-\hlcom{# install.packages("lme4")}
-\hlcom{# install.packages("lmerTest")}
-
 \hlkwd{library}\hldef{(lme4)}
 \hlkwd{library}\hldef{(lmerTest)}
 
 \hldef{lmer_mod} \hlkwb{<-} \hlkwd{lmer}\hldef{(...)}
-
 \hlkwd{anova}\hldef{(lmer_mod)}
 \end{alltt}
 \end{kframe}
 \end{knitrout}
-
 
 \end{enumerate}
 
@@ -203,8 +220,7 @@ $$
 \text{Optimal Number of MUs per EU} = \sqrt{ \frac{\sigma^2_{MU} \cdot \text{(Cost of EU)}}{\sigma^2_{EU} \cdot \text{(Cost of MU)} }}
 $$
 
-If a single pig costs $\$75$, and a pen costs $\$500$ to build and maintain, how many pigs-per-pen would your recommend for a follow-up study?
-
+If a single pig costs $\$100$, and a pen costs $\$500$ to build and maintain, how many pigs-per-pen would your recommend for a follow-up study?
 
 \end{enumerate}
 
