@@ -112,7 +112,101 @@
 
 \begin{enumerate}
   
-  \item 
+    \item (\textbf{Modified Exercise 12.1 from textbook}) Consider a four-factor model with $A$ and $D$ fixed, each with three levels. Factors $B$ and $C$ are random with two levels each. All factors are crossed. There is a total of 72 observations.
+  
+  \begin{enumerate}
+    \item Write an appropriate linear model for this situation. Be careful with subscripts!
+    \item How many total parameters need to be estimated?
+  \end{enumerate}
+  
+  \item (\textbf{Modified Exercise 12.2 from textbook}) Consider a four-factor model with $A$ and $D$ fixed, each with three levels. Factors $B$ and $C$ are random with two levels each. B nests in A, C nests in B, and D crosses with the others. There is a total of 72 observations.
+  
+  \begin{enumerate}
+    \item Write an appropriate linear model for this situation. Be careful with subscripts!
+    \item How many total parameters need to be estimated?
+  \end{enumerate}
+  
+  \item \textbf{Pig Pens: CRD vs Nesting}.
+  The dataset \texttt{pig\_feed\_data.csv} in Canvas contains (synthetic) data from the following experiment:
+  
+  \begin{quote}
+    An agricultural researcher would like to test the impact new feed formulations will have on swine weight.
+    They have three formulas they would like to compare, and access to 60 pigs.
+    They group together the pigs in pens of 5 pigs each, given 12 total pens.
+    They then perform a completely randomized design, assigning each of the three distinct feed formulas to four pens each, and measure the weight change of the pigs after 6 months.
+  \end{quote}
+
+The data in Canvas include changes in weight values for every single pig, not just aggregated by pen (as discussed in Module 3).
+
+\begin{enumerate}
+  \item \textbf{Fit a fixed-effects only ANOVA model by aggregating the data, as suggested in module 3}.
+  That is, we want to avoid pseudo-replication by using only data aggregated by the experimental units (pen).
+  The code below can be used to compute the mean-weight for each pen:
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{# IF NECESSARY: }
+\hlcom{# install.packages("dplyr") }
+\hlkwd{library}\hldef{(dplyr)}
+
+\hlcom{# Double check your file-paths}
+\hldef{pig_data} \hlkwb{<-} \hlkwd{read.csv}\hldef{(}\hlsng{'pig_feed_data.csv'}\hldef{)}
+
+\hlcom{# Get mean-weight for each Pen.}
+\hldef{mean_pig_data} \hlkwb{<-} \hldef{pig_data |>}
+  \hlkwd{group_by}\hldef{(Pen, Feed) |>}
+  \hlkwd{summarize}\hldef{(}\hlkwc{Weight} \hldef{=} \hlkwd{mean}\hldef{(Weight))}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+
+\item Now we will refit a model to the raw-data (values for each pig) using a nested model structure.
+
+\begin{enumerate}
+  \item Write down a model with a nested structure appropriate for these data. Carefully define your subscripts and model assumptions.
+  \item Use the \texttt{lme4} and \texttt{lmerTest} packages to fit this model and perform a hypothesis test for the fixed effects. \textbf{You need to load both \texttt{lme4} and \texttt{lmerTest} packages before fitting the model to get the anova() function to work properly}
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{# IF NECESSARY: }
+\hlcom{# install.packages("lme4")}
+\hlcom{# install.packages("lmerTest")}
+
+\hlkwd{library}\hldef{(lme4)}
+\hlkwd{library}\hldef{(lmerTest)}
+
+\hldef{lmer_mod} \hlkwb{<-} \hlkwd{lmer}\hldef{(...)}
+
+\hlkwd{anova}\hldef{(lmer_mod)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+
+\end{enumerate}
+
+\item Compare the F-values and P-values of your two tests.
+
+\item Using either model, perform a post-hoc analysis for the main treatment effect. 
+
+\item (\textbf{Comparing to incorrect approach}) Now fit a fixed-effects model to the raw pig-weight data, treating each measurement as if it were an experimental unit (ignoring the nesting structure).
+\textbf{What is the difference in the output, and what could go wrong if we did this in practice?}
+
+\item (\textbf{6000-level only}: What we gain by modeling nesting). One question we might ask: \emph{If we were to repeat the study, what is the optimal allocation of pigs-to-pen, based on budget constraints?} This is actually something that we can compute!
+
+Equation~1 of \texttt{CostSupplement.pdf} (Slide 12) gives the following equation for minimizing the observation variance given cost constraints:
+
+$$
+\text{Optimal Number of MUs per EU} = \sqrt{ \frac{\sigma^2_{MU} \cdot \text{(Cost of EU)}}{\sigma^2_{EU} \cdot \text{(Cost of MU)} }}
+$$
+
+If a single pig costs $\$75$, and a pen costs $\$500$ to build and maintain, how many pigs-per-pen would your recommend for a follow-up study?
+
+
+\end{enumerate}
 
 \end{enumerate}
 
