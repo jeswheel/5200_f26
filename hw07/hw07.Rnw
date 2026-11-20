@@ -63,6 +63,8 @@
 
 \begin{enumerate}
   
+  \item Finish all of the problems below, and then add your academic integrity statement.
+  
   %   \item (\textbf{Modified Exercise 12.1 from textbook}) Consider a four-factor model with $A$ and $D$ fixed, each with three levels. Factors $B$ and $C$ are random with two levels each. All factors are crossed. There is a total of 72 observations.
   % 
   % \begin{enumerate}
