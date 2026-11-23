@@ -92,7 +92,7 @@
     \item All split plots within a given whole plot must receive the \emph{same level} of the whole-plot factor.
     
     \begin{block}{General Rule of Thumb: More precision for smaller units}
-    Because the \alert{whole-plot} factor acts like \emph{blocks} for the split-plots, comparisons involving the split-plot factor are generally \alert{more precise} than comparisons involving the whole-plot factor.
+    Because the \alert{whole-plot} units act like \emph{blocks} for the split-plots, comparisons involving the split-plot factor are generally \alert{more precise} than comparisons involving the whole-plot factor.
     \end{block}
     
   \end{itemize}
@@ -118,7 +118,7 @@
   \begin{itemize}
     \item What are the whole plots? \answer{\textbf{The Panels.}}
     \item What is the whole-plot factor? \answer{\textbf{Manufacturer.}}
-    \item What are the split plots? \answer{\textbf{The listening sessions.}}
+    \item What are the split plots? \answer{\textbf{The individual piano performances (or listening slots within a session).}}
     \item What is the split-plot factor? \answer{\textbf{Piano Type (Baby vs. Concert).}}
   \end{itemize}
   
@@ -150,7 +150,7 @@ $$
   \begin{itemize}
     \item $\alpha_i$: Fixed effect of whole-plot factor $A$.
     \item $\eta_{k(i)}$: Random error for whole plot $k$ (nested in $A$). \textbf{(Whole-Plot Error)}
-    \item $\beta_j$: Fixed effect of split-plot factor B.
+    \item $\beta_j$: Fixed effect of split-plot factor $B$.
     \item $(\alpha\beta)_{ij}$: Interaction between whole-plot and split-plot factors.
     \item $\epsilon_{k(ij)}$: Random error for the split plot. 
     \textbf{(Split-Plot Error)}
@@ -221,7 +221,7 @@ Because this involves changing levels of the split-plot factor, it must be evalu
     \item \textbf{Whole plots:} \answer{Subjects.}
     \item \textbf{Whole-plot factors:} \answer{Anxiety and Tension.}
     \item \textbf{Split plots:} \answer{Trials within subjects.}
-    \item \textbf{Split-plot factor:} {Memory Type.}
+    \item \textbf{Split-plot factor:} \answer{Memory Type.}
   \end{itemize}
 
 \end{frame}
@@ -246,8 +246,8 @@ memory$subject <- factor(memory$subject)
 Next, it is important to make sure we know how the data are encoded.
 Check however you want, but we notice for this data: 
 \begin{itemize}
-  \item Subject has been encoded only $1, 2, 3$, whereas the actual experiment as 12 subjects.
-  \item The subjects can be identified by there treatment combination: there are two whole-plot level treatments: Anxiety and Tension, each with two levels, for a total of 4 combinations.
+  \item Subject has been encoded only $1, 2, 3$, whereas the actual experiment has 12 subjects.
+  \item The subjects can be identified by their treatment combination: there are two whole-plot level treatments: Anxiety and Tension, each with two levels, for a total of 4 combinations.
   \item 3 subjects are randomly assigned to each of these 4 combinations, so \emph{subject is nested in treatment}.
 \end{itemize}
 
@@ -267,9 +267,9 @@ mod_memory <- lmer(
   \framebreak
 
   \begin{itemize}
-    \item By using \texttt{(1 | subject:anxiety:tension)}, we correctly identify subject and avoid pseudo-replication, while explicitly add the \alert{Whole-Plot Error} term $\eta_{k(i)}$.
+    \item By using \texttt{(1 | subject:anxiety:tension)}, we correctly identify subject and avoid pseudo-replication, while explicitly adding the \alert{Whole-Plot Error} term $\eta_{k(i)}$.
     \item The residual error automatically handles the \alert{Split-Plot Error} term $\epsilon_{k(ij)}$.
-    \item \textbf{Important:} Remember from the nested module--If \texttt{subject} was given a unique ID (Explicit IDs: 1 to 12), we could just write \texttt{(1 | subject)}.
+    \item \textbf{Important:} Remember from the nested module---If \texttt{subject} was given a unique ID (Explicit IDs: 1 to 12), we could just write \texttt{(1 | subject)}.
   \end{itemize}
   
   \framebreak
@@ -285,7 +285,8 @@ anova(mod_memory)
   \begin{itemize}
     \item At the split-plot level, the effect of type is highly significant.
     \begin{itemize}
-      \item No interaction with type (anxiety by type, tension by type, or the three-way interaction) appear significant. We could do a post-hoc inference on this is we would like.
+      \item No interaction with type (anxiety by type, tension by type, or the three-way interaction) appears significant.
+      We could do a post-hoc inference on this if we would like.
     \end{itemize}
     \item At the whole-plot level, we did not find significant main-effects for anxiety or tension. \emph{However}, there is a moderately significant interaction effect. Let's investigate this interaction further.
   \end{itemize}
@@ -299,7 +300,7 @@ emmip(em_mod, anxiety ~ tension)
 @
 
 
-\mode<article>{In the plot above, we see that the most errors are made when both factors are at level 2; the difference is means is small, and we didn't consider and multiple testing, so the marginally significant p-value may just be due to multiple testing.
+\mode<article>{In the plot above, we see that the most errors are made when both factors are at level 2; the difference in means is small, and we didn't consider and multiple testing, so the marginally significant p-value may just be due to multiple testing.
 
 One last note is regarding model assumptions. The non-constant variance assumption looks to be slightly problematic, though no transformation really fixes it, so we still just interpret on the original scale, keeping in mind the potential for inflated Type-I errors.}
   
@@ -314,7 +315,7 @@ One last note is regarding model assumptions. The non-constant variance assumpti
     \item \textbf{Blocking at the whole-plot level:} Often, whole plots are grouped into blocks (e.g., RCB) before treatments are assigned.
     \item \textbf{Split-Split Plots:} We can split the units again!
     
-    \mode<article>{\textbf{Idea:} We may have 3 factors, $A, B, C$. We start with a standard split-plot, that is we have $n$ whole-plots to which we assign the levels of $A$. We split the whole-plots into distinct units, which we assign to the levels of $B$. So far, this is exactly the same as a standard split-plot. We can then split the split-plot units further to assign the units of $C$! We call these smallest level of experimental units split-split-plots. This requires \textbf{three} sizes of experimental units and \textbf{three} randomizations!
+    \mode<article>{\textbf{Idea:} We may have 3 factors, $A, B, C$. We start with a standard split-plot, that is we have $n$ whole-plots to which we assign the levels of $A$. We split the whole-plots into distinct units, which we assign to the levels of $B$. So far, this is exactly the same as a standard split-plot. We can then split the split-plot units further to assign the levels of $C$! We call these smallest level of experimental units split-split-plots. This requires \textbf{three} sizes of experimental units and \textbf{three} randomizations!
 }
     
   \end{itemize}
@@ -327,7 +328,7 @@ One last note is regarding model assumptions. The non-constant variance assumpti
   
   \item We have 8 trays, each tray holds 3 artificial wetlands. Four of the trays are placed on a table near the door of the greenhouse, and the other four trays are placed on a table in the center. On each table, we randomly assign one of the trays to each of the four nitrogen treatments. Within each tray, we randomly assign the wetlands to the three weed treatments.
   
-  \item Each wetland is then split in half, one for clipping and one not.
+  \item Each wetland is then split in half, with clipping type randomly assigned to one half.
   \end{itemize}
   
   \framebreak
