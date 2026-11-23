@@ -33,16 +33,10 @@ PREREQ: Earn a minimum grade of C- one of the following:
 5. [Block Designs](05/index.html)
 6. [Random and Mixed Effects Models](06/index.html)
 7. [Designs with Nested Factors](07/index.html)
+8. [Split-plot Designs](08/index.html)
 
 - [Supplemental Notes](supplemental/index.html)
 
-<!--
-8. [Block Designs](08/index.html)
--->
-
-<!--
-[Midterm II Review](midterm02/Midterm2Review.pdf)
---> 
 
 --------
 
@@ -77,12 +71,6 @@ Please read the [grading rubric](rubric_homework.html) before submitting homewor
 [nestedDesignData.csv](hw07/nestedDesignData.csv)
 [pig\_feed\_data.csv](hw07/pig_feed_data.csv)
 
-<!--
-* [Homework 4](hw04/hw04.pdf), due Wed Feb 25, 11:59pm.
-[TeX file](hw04/hw04.tex)
-[TeX file](hw05/hw05.tex)
--->
-
 
 -------------------
 
@@ -91,12 +79,6 @@ Please read the [grading rubric](rubric_homework.html) before submitting homewor
 * October, 29, 2026 *(tentatively scheduled)*.
 * [Review (pdf)](midterm01/MidtermReview.pdf).
 
-<!--
-
-
-* [Formula Sheet](midterm/formulaSheet.pdf)
-
--->
 
 -------------
 
