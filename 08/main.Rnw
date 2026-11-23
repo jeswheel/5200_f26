@@ -19,7 +19,7 @@
 \newcommand\CHAPTER{8}
 % \newcommand\answer[2]{\textcolor{blue}{#2}} % to show answers
 % \newcommand\answer[2]{\textcolor{red}{#2}} % to show answers
- \newcommand\answer[2]{#1} % to show blank space
+ \newcommand\answer[1]{\mode<article>{#1}} % to show blank space
 
 \title{\vspace{2mm} \link{https://jeswheel.github.io/5200_f26/}{Split-Plot Designs}}
 \author{Jesse Wheeler}
@@ -90,11 +90,15 @@
   \begin{itemize}
     \item A split plot is essentially a restricted randomization.
     \item All split plots within a given whole plot must receive the \emph{same level} of the whole-plot factor.
-    \item \textbf{Trade-off:} Because they act as blocks for the split plots, comparisons involving the split-plot factor are generally \alert{more precise} than comparisons involving the whole-plot factor.
+    
+    \begin{block}{General Rule of Thumb: More precision for smaller units}
+    Because the \alert{whole-plot} factor acts like \emph{blocks} for the split-plots, comparisons involving the split-plot factor are generally \alert{more precise} than comparisons involving the whole-plot factor.
+    \end{block}
+    
   \end{itemize}
   \mode<article>{
   You cannot distinguish a split-plot design from a completely randomized factorial design just by looking at a table of factor levels and responses.
-  You \emph{must} know how the randomization was done! Always follow the randomization to identify the units.
+  You \emph{must} know how the randomization was done! Always follow the randomization to identify the units and type of experimental design.
 }
 \end{frame}
 
@@ -112,10 +116,10 @@
 
   \textbf{Identify the Split-Plot Structure:}
   \begin{itemize}
-    \item What are the whole plots? \answer{\textbf{The Panels.}}{}
-    \item What is the whole-plot factor? \answer{\textbf{Manufacturer.}}{}
-    \item What are the split plots? \answer{\textbf{The listening sessions.}}{}
-    \item What is the split-plot factor? \answer{\textbf{Piano Type (Baby vs. Concert).}}{}
+    \item What are the whole plots? \answer{\textbf{The Panels.}}
+    \item What is the whole-plot factor? \answer{\textbf{Manufacturer.}}
+    \item What are the split plots? \answer{\textbf{The listening sessions.}}
+    \item What is the split-plot factor? \answer{\textbf{Piano Type (Baby vs. Concert).}}
   \end{itemize}
   
   \mode<article>{
@@ -133,8 +137,8 @@
     \item \textbf{Golden Rule:} We assume that there is a random effect for \alert{every randomization}.
     \item For a basic split-plot, we have:
     \begin{enumerate}
-      \item A random value for each whole plot (Whole-Plot Error).
-      \item A random value for each split plot (Split-Plot Error).
+      \item A random effect for each whole plot (Whole-Plot Error).
+      \item A random effect for each split plot (Split-Plot Error).
     \end{enumerate}
   \end{itemize}
   \framebreak
@@ -151,12 +155,31 @@ $$
     \item $\epsilon_{k(ij)}$: Random error for the split plot. 
     \textbf{(Split-Plot Error)}
   \end{itemize}
+  
+  \framebreak
+  
+  \begin{itemize}
+    \item Why is the whole-plot error nested in treatment? \answer{In a split-plot design, the treatments ($A$ and $B$) are crossed, but the experimental units (the whole plots and split plots themselves) are nested within treatment.
+    Each whole plot only receives \textbf{one} level of Factor $A$; consequently, whole-plot 1 assigned to $A = 1$ is a completely different physical unit than whole-plot 1 assigned to $A = 2$.
+    We can encode the data with unique IDs for every whole plot, or reuse labels $1, \ldots, r$ within each level of $A$---how it is encoded changes the ``correct'' syntax in R.}
+    
+    \mode<presentation>{\vspace{4cm}} 
+    
+    \item Why is there an interaction effect? \answer{Because the treatment factors $A$ and $B$ are \textbf{crossed}: every level of the whole-plot factor ($A$) is paired with every level of the split-plot factor ($B$).
+    Unlike a standard nested design, the nesting in a split-plot is in the \emph{random error terms} (the physical units), \emph{not} the treatment effects.
+    Specifically, the whole-plot error is nested in treatment $A$, and the split-plot error is nested in the $A \times B$ combination.}
+  \end{itemize}
+  
 \end{frame}
 
 \begin{frame}[allowframebreaks]{Decomposing the Variation}
 
   \begin{itemize}
-    \item A useful heuristic is to split the total variation into two bundles:
+    \item A useful heuristic is to split the total variation into two bundles, and sometimes writing the equation on two lines:
+    \begin{align*}
+      y_{ijk} =& \mu + \alpha_i + \eta_{k(i)} \\ 
+      & + \beta_j + (\alpha\beta)_{ij} + \epsilon_{k(ij)}
+    \end{align*}
     \begin{enumerate}
       \item \textbf{Between Whole Plots:} Variation due to effects that impact complete whole plots (Whole-plot treatments, whole-plot blocks, whole-plot error).
       \item \textbf{Within Whole Plots (Between Split Plots):} Variation due to effects acting on individual split plots (Split-plot treatments, interaction, split-plot error).
@@ -171,7 +194,10 @@ Because this involves changing levels of the split-plot factor, it must be evalu
 \section{Split Plots in R}
 
 \begin{frame}[allowframebreaks,fragile]{Example: Anxiety, Tension, and Memory}
-
+  
+  We wish to study the effects of anxiety and muscular tension on four different types of memory. The low-anxiety group is told that they will be awarded \$10 if they remember accurately, and the high-anxiety group is told they will be awarded \$100 if they remember accurately.
+  Participants must hold a spring (low or high tension) to keep a buzzer from going off during the trial. 
+  
   \begin{block}{Memory Experiment}
     12 subjects are randomly assigned to one of 4 Anxiety-Tension combinations (Low/High Anxiety $\times$ Low/High Tension).
     \begin{itemize}
@@ -182,32 +208,101 @@ Because this involves changing levels of the split-plot factor, it must be evalu
   
   \framebreak
   
-  \begin{itemize}
-    \item \textbf{Whole plots:} Subjects.
-    \item \textbf{Whole-plot factors:} Anxiety and Tension.
-    \item \textbf{Split plots:} Trials within subjects.
-    \item \textbf{Split-plot factor:} Memory Type.
-  \end{itemize}
+  \mode<article>{
+  This is a split-plot design, with factorial treatment structure for the whole-plot.
+  The first level of randomization is the assign the anxiety-tension combinations to each subject. 
+  Even though we will have four responses from each subject, the randomization is restricted so that all four of those responses will be at the same anxiety-tension combination.
+  Thus, \textbf{Anxiety} and \textbf{Tension} are the whole-plot treatment factors, the whole-plot units being the subjects.
   
-<<memory-example, eval=FALSE>>=
+  Each subject will do four memory trials. The trial type is randomized to the four trials for a given subject. Thus, the four trials for a subject are the split-plot units, and the trial type is the split-plot treatment. 
+  }
+  
+  \begin{itemize}
+    \item \textbf{Whole plots:} \answer{Subjects.}
+    \item \textbf{Whole-plot factors:} \answer{Anxiety and Tension.}
+    \item \textbf{Split plots:} \answer{Trials within subjects.}
+    \item \textbf{Split-plot factor:} {Memory Type.}
+  \end{itemize}
+
+\end{frame}
+
+\section{Analysis example in R: Anxiety}
+
+\begin{frame}[allowframebreaks,fragile]{Analysis in R}
+
+First we would like to load and prepare the data:
+
+<<memory-example, eval=TRUE, message=FALSE>>=
+memory <- read.csv('memory.csv') 
+
+memory$anxiety <- factor(memory$anxiety)
+memory$tension <- factor(memory$tension)
+memory$mem.type <- factor(memory$mem.type)
+memory$subject <- factor(memory$subject)
+@ 
+
+\framebreak
+
+Next, it is important to make sure we know how the data are encoded.
+Check however you want, but we notice for this data: 
+\begin{itemize}
+  \item Subject has been encoded only $1, 2, 3$, whereas the actual experiment as 12 subjects.
+  \item The subjects can be identified by there treatment combination: there are two whole-plot level treatments: Anxiety and Tension, each with two levels, for a total of 4 combinations.
+  \item 3 subjects are randomly assigned to each of these 4 combinations, so \emph{subject is nested in treatment}.
+\end{itemize}
+
+\framebreak
+
+<<memory-ANOVA, eval=TRUE, message=FALSE>>=
 library(lme4)
 library(lmerTest)
-# Assume 'memory' data is loadedSubject is uniquely numbered 1-12Anxiety, Tension, and Type are fixed factors
 
 mod_memory <- lmer(
-  Errors ~ Anxiety * Tension * Type + (1 | Subject),
+  num.errors ~ anxiety * tension * mem.type + 
+    (1 | subject:anxiety:tension),
   data = memory
 )
-anova(mod_memory)
 @
 
   \framebreak
 
   \begin{itemize}
-    \item By using \texttt{(1 | Subject)}, we explicitly add the \alert{Whole-Plot Error} term $\eta_{k(i)}$.
+    \item By using \texttt{(1 | subject:anxiety:tension)}, we correctly identify subject and avoid pseudo-replication, while explicitly add the \alert{Whole-Plot Error} term $\eta_{k(i)}$.
     \item The residual error automatically handles the \alert{Split-Plot Error} term $\epsilon_{k(ij)}$.
-    \item \textbf{Important:} Remember from the nested module—because Subject is given a unique ID (Explicit IDs: 1 to 12), we don't need to write \texttt{(1 | Anxiety:Tension:Subject)}.
+    \item \textbf{Important:} Remember from the nested module--If \texttt{subject} was given a unique ID (Explicit IDs: 1 to 12), we could just write \texttt{(1 | subject)}.
   \end{itemize}
+  
+  \framebreak
+  
+<<print-Anova-Table, size='scriptsize',custom.width=75>>=
+anova(mod_memory)
+@
+  
+\end{frame}
+
+\begin{frame}[allowframebreaks,fragile]{R analysis: Continued}
+  We investigate these results further, with the following findings:
+  \begin{itemize}
+    \item At the split-plot level, the effect of type is highly significant.
+    \begin{itemize}
+      \item No interaction with type (anxiety by type, tension by type, or the three-way interaction) appear significant. We could do a post-hoc inference on this is we would like.
+    \end{itemize}
+    \item At the whole-plot level, we did not find significant main-effects for anxiety or tension. \emph{However}, there is a moderately significant interaction effect. Let's investigate this interaction further.
+  \end{itemize}
+  
+  \framebreak
+  
+<<emmean-interaction, message=FALSE>>=
+library(emmeans)
+em_mod <- emmeans(mod_memory, ~ anxiety*tension)
+emmip(em_mod, anxiety ~ tension)
+@
+
+
+\mode<article>{In the plot above, we see that the most errors are made when both factors are at level 2; the difference is means is small, and we didn't consider and multiple testing, so the marginally significant p-value may just be due to multiple testing.
+
+One last note is regarding model assumptions. The non-constant variance assumption looks to be slightly problematic, though no transformation really fixes it, so we still just interpret on the original scale, keeping in mind the potential for inflated Type-I errors.}
+  
 \end{frame}
 
 \section{Extensions}
@@ -218,17 +313,36 @@ anova(mod_memory)
     \item Just like factorial designs, split plots can be extended to fit logistical needs:
     \item \textbf{Blocking at the whole-plot level:} Often, whole plots are grouped into blocks (e.g., RCB) before treatments are assigned.
     \item \textbf{Split-Split Plots:} We can split the units again!
+    
+    \mode<article>{\textbf{Idea:} We may have 3 factors, $A, B, C$. We start with a standard split-plot, that is we have $n$ whole-plots to which we assign the levels of $A$. We split the whole-plots into distinct units, which we assign to the levels of $B$. So far, this is exactly the same as a standard split-plot. We can then split the split-plot units further to assign the units of $C$! We call these smallest level of experimental units split-split-plots. This requires \textbf{three} sizes of experimental units and \textbf{three} randomizations!
+}
+    
+  \end{itemize}
+  
+  \framebreak
+ 
+ \begin{itemize}
+ 
+  \item An experiment studies the effect of nitrogen and weeds on plant growth in wetlands. There are 3 factors: Nitrogen level (4-levels), Weeds (no weeds, species 1, species 2), and two physical treatments (clipping vs no-clipping).
+  
+  \item We have 8 trays, each tray holds 3 artificial wetlands. Four of the trays are placed on a table near the door of the greenhouse, and the other four trays are placed on a table in the center. On each table, we randomly assign one of the trays to each of the four nitrogen treatments. Within each tray, we randomly assign the wetlands to the three weed treatments.
+  
+  \item Each wetland is then split in half, one for clipping and one not.
   \end{itemize}
   
   \framebreak
   
-  \begin{block}{Split-Split Plot Example: Wetland Weeds}
+  
+  \begin{block}{Split-Split Plot Summary}
+  
+    This is a \textbf{blocked split-split-plot} design.
+  
     \begin{itemize}
-      \item \textbf{Whole plot (Tray):} Assigned a Nitrogen level.
-      \item \textbf{Split plot (Wetland):} Assigned a Weed treatment.
-      \item \textbf{Split-Split plot (Half-Wetland):} Assigned a Clipping treatment.
+      \item \textbf{Blocking variable (Table)}: The blocking occurred for the highest EUs. We block by table location, and each table gets exactly one of each nitrogen treatment (RCBD). 
+      \item \textbf{Whole plot (Tray):} Assigned a Nitrogen level. \mode<article>{Everything in a given tray has the same level of nitrogen, so the trays are whole plots, and the nitrogen is the whole-plot factor.}
+      \item \textbf{Split plot (Wetland):} Assigned a Weed treatment. \mode<article>{Each of the measurements for a given wetland have the same weed treatment, so the wetlands are split-plots, and weed assignment is the split-plot factor.}
+      \item \textbf{Split-Split plot (Half-Wetland):} Assigned a Clipping treatment. \mode<article>{Each wetland half gets its own clipping treatment, so they are the split-split plot units, with clipping being the factor.}
     \end{itemize}
-    This requires \textbf{three} sizes of experimental units and \textbf{three} randomizations!
   \end{block}
 \end{frame}
 

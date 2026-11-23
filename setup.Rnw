@@ -49,6 +49,14 @@ options(
   str=str_opt
 )
 
+knit_hooks$set(custom.width = function(before, options, envir) {
+  if (before) {
+    assign(".old_width", getOption("width"), envir = envir)
+    options(width = options$custom.width)
+  } else {
+    options(width = get(".old_width", envir = envir))
+  }
+})
 
 myround<- function (x, digits = 1) {
   # taken from the broman package
