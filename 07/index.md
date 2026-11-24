@@ -16,13 +16,12 @@ Learning Objectives
 
 **Expected reading:** This materal is loosely based on Chapter 12 of Oehlert, G. W. (2020). *A First Course in Design and Analysis of Experiments*, [http://users.stat.umn.edu/~gary/book/fcdae.pdf](http://users.stat.umn.edu/~gary/book/fcdae.pdf). Students are not expected to read from this chapter, though may find sections 12.1 -- 12.6 useful for a study reference.
 
-<!-- 
 
 | &nbsp;           | &nbsp;                          |
 |:-----------------------|:------------------------:|
 | Lecture slides   | [pdf](slides.pdf) |
 | Lecture notes    | [pdf](notes.pdf) |
-<!-- | Annotated Slides | [pdf](annotatedSlides.pdf) | -->
+| Annotated Slides | [pdf](annotatedSlides.pdf) |
 <!-- | Discussion Problems | [pdf](discussionProbs.pdf) | -->
 
 ----------------------
